@@ -1,41 +1,58 @@
-export type ParticipantDto = {
-  name: string;
-  bias: number;
-  label: string;
-};
+//Api calls are now mocked by static JSON files in the public/data directory. 
+// The types below are not currently used, but could be helpful for future development 
+// when we switch back to real API calls.
+const JSON_BASE = import.meta.env.VITE_JSON_BASE_URL ?? "/data";
 
-export type MarketTodayResponse = {
-  index: string;
-  date: string;
-  asOfDate?: string;
-  dateasof?: string;
-  final_Score: number;
-  bias_Label: string;
-  strength: string;
-  regime: string;
-  shock_Score: number;
-  participants: ParticipantDto[];
-  explanation: string;
-};
-
-export type MarketHistoryPoint = {
-  date: string;
-  final_score: number;
-  regime: string;
-};
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
-
-async function httpGet<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`);
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(txt || `HTTP ${res.status}`);
-  }
+async function jsonGet<T>(file: string): Promise<T> {
+  const res = await fetch(`${JSON_BASE}/${file}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json() as Promise<T>;
 }
 
 export const api = {
-  marketToday: () => httpGet<MarketTodayResponse>("/api/market/today"),
-  marketHistory: (days = 30) => httpGet<MarketHistoryPoint[]>(`/api/market/history?days=${days}`),
+  marketToday: () => jsonGet<any>("market_today.json"),
+  marketHistory: () => jsonGet<any>("market_history_30.json"),
 };
+
+
+// export type ParticipantDto = {
+//   name: string;
+//   bias: number;
+//   label: string;
+// };
+
+// export type MarketTodayResponse = {
+//   index: string;
+//   date: string;
+//   asOfDate?: string;
+//   dateasof?: string;
+//   final_Score: number;
+//   bias_Label: string;
+//   strength: string;
+//   regime: string;
+//   shock_Score: number;
+//   participants: ParticipantDto[];
+//   explanation: string;
+// };
+
+// export type MarketHistoryPoint = {
+//   date: string;
+//   final_score: number;
+//   regime: string;
+// };
+
+// const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+
+// async function httpGet<T>(path: string): Promise<T> {
+//   const res = await fetch(`${BASE_URL}${path}`);
+//   if (!res.ok) {
+//     const txt = await res.text();
+//     throw new Error(txt || `HTTP ${res.status}`);
+//   }
+//   return res.json() as Promise<T>;
+// }
+
+// export const api = {
+//   marketToday: () => httpGet<MarketTodayResponse>("/api/market/today"),
+//   marketHistory: (days = 30) => httpGet<MarketHistoryPoint[]>(`/api/market/history?days=${days}`),
+// };

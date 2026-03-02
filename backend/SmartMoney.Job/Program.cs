@@ -128,7 +128,8 @@ using (var scope = sp.CreateScope())
         .ToListAsync();
 
     // Output folder that will be deployed (Vue dist)
-    var outDir = Path.Combine(Directory.GetCurrentDirectory(), "frontend", "dist", "data");
+    var repoRoot = FindRepoRoot();
+    var outDir = Path.Combine(repoRoot, "frontend", "dist", "data");
     Directory.CreateDirectory(outDir);
 
     var jsonOpts = new JsonSerializerOptions { WriteIndented = true };
@@ -147,6 +148,18 @@ using (var scope = sp.CreateScope())
         JsonSerializer.Serialize(runResult, jsonOpts));
 
     log.LogInformation("Exported JSON to {Dir}", outDir);
+}
+static string FindRepoRoot()
+{
+    var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
+    while (dir is not null)
+    {
+        var hasFrontend = Directory.Exists(Path.Combine(dir.FullName, "frontend"));
+        var hasBackend = Directory.Exists(Path.Combine(dir.FullName, "backend"));
+        if (hasFrontend && hasBackend) return dir.FullName;
+        dir = dir.Parent;
+    }
+    throw new InvalidOperationException("Repo root not found (expected /frontend and /backend).");
 }
 
 log.LogInformation("DONE");
