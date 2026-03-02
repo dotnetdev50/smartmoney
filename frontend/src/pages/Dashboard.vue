@@ -180,7 +180,7 @@ async function load() {
   error.value = null;
 
   try {
-    const [t, h] = await Promise.all([api.marketToday(), api.marketHistory(30)]);
+    const [t, h] = await Promise.all([api.marketToday(), api.marketHistory()]);
     today.value = t;
     history.value = h;
   } catch (e: unknown) {
@@ -204,7 +204,7 @@ onMounted(load);
 
 const points = computed(() => {
   if (history.value.length === 0) return "";
-  const ys = history.value.map((point) => point.final_score);
+  const ys = history.value.map((p: MarketHistoryPoint) => p.final_score);
 
   const minY = Math.min(...ys);
   const maxY = Math.max(...ys);
@@ -221,8 +221,8 @@ const points = computed(() => {
     pad + (height - pad * 2) * (1 - (v - minY) / rangeY);
 
   return ys
-    .map((v, i) => `${xScale(i).toFixed(2)},${yScale(v).toFixed(2)}`)
-    .join(" ");
+  .map((v: number, i: number) => `${xScale(i).toFixed(2)},${yScale(v).toFixed(2)}`)
+  .join(" ");
 });
 </script>
 
