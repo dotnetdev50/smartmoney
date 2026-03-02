@@ -51,6 +51,9 @@ jobs:
       - name: Run SmartMoney job (ingest + compute + export JSON)
         run: dotnet run -c Release --project backend/SmartMoney.Job/SmartMoney.Job.csproj
 
+      - name: Debug dist output
+        run: echo "dist:" ls -la frontend/dist echo "assets:" ls -la frontend/dist/assets || true echo "data:" ls -la frontend/dist/data || true
+
       - name: Upload Pages artifact (frontend/dist)
         uses: actions/upload-pages-artifact@v3
         with:
