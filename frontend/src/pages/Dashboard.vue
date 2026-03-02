@@ -22,11 +22,18 @@ function formatDate(value?: string | null) {
 
 const signalDate = computed(() => formatDate(today.value?.date));
 
-const asOfDate = computed(() =>
-  formatDate(today.value?.asOfDate ?? today.value?.dateasof ?? today.value?.date),
-);
+// JSON mode doesn’t necessarily provide asOfDate; we fall back to date
+const asOfDate = computed(() => formatDate(today.value?.date));
 
 const historyCount = computed(() => history.value.length);
+
+const historyDelta = computed(() => {
+  if (history.value.length < 2) return null;
+  const firstPoint = history.value[0];
+  const lastPoint = history.value[history.value.length - 1];
+  if (!firstPoint || !lastPoint) return null;
+  return lastPoint.final_score - firstPoint.final_score;
+});
 
 const trendLabel = computed(() => {
   const delta = historyDelta.value;
@@ -38,32 +45,39 @@ const trendLabel = computed(() => {
 
 const scoreColorClass = computed(() => {
   if (!today.value) return "text-gray-900 dark:text-gray-100";
-  const v = today.value.final_Score;
+  const v = today.value.final_score;
   if (v >= 40) return "text-green-700 dark:text-green-400";
   if (v <= -40) return "text-red-700 dark:text-red-400";
   return "text-gray-900 dark:text-gray-100";
 });
 
 const scoreBadgeClass = computed(() => {
-  if (!today.value) return "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700";
-  const v = today.value.final_Score;
-  if (v >= 40) return "bg-green-100 text-green-800 border-green-200 dark:bg-green-500/15 dark:text-green-300 dark:border-green-500/30";
-  if (v <= -40) return "bg-red-100 text-red-800 border-red-200 dark:bg-red-500/15 dark:text-red-300 dark:border-red-500/30";
+  if (!today.value)
+    return "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700";
+  const v = today.value.final_score;
+  if (v >= 40)
+    return "bg-green-100 text-green-800 border-green-200 dark:bg-green-500/15 dark:text-green-300 dark:border-green-500/30";
+  if (v <= -40)
+    return "bg-red-100 text-red-800 border-red-200 dark:bg-red-500/15 dark:text-red-300 dark:border-red-500/30";
   return "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700";
 });
 
 const regimeBadgeClass = computed(() => {
-  if (!today.value) return "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700";
+  if (!today.value)
+    return "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700";
   return today.value.regime === "SHOCK"
     ? "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-500/15 dark:text-orange-300 dark:border-orange-500/30"
     : "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700";
 });
 
 const shockBadgeClass = computed(() => {
-  if (!today.value) return "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700";
-  const v = today.value.today.shock_score ?? 0;
-  if (v >= 25) return "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-500/15 dark:text-orange-300 dark:border-orange-500/30";
-  if (v >= 10) return "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30";
+  if (!today.value)
+    return "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700";
+  const v = today.value.shock_score ?? 0;
+  if (v >= 25)
+    return "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-500/15 dark:text-orange-300 dark:border-orange-500/30";
+  if (v >= 10)
+    return "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30";
   return "bg-green-100 text-green-800 border-green-200 dark:bg-green-500/15 dark:text-green-300 dark:border-green-500/30";
 });
 
@@ -92,18 +106,30 @@ function normalizeParticipantName(name: string): ParticipantKey | null {
   return null;
 }
 
+function fallbackLabelFromBias(bias: number) {
+  const abs = Math.abs(bias);
+  if (abs >= 2.0) return bias > 0 ? "Strong Bullish" : "Strong Bearish";
+  if (abs >= 1.0) return bias > 0 ? "Bullish" : "Bearish";
+  if (abs >= 0.4) return bias > 0 ? "Mild Bullish" : "Mild Bearish";
+  return "Neutral";
+}
+
 const participantRows = computed<ParticipantRow[]>(() => {
   const rows = new Map<ParticipantKey, ParticipantRow>();
 
   if (today.value) {
-    for (const participant of today.value.participants) {
+    for (const participant of today.value.participants ?? []) {
       const key = normalizeParticipantName(participant.name);
       if (!key || rows.has(key)) continue;
+
+      const bias = participant.bias ?? 0;
+      const label = participant.label ?? fallbackLabelFromBias(bias);
+
       rows.set(key, {
         key,
         name: participantDisplayName(key),
-        bias: participant.bias,
-        label: participant.label,
+        bias,
+        label,
         hasData: true,
       });
     }
@@ -124,16 +150,6 @@ const topParticipant = computed(() => {
   const available = participantRows.value.filter((row) => row.hasData);
   if (available.length === 0) return null;
   return [...available].sort((a, b) => Math.abs(b.bias) - Math.abs(a.bias))[0] ?? null;
-});
-
-const historyDelta = computed(() => {
-  if (history.value.length < 2) return null;
-  const firstPoint = history.value[0];
-  const lastPoint = history.value[history.value.length - 1];
-  if (!firstPoint || !lastPoint) return null;
-  const first = firstPoint.final_score;
-  const last = lastPoint.final_score;
-  return last - first;
 });
 
 const historyDeltaClass = computed(() => {
@@ -172,7 +188,7 @@ function participantBarWidth(value: number) {
 
 const scoreMeterWidth = computed(() => {
   if (!today.value) return "0%";
-  return `${Math.min(50, Math.abs(today.value.final_Score) / 2)}%`;
+  return `${Math.min(50, Math.abs(today.value.final_score) / 2)}%`;
 });
 
 async function load() {
@@ -202,6 +218,7 @@ function toggleTheme() {
 
 onMounted(load);
 
+// Sparkline points
 const points = computed(() => {
   if (history.value.length === 0) return "";
   const ys = history.value.map((p: MarketHistoryPoint) => p.final_score);
@@ -221,13 +238,15 @@ const points = computed(() => {
     pad + (height - pad * 2) * (1 - (v - minY) / rangeY);
 
   return ys
-  .map((v: number, i: number) => `${xScale(i).toFixed(2)},${yScale(v).toFixed(2)}`)
-  .join(" ");
+    .map((v: number, i: number) => `${xScale(i).toFixed(2)},${yScale(v).toFixed(2)}`)
+    .join(" ");
 });
 </script>
 
 <template>
-  <div class="dashboard-shell flex h-dvh items-stretch justify-center overflow-hidden bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+  <div
+    class="dashboard-shell flex h-dvh items-stretch justify-center overflow-hidden bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100"
+  >
     <div class="flex h-full w-full max-w-[1180px] flex-col gap-2 px-3 py-2 sm:px-4 sm:py-3">
       <header class="flex shrink-0 flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -258,18 +277,29 @@ const points = computed(() => {
         </div>
       </header>
 
-      <div v-if="error" class="shrink-0 rounded-xl border border-red-200 bg-red-50 p-2 text-sm text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-200">
+      <div
+        v-if="error"
+        class="shrink-0 rounded-xl border border-red-200 bg-red-50 p-2 text-sm text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-200"
+      >
         {{ error }}
       </div>
 
       <section v-if="!loading && today" class="dashboard-kpi-grid grid shrink-0 grid-cols-2 gap-2 lg:grid-cols-4">
-        <article class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]">
+        <article
+          class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
+        >
           <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Final Score</p>
-          <p :class="['mt-1 text-2xl font-bold leading-none', scoreColorClass]">{{ fmtScore(today.final_score) }}</p>
-          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ today.strength }} {{ today.bias_Label }}</p>
+          <p :class="['mt-1 text-2xl font-bold leading-none', scoreColorClass]">
+            {{ fmtScore(today.final_score) }}
+          </p>
+          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            {{ (today.strength ?? "—") }} {{ (today.bias_Label ?? "") }}
+          </p>
         </article>
 
-        <article class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]">
+        <article
+          class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
+        >
           <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Regime</p>
           <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">{{ today.regime }}</p>
           <span :class="['mt-1 inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold', regimeBadgeClass]">
@@ -277,13 +307,17 @@ const points = computed(() => {
           </span>
         </article>
 
-        <article class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]">
+        <article
+          class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
+        >
           <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">30D Trend</p>
           <p :class="['mt-1 text-2xl font-semibold leading-none', historyDeltaClass]">{{ trendLabel }}</p>
           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ historyCount }} points tracked</p>
         </article>
 
-        <article class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]">
+        <article
+          class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
+        >
           <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">As Of Date</p>
           <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">{{ asOfDate }}</p>
           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Data publishing timestamp</p>
@@ -299,18 +333,21 @@ const points = computed(() => {
       </div>
 
       <template v-else>
-        <div v-if="today" class="dashboard-main-grid grid min-h-0 flex-1 grid-rows-[minmax(0,0.86fr)_minmax(0,0.8fr)_minmax(0,1.12fr)] gap-2">
+        <div
+          v-if="today"
+          class="dashboard-main-grid grid min-h-0 flex-1 grid-rows-[minmax(0,0.86fr)_minmax(0,0.8fr)_minmax(0,1.12fr)] gap-2"
+        >
           <section class="grid min-h-0 gap-2 lg:grid-cols-12">
-            <article class="h-full min-h-0 overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-7">
+            <article
+              class="h-full min-h-0 overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-7"
+            >
               <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Headline Signal</p>
               <div class="mt-1.5 flex flex-wrap items-end gap-2">
                 <div :class="['text-4xl font-bold leading-none', scoreColorClass]">
                   {{ fmtScore(today.final_score) }}
                 </div>
-                <span
-                  :class="['inline-flex rounded-full border px-2.5 py-0.5 text-sm font-semibold', scoreBadgeClass]"
-                >
-                  {{ today.strength }} {{ today.bias_Label }}
+                <span :class="['inline-flex rounded-full border px-2.5 py-0.5 text-sm font-semibold', scoreBadgeClass]">
+                  {{ (today.strength ?? "—") }} {{ (today.bias_Label ?? "") }}
                 </span>
               </div>
               <div class="mt-1.5 flex flex-wrap items-center gap-2">
@@ -318,7 +355,7 @@ const points = computed(() => {
                   Regime: {{ today.regime }}
                 </span>
                 <span :class="['rounded-full border px-2 py-0.5 text-xs font-semibold', shockBadgeClass]">
-                  Shock Score: {{ fmtScore(today.today.shock_score ?? 0) }}
+                  Shock Score: {{ fmtScore(today.shock_score ?? 0) }}
                 </span>
               </div>
 
@@ -341,17 +378,21 @@ const points = computed(() => {
               </div>
             </article>
 
-            <article class="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-5">
+            <article
+              class="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-5"
+            >
               <h2 class="text-base font-semibold">Explanation</h2>
               <p class="mt-1 text-xs leading-5 text-gray-800 dark:text-gray-200 sm:text-sm max-h-[112px] overflow-hidden">
-                {{ today.explanation }}
+                {{ today.explanation ?? "Explanation will appear here once enabled." }}
               </p>
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Rule-based explanation (V1). No AI.</p>
             </article>
           </section>
 
           <section class="grid min-h-0 gap-2 lg:grid-cols-12">
-            <article class="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-7">
+            <article
+              class="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-7"
+            >
               <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <h2 class="text-base font-semibold">30-Day Trend</h2>
                 <p :class="['text-sm font-semibold', historyDeltaClass]">
@@ -366,7 +407,9 @@ const points = computed(() => {
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ historyRange }}</p>
             </article>
 
-            <article class="h-full min-h-0 overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-5">
+            <article
+              class="h-full min-h-0 overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-5"
+            >
               <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Quick Facts</p>
               <dl class="mt-2 grid grid-cols-2 gap-x-6 gap-y-2">
                 <div class="space-y-2">
@@ -457,7 +500,10 @@ const points = computed(() => {
           </section>
         </div>
 
-        <div v-else class="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
+        <div
+          v-else
+          class="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
+        >
           No market data available.
         </div>
       </template>
