@@ -245,9 +245,9 @@ const points = computed(() => {
 
 <template>
   <div
-    class="dashboard-shell flex h-dvh items-stretch justify-center overflow-hidden bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100"
+    class="dashboard-shell flex min-h-dvh items-stretch justify-center overflow-y-auto bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 lg:h-dvh lg:overflow-hidden"
   >
-    <div class="flex h-full w-full max-w-[1180px] flex-col gap-2 px-3 py-2 sm:px-4 sm:py-3">
+    <div class="flex w-full max-w-[1180px] flex-col gap-2 px-3 py-2 sm:px-4 sm:py-3 lg:h-full">
       <header class="flex shrink-0 flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Dashboard</p>
@@ -335,11 +335,11 @@ const points = computed(() => {
       <template v-else>
         <div
           v-if="today"
-          class="dashboard-main-grid grid min-h-0 flex-1 grid-rows-[minmax(0,0.86fr)_minmax(0,0.8fr)_minmax(0,1.12fr)] gap-2"
+          class="dashboard-main-grid grid gap-2 lg:min-h-0 lg:flex-1 lg:grid-rows-[minmax(0,0.86fr)_minmax(0,0.8fr)_minmax(0,1.12fr)]"
         >
-          <section class="grid min-h-0 gap-2 lg:grid-cols-12">
+          <section class="grid gap-2 lg:min-h-0 lg:grid-cols-12">
             <article
-              class="h-full min-h-0 overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-7"
+              class="overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-7 lg:h-full lg:min-h-0"
             >
               <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Headline Signal</p>
               <div class="mt-1.5 flex flex-wrap items-end gap-2">
@@ -379,19 +379,19 @@ const points = computed(() => {
             </article>
 
             <article
-              class="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-5"
+              class="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-5 lg:h-full lg:min-h-0"
             >
               <h2 class="text-base font-semibold">Explanation</h2>
-              <p class="mt-1 text-xs leading-5 text-gray-800 dark:text-gray-200 sm:text-sm max-h-[112px] overflow-hidden">
+              <p class="mt-1 max-h-[112px] overflow-hidden text-xs leading-5 text-gray-800 dark:text-gray-200 sm:text-sm">
                 {{ today.explanation ?? "Explanation will appear here once enabled." }}
               </p>
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Rule-based explanation (V1). No AI.</p>
             </article>
           </section>
 
-          <section class="grid min-h-0 gap-2 lg:grid-cols-12">
+          <section class="grid gap-2 lg:min-h-0 lg:grid-cols-12">
             <article
-              class="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-7"
+              class="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-7 lg:h-full lg:min-h-0"
             >
               <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <h2 class="text-base font-semibold">30-Day Trend</h2>
@@ -399,7 +399,7 @@ const points = computed(() => {
                   Change: {{ historyDelta !== null ? fmtScore(historyDelta) : "-" }}
                 </p>
               </div>
-              <div class="min-h-0 flex-1 rounded-lg border border-gray-200 bg-white p-1.5 dark:border-gray-800 dark:bg-gray-900">
+              <div class="min-h-[100px] rounded-lg border border-gray-200 bg-white p-1.5 dark:border-gray-800 dark:bg-gray-900 lg:min-h-0 lg:flex-1">
                 <svg viewBox="0 0 100 36" preserveAspectRatio="none" class="h-full min-h-[72px] w-full text-gray-900 dark:text-gray-200">
                   <polyline :points="points" fill="none" stroke="currentColor" stroke-width="1.6" />
                 </svg>
@@ -408,7 +408,7 @@ const points = computed(() => {
             </article>
 
             <article
-              class="h-full min-h-0 overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-5"
+              class="overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-5 lg:h-full lg:min-h-0"
             >
               <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Quick Facts</p>
               <dl class="mt-2 grid grid-cols-2 gap-x-6 gap-y-2">
@@ -445,7 +445,7 @@ const points = computed(() => {
             </article>
           </section>
 
-          <section class="h-full min-h-0 overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <section class="overflow-hidden rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:h-full lg:min-h-0">
             <div class="mb-1.5 flex items-center justify-between">
               <h2 class="text-base font-semibold">FII / DII / PRO / Retail</h2>
               <p class="text-xs text-gray-500 dark:text-gray-400">Standard participant view</p>
@@ -478,7 +478,7 @@ const points = computed(() => {
                       {{ p.hasData ? fmtScore(p.bias) : '-' }}
                     </td>
                     <td class="py-1 pr-3">
-                      <div class="h-2 w-28 rounded-full bg-gray-200 dark:bg-gray-800">
+                      <div class="h-2 w-full max-w-28 rounded-full bg-gray-200 dark:bg-gray-800">
                         <div
                           :class="['h-2 rounded-full', participantBarClass(p.bias)]"
                           :style="{ width: p.hasData ? participantBarWidth(p.bias) : '0%' }"
@@ -548,7 +548,7 @@ const points = computed(() => {
   max-height: var(--dash-expl-max);
 }
 
-@media (max-height: 860px) {
+@media (min-width: 1024px) and (max-height: 860px) {
   .dashboard-shell {
     --dash-gap: clamp(0.4rem, 0.55vw, 0.65rem);
     --dash-pad: clamp(0.42rem, 0.55vw, 0.72rem);
@@ -564,7 +564,7 @@ const points = computed(() => {
   }
 }
 
-@media (max-height: 760px) {
+@media (min-width: 1024px) and (max-height: 760px) {
   .dashboard-main-grid {
     grid-template-rows: minmax(0, 0.8fr) minmax(0, 0.74fr) minmax(0, 1.08fr);
   }
