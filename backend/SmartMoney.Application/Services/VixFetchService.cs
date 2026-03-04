@@ -59,8 +59,9 @@ public sealed class VixFetchService(
     /// </summary>
     private static double? ParseVixClose(string csv, DateTime date)
     {
-        // NSE VIX CSV date format: dd-MMM-yyyy (e.g. "27-Feb-2026")
-        var targetDate = date.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture); // always two-digit day
+        // NSE VIX CSV date format: dd-MMM-yyyy (e.g. "27-Feb-2026") or d-MMM-yyyy (e.g. "7-Feb-2026")
+        var targetDateTwoDigit = date.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
+        var targetDateOneDigit = date.ToString("d-MMM-yyyy", CultureInfo.InvariantCulture);
 
         var lines = csv.Split('\n');
         foreach (var rawLine in lines)
@@ -73,7 +74,8 @@ public sealed class VixFetchService(
             if (comma <= 0) continue;
 
             var datePart = line[..comma].Trim();
-            if (!datePart.Equals(targetDate, StringComparison.OrdinalIgnoreCase)) continue;
+            if (!datePart.Equals(targetDateTwoDigit, StringComparison.OrdinalIgnoreCase) &&
+                !datePart.Equals(targetDateOneDigit, StringComparison.OrdinalIgnoreCase)) continue;
 
             var cols = line.Split(',');
             // cols: Date, Open, High, Low, Close, Prev Close, Change

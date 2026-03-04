@@ -46,9 +46,9 @@ services.AddDbContext<SmartMoneyDbContext>(opt =>
 services.Configure<NseOptions>(o =>
 {
     // FO Bhavcopy base (PCR)
-    o.FoBhavCopyBaseUrl = "https://archives.nseindia.com/content/historical/DERIVATIVES/";
+    o.FoBhavCopyBaseUrl = "https://nsearchives.nseindia.com/content/historical/DERIVATIVES/";
     // India VIX full-history CSV
-    o.VixArchiveUrl = "https://archives.nseindia.com/content/indices/hist_vix_data.csv";
+    o.VixArchiveUrl = "https://nsearchives.nseindia.com/content/indices/hist_vix_data.csv";
 });
 
 services.Configure<NseJobOptions>(o =>
