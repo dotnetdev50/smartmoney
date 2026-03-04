@@ -45,10 +45,12 @@ services.AddDbContext<SmartMoneyDbContext>(opt =>
 // Options used by ingestion services
 services.Configure<NseOptions>(o =>
 {
-    // FO Bhavcopy base (PCR)
+    // FO Bhavcopy base (legacy PCR fallback – old format with SYMBOL/OPTION_TYP columns)
     o.FoBhavCopyBaseUrl = "https://nsearchives.nseindia.com/content/historical/DERIVATIVES/";
     // India VIX full-history CSV
     o.VixArchiveUrl = "https://nsearchives.nseindia.com/content/indices/hist_vix_data.csv";
+    // Daily FO bhavcopy ZIP (fo{DDMMYYYY}.zip) containing op{DDMMYYYY}.csv – primary PCR source
+    o.FoBhavZipBaseUrl = "https://nsearchives.nseindia.com/content/fo/";
 });
 
 services.Configure<NseJobOptions>(o =>
@@ -60,6 +62,7 @@ services.Configure<NseJobOptions>(o =>
 // Register services (each gets its own named HttpClient)
 services.AddHttpClient<CsvIngestionService>();
 services.AddHttpClient<FoBhavCopyService>();
+services.AddHttpClient<OpBhavCopyService>();
 services.AddHttpClient<VixFetchService>();
 services.AddHttpClient<PrPcrService>();
 services.AddScoped<DailyPipelineService>();
@@ -256,15 +259,31 @@ double? vix = null;
 
 using (var scope = sp.CreateScope())
 {
-    var prPcrSvc = scope.ServiceProvider.GetRequiredService<PrPcrService>();
-    var bhavSvc  = scope.ServiceProvider.GetRequiredService<FoBhavCopyService>();
-    var vixSvc   = scope.ServiceProvider.GetRequiredService<VixFetchService>();
+    var opBhavSvc = scope.ServiceProvider.GetRequiredService<OpBhavCopyService>();
+    var prPcrSvc  = scope.ServiceProvider.GetRequiredService<PrPcrService>();
+    var bhavSvc   = scope.ServiceProvider.GetRequiredService<FoBhavCopyService>();
+    var vixSvc    = scope.ServiceProvider.GetRequiredService<VixFetchService>();
 
     for (int attempt = 1; attempt <= maxPcrVixRetries; attempt++)
     {
         log.LogInformation("[H3] Fetching PCR/VIX, attempt {Attempt}/{Max}", attempt, maxPcrVixRetries);
 
-        // Primary PCR source: NSE PR file (provides OI + Volume PCR for NIFTY and BANKNIFTY)
+        // Primary PCR source: NSE op-bhavcopy (op{DDMMYYYY}.csv from fo.zip)
+        // Aggregates CE and PE across ALL expiries for NIFTY and BANKNIFTY.
+        if (pcr is null)
+        {
+            var opResult = await opBhavSvc.FetchPcrAsync(today, CancellationToken.None);
+            if (opResult is not null)
+            {
+                pcr                = opResult.NiftyPcrOi;
+                pcrVolume          = opResult.NiftyPcrVolume;
+                bankniftyPcr       = opResult.BankniftyPcrOi;
+                bankniftyPcrVolume = opResult.BankniftyPcrVolume;
+                log.LogInformation("[H3] PCR sourced from op-bhavcopy (all expiries): OI={Pcr}, Vol={PcrVol}", pcr, pcrVolume);
+            }
+        }
+
+        // Secondary PCR source: NSE PR file (provides OI + Volume PCR for NIFTY and BANKNIFTY)
         if (pcr is null)
         {
             var prResult = await prPcrSvc.FetchPcrAsync(today, CancellationToken.None);
@@ -274,10 +293,11 @@ using (var scope = sp.CreateScope())
                 pcrVolume          = prResult.NiftyPcrVolume;
                 bankniftyPcr       = prResult.BankniftyPcrOi;
                 bankniftyPcrVolume = prResult.BankniftyPcrVolume;
+                log.LogInformation("[H3] PCR sourced from PR file: OI={Pcr}, Vol={PcrVol}", pcr, pcrVolume);
             }
         }
 
-        // Fallback for NIFTY OI PCR: FO Bhavcopy (when PR file is unavailable)
+        // Fallback for NIFTY OI PCR: FO Bhavcopy (when both primary sources are unavailable)
         if (pcr is null)
             pcr = await bhavSvc.FetchPcrAsync(today, CancellationToken.None);
 
