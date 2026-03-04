@@ -74,10 +74,13 @@ using (var scope = sp.CreateScope())
     await db.Database.MigrateAsync();
 }
 
-// ---- H2: Skip if today's data is already exported ----
+// ---- H2: Skip if today's data is already exported with PCR and VIX present ----
 var repoRoot = FindRepoRoot();
 var publicDataDir = Path.Combine(repoRoot, "frontend", "public", "data");
 var publicMarketTodayPath = Path.Combine(publicDataDir, "market_today.json");
+
+// Track whether participant data was already written in a prior run today
+bool participantDataAlreadyExported = false;
 
 if (File.Exists(publicMarketTodayPath))
 {
@@ -88,8 +91,19 @@ if (File.Exists(publicMarketTodayPath))
         if (existing.TryGetProperty("date", out var dateEl) &&
             dateEl.GetString() == today.ToString("yyyy-MM-dd"))
         {
-            log.LogInformation("[H2] market_today.json already contains today's data ({Date}). Skipping computation.", today.ToString("yyyy-MM-dd"));
-            return;
+            bool hasPcr = existing.TryGetProperty("pcr", out var pcrEl) && pcrEl.ValueKind != JsonValueKind.Null;
+            bool hasVix = existing.TryGetProperty("vix", out var vixEl) && vixEl.ValueKind != JsonValueKind.Null;
+
+            if (hasPcr && hasVix)
+            {
+                log.LogInformation("[H2] market_today.json already contains today's complete data with PCR and VIX ({Date}). Skipping job.", today.ToString("yyyy-MM-dd"));
+                return;
+            }
+
+            // Participant data is present but PCR/VIX are still missing — skip re-ingestion and
+            // only retry the PCR/VIX fetch so we can fill in the missing values.
+            participantDataAlreadyExported = true;
+            log.LogInformation("[H2] market_today.json has today's participant data but PCR/VIX are missing ({Date}). Skipping ingestion; will retry PCR/VIX fetch.", today.ToString("yyyy-MM-dd"));
         }
     }
     catch (Exception ex)
@@ -98,12 +112,13 @@ if (File.Exists(publicMarketTodayPath))
     }
 }
 
-// ---- Ingest range + pipeline range ----
-object ingestResult;
-object runResult;
+// ---- Ingest range + pipeline range (skipped when participant data is already present) ----
+object ingestResult = "skipped – participant data already exported today";
+object runResult = "skipped – participant data already exported today";
 
-using (var scope = sp.CreateScope())
+if (!participantDataAlreadyExported)
 {
+    using var scope = sp.CreateScope();
     var ingestion = scope.ServiceProvider.GetRequiredService<CsvIngestionService>();
     var pipeline = scope.ServiceProvider.GetRequiredService<DailyPipelineService>();
 
@@ -112,6 +127,130 @@ using (var scope = sp.CreateScope())
 
     log.LogInformation("Running pipeline range {From} → {To} (IST)", from.ToString("yyyy-MM-dd"), to.ToString("yyyy-MM-dd"));
     runResult = await pipeline.RunRangeAsync(from, to, CancellationToken.None);
+}
+
+// ---- Export participant data immediately so JSON files are updated regardless of PCR/VIX ----
+// (H4: fallback to last available day)
+MarketTodayDto marketToday;
+List<MarketHistoryPointDto> history;
+
+if (!participantDataAlreadyExported)
+{
+    using var scope = sp.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<SmartMoneyDbContext>();
+
+    var latest = await db.MarketBiases
+        .AsNoTracking()
+        .OrderByDescending(x => x.Date)
+        .FirstOrDefaultAsync();
+
+    if (latest is null)
+    {
+        log.LogError("[H4] No market_bias rows produced. Exiting with failure.");
+        Environment.ExitCode = 1;
+        return;
+    }
+
+    var exportDate = latest.Date;
+
+    if (exportDate != today)
+    {
+        log.LogWarning("[H4] Today's data ({Today}) not available. Falling back to last available: {ExportDate}.",
+            today.ToString("yyyy-MM-dd"), exportDate.ToString("yyyy-MM-dd"));
+    }
+
+    var metrics = await db.ParticipantMetrics
+        .AsNoTracking()
+        .Where(x => x.Date == exportDate)
+        .OrderBy(x => x.Participant)
+        .ToListAsync();
+
+    var participants = metrics
+        .Select(m =>
+        {
+            var name = m.Participant.ToString().ToUpperInvariant();
+            var label = MarketNarrative.ParticipantLabel(m.ParticipantBias);
+            return new ParticipantDto(name, m.ParticipantBias, label);
+        })
+        .OrderBy(p => p.name)
+        .ToList();
+
+    var (biasLabel, strength) = MarketNarrative.ScoreLabel(latest.FinalScore);
+    var regime = latest.Regime.ToString().ToUpperInvariant();
+    var explanation = MarketNarrative.Explanation(regime, latest.ShockScore, participants, latest.FinalScore);
+
+    // Write participant data now with pcr/vix as null; they will be filled in below if available.
+    marketToday = new MarketTodayDto(
+        index: "NIFTY",
+        date: exportDate.ToString("yyyy-MM-dd"),
+        final_score: latest.FinalScore,
+        regime: regime,
+        shock_score: latest.ShockScore,
+        participants: participants,
+        bias_Label: biasLabel,
+        strength: strength,
+        explanation: explanation,
+        pcr: null,
+        vix: null
+    );
+
+    var fromHist = exportDate.AddDays(-29);
+    var historyRaw = await db.MarketBiases
+        .AsNoTracking()
+        .Where(x => x.Date >= fromHist)
+        .OrderBy(x => x.Date)
+        .ToListAsync();
+
+    history = historyRaw
+        .Select(x => new MarketHistoryPointDto(
+            date: x.Date.ToString("yyyy-MM-dd"),
+            final_score: x.FinalScore,
+            regime: x.Regime.ToString().ToUpperInvariant()
+        ))
+        .ToList();
+
+    var jsonOptsIntermediate = new JsonSerializerOptions { WriteIndented = true };
+
+    // Write participant data immediately so it is available even if PCR/VIX fetch times out.
+    var distDirIntermediate = Path.Combine(repoRoot, "frontend", "dist", "data");
+    Directory.CreateDirectory(distDirIntermediate);
+    await File.WriteAllTextAsync(Path.Combine(distDirIntermediate, "market_today.json"),
+        JsonSerializer.Serialize(marketToday, jsonOptsIntermediate));
+    await File.WriteAllTextAsync(Path.Combine(distDirIntermediate, "market_history_30.json"),
+        JsonSerializer.Serialize(history, jsonOptsIntermediate));
+    await File.WriteAllTextAsync(Path.Combine(distDirIntermediate, "job_ingest_result.json"),
+        JsonSerializer.Serialize(ingestResult, jsonOptsIntermediate));
+    await File.WriteAllTextAsync(Path.Combine(distDirIntermediate, "job_run_result.json"),
+        JsonSerializer.Serialize(runResult, jsonOptsIntermediate));
+
+    Directory.CreateDirectory(publicDataDir);
+    await File.WriteAllTextAsync(publicMarketTodayPath,
+        JsonSerializer.Serialize(marketToday, jsonOptsIntermediate));
+    await File.WriteAllTextAsync(Path.Combine(publicDataDir, "market_history_30.json"),
+        JsonSerializer.Serialize(history, jsonOptsIntermediate));
+
+    log.LogInformation("[H4] Participant data exported (PCR/VIX pending). dist: {DistDir}, public: {PubDir}",
+        distDirIntermediate, publicDataDir);
+}
+else
+{
+    // Participant data already exported — read the existing snapshot so we can later patch PCR/VIX.
+    log.LogInformation("[H4] Re-using previously exported participant data; will update PCR/VIX only.");
+    var existingJson = await File.ReadAllTextAsync(publicMarketTodayPath);
+    marketToday = JsonSerializer.Deserialize<MarketTodayDto>(existingJson)
+        ?? throw new InvalidOperationException($"Failed to deserialize existing market_today.json from {publicMarketTodayPath}.");
+
+    // Reconstruct history from the public file (written in a prior run).
+    var publicHistPath = Path.Combine(publicDataDir, "market_history_30.json");
+    if (File.Exists(publicHistPath))
+    {
+        var histJson = await File.ReadAllTextAsync(publicHistPath);
+        history = JsonSerializer.Deserialize<List<MarketHistoryPointDto>>(histJson) ?? new();
+    }
+    else
+    {
+        history = new();
+    }
 }
 
 // ---- Fetch PCR and VIX (H3: retry up to configured limit if not yet published) ----
@@ -155,90 +294,13 @@ using (var scope = sp.CreateScope())
     }
 }
 
-// ---- Export JSON for the Vue dashboard (H4: fallback to last available day) ----
-using (var scope = sp.CreateScope())
+// ---- Update JSON files with PCR/VIX values (when at least one was obtained) ----
+if (pcr.HasValue || vix.HasValue)
 {
-    var db = scope.ServiceProvider.GetRequiredService<SmartMoneyDbContext>();
-
-    // H4: Use the most recent available market bias (may be a prior trading day if today's data not ingested)
-    var latest = await db.MarketBiases
-        .AsNoTracking()
-        .OrderByDescending(x => x.Date)
-        .FirstOrDefaultAsync();
-
-    if (latest is null)
-    {
-        log.LogError("[H4] No market_bias rows produced. Exiting with failure.");
-        Environment.ExitCode = 1;
-        return;
-    }
-
-    var exportDate = latest.Date;
-
-    if (exportDate != today)
-    {
-        log.LogWarning("[H4] Today's data ({Today}) not available. Falling back to last available: {ExportDate}.",
-            today.ToString("yyyy-MM-dd"), exportDate.ToString("yyyy-MM-dd"));
-    }
-
-    var metrics = await db.ParticipantMetrics
-        .AsNoTracking()
-        .Where(x => x.Date == exportDate)
-        .OrderBy(x => x.Participant)
-        .ToListAsync();
-
-    var participants = metrics
-        .Select(m =>
-        {
-            var name = m.Participant.ToString().ToUpperInvariant();
-            var label = MarketNarrative.ParticipantLabel(m.ParticipantBias);
-            return new ParticipantDto(name, m.ParticipantBias, label);
-        })
-        .OrderBy(p => p.name)
-        .ToList();
-
-    var (biasLabel, strength) = MarketNarrative.ScoreLabel(latest.FinalScore);
-
-    var regime = latest.Regime.ToString().ToUpperInvariant();
-
-    var explanation = MarketNarrative.Explanation(
-        regime,
-        latest.ShockScore,
-        participants,
-        latest.FinalScore);
-
-    var marketToday = new MarketTodayDto(
-        index: "NIFTY",
-        date: exportDate.ToString("yyyy-MM-dd"),
-        final_score: latest.FinalScore,
-        regime: regime,
-        shock_score: latest.ShockScore,
-        participants: participants,
-        bias_Label: biasLabel,
-        strength: strength,
-        explanation: explanation,
-        pcr: pcr,
-        vix: vix
-    );
-
-    var fromHist = exportDate.AddDays(-29);
-    var historyRaw = await db.MarketBiases
-        .AsNoTracking()
-        .Where(x => x.Date >= fromHist)
-        .OrderBy(x => x.Date)
-        .ToListAsync();
-
-    var history = historyRaw
-        .Select(x => new MarketHistoryPointDto(
-            date: x.Date.ToString("yyyy-MM-dd"),
-            final_score: x.FinalScore,
-            regime: x.Regime.ToString().ToUpperInvariant()
-        ))
-        .ToList();
+    marketToday = marketToday with { pcr = pcr, vix = vix };
 
     var jsonOpts = new JsonSerializerOptions { WriteIndented = true };
 
-    // Write to dist/data/ (served by GitHub Pages this run)
     var distDir = Path.Combine(repoRoot, "frontend", "dist", "data");
     Directory.CreateDirectory(distDir);
 
@@ -251,15 +313,18 @@ using (var scope = sp.CreateScope())
     await File.WriteAllTextAsync(Path.Combine(distDir, "job_run_result.json"),
         JsonSerializer.Serialize(runResult, jsonOpts));
 
-    // Also write to public/data/ so it's committable and used by H2 on next run
     Directory.CreateDirectory(publicDataDir);
-
     await File.WriteAllTextAsync(publicMarketTodayPath,
         JsonSerializer.Serialize(marketToday, jsonOpts));
     await File.WriteAllTextAsync(Path.Combine(publicDataDir, "market_history_30.json"),
         JsonSerializer.Serialize(history, jsonOpts));
 
-    log.LogInformation("Exported JSON to dist: {DistDir} and public: {PubDir}", distDir, publicDataDir);
+    log.LogInformation("[H3] JSON files updated with PCR={Pcr}, VIX={Vix}. dist: {DistDir}, public: {PubDir}",
+        pcr, vix, distDir, publicDataDir);
+}
+else
+{
+    log.LogWarning("[H3] PCR and VIX both unavailable. JSON files retain participant data without PCR/VIX.");
 }
 
 static string FindRepoRoot()
