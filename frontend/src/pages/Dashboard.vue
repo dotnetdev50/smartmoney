@@ -275,7 +275,7 @@ const points = computed(() => {
       <header class="flex shrink-0 flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Dashboard</p>
-          <h1 class="text-xl font-bold tracking-tight sm:text-2xl">NIFTY Smart Money Bias</h1>
+          <h1 class="text-xl font-bold tracking-tight sm:text-2xl">Smart Money - NIFTY Bias</h1>
           <p class="text-xs text-gray-600 dark:text-gray-300 sm:text-sm" v-if="today">
             As Of Date: <span class="font-semibold text-gray-800 dark:text-gray-100">{{ asOfDate }}</span>
             <span class="mx-2 text-gray-300 dark:text-gray-600">•</span>
