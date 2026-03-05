@@ -247,15 +247,26 @@ else
     }
 }
 
-// ---- Fetch PCR and VIX (H3: retry up to configured limit if not yet published) ----
-int maxPcrVixRetries = jobOpts.PcrVixMaxRetries;
-int retryDelayMs = jobOpts.PcrVixRetryMinutes * 60 * 1000;
+// ---- Fetch PCR and VIX (H3: up to PcrVixMaxRetries attempts, write partial data after each) ----
+// Use pcrVixDate derived from the actual exported data date (marketToday.date), NOT `today`.
+// This ensures PCR/VIX match the participant data date, especially when H4 fallback is active
+// and exportDate is the prior trading day rather than today.
+if (!DateTime.TryParseExact(marketToday.date, "yyyy-MM-dd",
+        System.Globalization.CultureInfo.InvariantCulture,
+        System.Globalization.DateTimeStyles.None, out var pcrVixDate))
+{
+    log.LogError("[H3] Cannot parse marketToday.date '{Date}' as yyyy-MM-dd. Skipping PCR/VIX fetch.", marketToday.date);
+    return;
+}
 
-double? pcr = null;
-double? pcrVolume = null;
-double? bankniftyPcr = null;
+int maxPcrVixRetries = jobOpts.PcrVixMaxRetries;
+int retryDelayMs     = jobOpts.PcrVixRetryMinutes * 60 * 1000;
+
+double? pcr                = null;
+double? pcrVolume          = null;
+double? bankniftyPcr       = null;
 double? bankniftyPcrVolume = null;
-double? vix = null;
+double? vix                = null;
 
 using (var scope = sp.CreateScope())
 {
@@ -264,91 +275,105 @@ using (var scope = sp.CreateScope())
     var bhavSvc   = scope.ServiceProvider.GetRequiredService<FoBhavCopyService>();
     var vixSvc    = scope.ServiceProvider.GetRequiredService<VixFetchService>();
 
+    var jsonOpts = new JsonSerializerOptions { WriteIndented = true };
+
     for (int attempt = 1; attempt <= maxPcrVixRetries; attempt++)
     {
-        log.LogInformation("[H3] Fetching PCR/VIX, attempt {Attempt}/{Max}", attempt, maxPcrVixRetries);
+        log.LogInformation("[H3] Fetching PCR/VIX for {Date}, attempt {Attempt}/{Max}",
+            pcrVixDate.ToString("yyyy-MM-dd"), attempt, maxPcrVixRetries);
 
-        // Primary PCR source: NSE op-bhavcopy (op{DDMMYYYY}.csv from fo.zip)
+        // Primary PCR source: NSE op-bhavcopy (op{DDMMYYYY}.csv from fo{DDMMYYYY}.zip)
         // Aggregates CE and PE across ALL expiries for NIFTY and BANKNIFTY.
         if (pcr is null)
         {
-            var opResult = await opBhavSvc.FetchPcrAsync(today, CancellationToken.None);
+            var opResult = await opBhavSvc.FetchPcrAsync(pcrVixDate, CancellationToken.None);
             if (opResult is not null)
             {
                 pcr                = opResult.NiftyPcrOi;
                 pcrVolume          = opResult.NiftyPcrVolume;
                 bankniftyPcr       = opResult.BankniftyPcrOi;
                 bankniftyPcrVolume = opResult.BankniftyPcrVolume;
-                log.LogInformation("[H3] PCR sourced from op-bhavcopy (all expiries): OI={Pcr}, Vol={PcrVol}", pcr, pcrVolume);
+                log.LogInformation(
+                    "[H3] PCR sourced from op-bhavcopy: OI={Pcr}, Vol={PcrVol}, BNF OI={BnfPcr}, BNF Vol={BnfVol}",
+                    pcr, pcrVolume, bankniftyPcr, bankniftyPcrVolume);
             }
         }
 
-        // Secondary PCR source: NSE PR file (provides OI + Volume PCR for NIFTY and BANKNIFTY)
+        // Secondary PCR source: NSE PR file (OI + Volume PCR for NIFTY and BANKNIFTY)
         if (pcr is null)
         {
-            var prResult = await prPcrSvc.FetchPcrAsync(today, CancellationToken.None);
+            var prResult = await prPcrSvc.FetchPcrAsync(pcrVixDate, CancellationToken.None);
             if (prResult is not null)
             {
                 pcr                = prResult.NiftyPcrOi;
                 pcrVolume          = prResult.NiftyPcrVolume;
                 bankniftyPcr       = prResult.BankniftyPcrOi;
                 bankniftyPcrVolume = prResult.BankniftyPcrVolume;
-                log.LogInformation("[H3] PCR sourced from PR file: OI={Pcr}, Vol={PcrVol}", pcr, pcrVolume);
+                log.LogInformation(
+                    "[H3] PCR sourced from PR file: OI={Pcr}, Vol={PcrVol}, BNF OI={BnfPcr}, BNF Vol={BnfVol}",
+                    pcr, pcrVolume, bankniftyPcr, bankniftyPcrVolume);
             }
         }
 
-        // Fallback for NIFTY OI PCR: FO Bhavcopy (when both primary sources are unavailable)
+        // Tertiary fallback: FO Bhavcopy (NIFTY OI PCR only)
         if (pcr is null)
-            pcr = await bhavSvc.FetchPcrAsync(today, CancellationToken.None);
+        {
+            pcr = await bhavSvc.FetchPcrAsync(pcrVixDate, CancellationToken.None);
+            if (pcr.HasValue)
+                log.LogInformation("[H3] NIFTY OI PCR sourced from FO bhavcopy fallback: {Pcr}", pcr);
+        }
 
         if (vix is null)
-            vix = await vixSvc.FetchVixAsync(today, CancellationToken.None);
+            vix = await vixSvc.FetchVixAsync(pcrVixDate, CancellationToken.None);
 
+        // Write whatever is available right now so the dashboard shows partial data immediately.
+        // This covers the case where e.g. PCR is obtained on attempt 1 but VIX is still pending.
+        bool anyData = pcr.HasValue || vix.HasValue || pcrVolume.HasValue
+                       || bankniftyPcr.HasValue || bankniftyPcrVolume.HasValue;
+        if (anyData)
+        {
+            marketToday = marketToday with
+            {
+                pcr                  = pcr,
+                vix                  = vix,
+                pcr_volume           = pcrVolume,
+                banknifty_pcr        = bankniftyPcr,
+                banknifty_pcr_volume = bankniftyPcrVolume,
+            };
+
+            Directory.CreateDirectory(publicDataDir);
+            await File.WriteAllTextAsync(publicMarketTodayPath,
+                JsonSerializer.Serialize(marketToday, jsonOpts));
+            await File.WriteAllTextAsync(Path.Combine(publicDataDir, "market_history_30.json"),
+                JsonSerializer.Serialize(history, jsonOpts));
+
+            log.LogInformation(
+                "[H3] JSON patched after attempt {Attempt}: PCR={Pcr}, PCRVol={PcrVol}, BNF={BnfPcr}, VIX={Vix}. public: {PubDir}",
+                attempt, pcr, pcrVolume, bankniftyPcr, vix, publicDataDir);
+        }
+
+        // All data complete — no need to retry further.
         if (pcr.HasValue && vix.HasValue)
         {
-            log.LogInformation("[H3] PCR={Pcr}, VIX={Vix} fetched successfully on attempt {Attempt}.", pcr, vix, attempt);
+            log.LogInformation("[H3] All data complete on attempt {Attempt}. PCR={Pcr}, VIX={Vix}. Done.",
+                attempt, pcr, vix);
             break;
         }
 
         if (attempt < maxPcrVixRetries)
         {
-            log.LogWarning("[H3] PCR or VIX not yet available. Waiting {Delay} min before retry {Next}/{Max}.",
-                retryDelayMs / 60000, attempt + 1, maxPcrVixRetries);
+            log.LogWarning(
+                "[H3] PCR or VIX still missing after attempt {Attempt}/{Max}. Waiting {Delay} min before next attempt.",
+                attempt, maxPcrVixRetries, retryDelayMs / 60000);
             await Task.Delay(retryDelayMs, CancellationToken.None);
         }
         else
         {
-            log.LogWarning("[H3] PCR/VIX not fetched after {Max} attempts. PCR={Pcr}, VIX={Vix}. Continuing with nulls.", maxPcrVixRetries, pcr, vix);
+            log.LogWarning(
+                "[H3] Stopping after {Max} attempt(s). Final: PCR={Pcr}, VIX={Vix}. Dashboard shows whatever is available.",
+                maxPcrVixRetries, pcr, vix);
         }
     }
-}
-
-// ---- Update JSON files with PCR/VIX values (when at least one was obtained) ----
-if (pcr.HasValue || vix.HasValue || pcrVolume.HasValue || bankniftyPcr.HasValue || bankniftyPcrVolume.HasValue)
-{
-    marketToday = marketToday with
-    {
-        pcr = pcr,
-        vix = vix,
-        pcr_volume = pcrVolume,
-        banknifty_pcr = bankniftyPcr,
-        banknifty_pcr_volume = bankniftyPcrVolume,
-    };
-
-    var jsonOpts = new JsonSerializerOptions { WriteIndented = true };
-
-    Directory.CreateDirectory(publicDataDir);
-    await File.WriteAllTextAsync(publicMarketTodayPath,
-        JsonSerializer.Serialize(marketToday, jsonOpts));
-    await File.WriteAllTextAsync(Path.Combine(publicDataDir, "market_history_30.json"),
-        JsonSerializer.Serialize(history, jsonOpts));
-
-    log.LogInformation("[H3] JSON files updated with PCR={Pcr}, PCRVol={PcrVol}, BankniftyPcr={BankniftyPcr}, VIX={Vix}. public: {PubDir}",
-        pcr, pcrVolume, bankniftyPcr, vix, publicDataDir);
-}
-else
-{
-    log.LogWarning("[H3] PCR and VIX both unavailable. JSON files retain participant data without PCR/VIX.");
 }
 
 static string FindRepoRoot()
