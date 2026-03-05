@@ -3,8 +3,12 @@ name: Build Bias + Deploy Pages
 on:
   workflow_dispatch:
   schedule:
-    # 9:40 PM IST = 16:10 UTC (IST is UTC+5:30)
-    - cron: "10 16 * * 1-5"
+    # Run 1: 8:30 PM IST = 15:00 UTC  (initial attempt — NSE data may already be published)
+    - cron: "00 15 * * 1-5"
+    # Run 2: 9:00 PM IST = 15:30 UTC  (retry if PCR/VIX not yet published in Run 1)
+    - cron: "30 15 * * 1-5"
+    # Run 3: 9:30 PM IST = 16:00 UTC  (final retry — NSE always publishes by this time)
+    - cron: "00 16 * * 1-5"
 
 permissions:
   contents: write
