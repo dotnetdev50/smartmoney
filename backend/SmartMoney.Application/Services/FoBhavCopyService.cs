@@ -26,34 +26,63 @@ public sealed class FoBhavCopyService(
     /// </summary>
     public async Task<double?> FetchPcrAsync(DateTime date, CancellationToken ct)
     {
-        var url = BuildBhavCopyUrl(date);
-        logger.LogInformation("Fetching FO bhavcopy PCR for {Date} from {Url}", date.ToString("yyyy-MM-dd"), url);
+        var urls = BuildBhavCopyUrlCandidates(date).ToList();
+        logger.LogInformation("Fetching FO bhavcopy PCR for {Date} from {Urls}", date.ToString("yyyy-MM-dd"), string.Join(", ", urls));
 
-        try
+        foreach (var url in urls)
         {
-            await using var zipStream = await DownloadAsync(url, ct);
-            return await ParsePcrFromZipAsync(zipStream, ct);
+            try
+            {
+                await using var zipStream = await DownloadAsync(url, ct);
+                return await ParsePcrFromZipAsync(zipStream, ct);
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                logger.LogDebug("FO bhavcopy ZIP not found at {Url}", url);
+                continue;
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning("Failed to fetch/parse FO bhavcopy for {Date} from {Url}: {Msg}", date.ToString("yyyy-MM-dd"), url, ex.Message);
+                return null;
+            }
         }
-        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-        {
-            logger.LogWarning("FO bhavcopy not found (404) for {Date} — likely holiday or data not yet published.", date.ToString("yyyy-MM-dd"));
-            return null;
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning("Failed to fetch/parse FO bhavcopy for {Date}: {Msg}", date.ToString("yyyy-MM-dd"), ex.Message);
-            return null;
-        }
+
+        logger.LogWarning("FO bhavcopy not found (404) for {Date} — likely holiday or data not yet published.", date.ToString("yyyy-MM-dd"));
+        return null;
     }
 
-    private string BuildBhavCopyUrl(DateTime date)
+    private IEnumerable<string> BuildBhavCopyUrlCandidates(DateTime date)
     {
-        // Example: .../DERIVATIVES/2026/FEB/fo27FEB2026bhav.csv.zip
         var dd = date.ToString("dd", CultureInfo.InvariantCulture);
         var mmm = date.ToString("MMM", CultureInfo.InvariantCulture).ToUpperInvariant();
         var yyyy = date.ToString("yyyy", CultureInfo.InvariantCulture);
-        var file = $"fo{dd}{mmm}{yyyy}bhav.csv.zip";
-        return $"{_opt.FoBhavCopyBaseUrl.TrimEnd('/')}/{yyyy}/{mmm}/{file}";
+        var yy = yyyy[^2..];
+
+        var fileFull = $"fo{dd}{mmm}{yyyy}bhav.csv.zip"; // fo04MAR2026bhav.csv.zip
+        var fileShort = $"fo{dd}{mmm}{yy}bhav.csv.zip";   // fo04MAR26bhav.csv.zip
+
+        // Prefer HttpClient base address (configured centrally) then fall back to option
+        var primaryBase = http.BaseAddress?.ToString().TrimEnd('/')
+                          ?? _opt.FoBhavCopyBaseUrl?.TrimEnd('/')
+                          ?? string.Empty;
+
+        if (!string.IsNullOrEmpty(primaryBase))
+        {
+            // Year/month organized path (primary)
+            yield return $"{primaryBase}/{yyyy}/{mmm}/{fileFull}";
+            if (!fileShort.Equals(fileFull, StringComparison.OrdinalIgnoreCase))
+                yield return $"{primaryBase}/{yyyy}/{mmm}/{fileShort}";
+
+            // Top-level path
+            yield return $"{primaryBase}/{fileFull}";
+            if (!fileShort.Equals(fileFull, StringComparison.OrdinalIgnoreCase))
+                yield return $"{primaryBase}/{fileShort}";
+        }
+
+        // Keep a small, deterministic fallback list (not scattered across files)
+        yield return $"https://nsearchives.nseindia.com/content/historical/DERIVATIVES/{yyyy}/{mmm}/{fileFull}";
+        yield return $"https://nsearchives.nseindia.com/content/fo/{fileFull}";
     }
 
     private async Task<Stream> DownloadAsync(string url, CancellationToken ct)
@@ -103,8 +132,8 @@ public sealed class FoBhavCopyService(
             .Select(h => h.Trim().Trim('"').ToUpperInvariant())
             .ToList();
 
-        var instrIdx   = headers.IndexOf("INSTRUMENT");
-        var symbolIdx  = headers.IndexOf("SYMBOL");
+        var instrIdx = headers.IndexOf("INSTRUMENT");
+        var symbolIdx = headers.IndexOf("SYMBOL");
         var optTypeIdx = headers.IndexOf("OPTION_TYP");
         var openIntIdx = headers.IndexOf("OPEN_INT");
 
@@ -126,8 +155,8 @@ public sealed class FoBhavCopyService(
             var cols = line.Split(',');
             if (cols.Length <= maxIdx) continue;
 
-            var instr   = cols[instrIdx].Trim().Trim('"');
-            var symbol  = cols[symbolIdx].Trim().Trim('"');
+            var instr = cols[instrIdx].Trim().Trim('"');
+            var symbol = cols[symbolIdx].Trim().Trim('"');
             var optType = cols[optTypeIdx].Trim().Trim('"');
 
             if (!instr.Equals(NiftyInstrument, StringComparison.OrdinalIgnoreCase)) continue;

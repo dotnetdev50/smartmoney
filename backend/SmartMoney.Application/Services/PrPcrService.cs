@@ -8,19 +8,18 @@ using System.IO.Compression;
 namespace SmartMoney.Application.Services;
 
 /// <summary>
-/// Downloads the NSE PR (options bhavcopy) ZIP for a given date, parses the CSV inside,
-/// and computes Put-Call Ratios for NIFTY and BANKNIFTY.
+/// Downloads the NSE PR (options bhavcopy) ZIP and computes Put-Call Ratios
+/// for NIFTY and BANKNIFTY (fallback PCR source after op-bhavcopy).
 ///
-/// Source URL pattern:
-///   {PrBaseUrl}/pr{DDMMYYYY}.zip  (e.g. https://nsearchives.nseindia.com/content/fo/pr04032026.zip)
+/// Source page : https://www.nseindia.com/all-reports-derivatives
+/// ZIP pattern : {PrBaseUrl}/PR{DDMMYY}.zip   (e.g. PR040326.zip  — 6-digit year)
+/// CSV inside  : pr{DDMMYYYY}.csv             (e.g. pr04032026.csv — 8-digit year)
 ///
-/// The ZIP contains a file named pr{DDMMYYYY}.csv with columns:
-///   SYMBOL, EXPIRY_DT, OPTION_TYP, STRIKE_PR, OPEN, HIGH, LOW, CLOSE, SETTLE_PR,
-///   CONTRACTS, VAL_INLAKH, OPEN_INT, CHG_IN_OI, TIMESTAMP
+/// Columns: SYMBOL, EXPIRY_DT, OPTION_TYP, STRIKE_PR, OPEN, HIGH, LOW, CLOSE,
+///          SETTLE_PR, CONTRACTS, VAL_INLAKH, OPEN_INT, CHG_IN_OI, TIMESTAMP
 ///
-/// Formulae:
-///   PCR (OI)     = Sum(OPEN_INT  for PE) / Sum(OPEN_INT  for CE)
-///   PCR (Volume) = Sum(CONTRACTS for PE) / Sum(CONTRACTS for CE)
+/// PCR (OI)     = Sum(OPEN_INT  for PE) / Sum(OPEN_INT  for CE)
+/// PCR (Volume) = Sum(CONTRACTS for PE) / Sum(CONTRACTS for CE)
 /// </summary>
 public sealed class PrPcrService(
     HttpClient http,
@@ -33,41 +32,63 @@ public sealed class PrPcrService(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
 
     /// <summary>
-    /// Fetches PCR values for the given date.
-    /// Returns a <see cref="PrPcrResult"/> with individual nulls for any symbol whose data
-    /// could not be computed (holiday, 404, or insufficient rows).
-    /// Never throws.
+    /// Fetches PCR values for the given date. Returns null on failure. Never throws.
     /// </summary>
     public async Task<PrPcrResult?> FetchPcrAsync(DateTime date, CancellationToken ct)
     {
-        var url = BuildPrUrl(date);
-        logger.LogInformation("Fetching NSE PR file PCR for {Date} from {Url}", date.ToString("yyyy-MM-dd"), url);
+        var urls = BuildPrUrlCandidates(date).ToList();
+        logger.LogInformation("Fetching NSE PR file PCR for {Date} from candidates: {Urls}",
+            date.ToString("yyyy-MM-dd"), string.Join(", ", urls));
 
-        try
+        foreach (var url in urls)
         {
-            await using var zipStream = await DownloadAsync(url, ct);
-            return await ParsePcrFromZipAsync(zipStream, ct);
+            try
+            {
+                await using var zipStream = await DownloadAsync(url, ct);
+                return await ParsePcrFromZipAsync(zipStream, date, ct);
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                logger.LogDebug("PR ZIP not found at {Url}", url);
+                continue;
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning("Failed to fetch/parse NSE PR file for {Date} from {Url}: {Msg}",
+                    date.ToString("yyyy-MM-dd"), url, ex.Message);
+                return null;
+            }
         }
-        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-        {
-            logger.LogWarning("NSE PR file not found (404) for {Date} — likely holiday or data not yet published.", date.ToString("yyyy-MM-dd"));
-            return null;
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning("Failed to fetch/parse NSE PR file for {Date}: {Msg}", date.ToString("yyyy-MM-dd"), ex.Message);
-            return null;
-        }
+
+        logger.LogWarning("NSE PR file not found for {Date} — likely holiday or data not yet published.",
+            date.ToString("yyyy-MM-dd"));
+        return null;
     }
 
-    private string BuildPrUrl(DateTime date)
+    /// <summary>
+    /// ZIP uses 6-digit year: PR{DDMMYY}.zip  e.g. PR040326.zip
+    /// Tries uppercase (canonical NSE naming) then lowercase fallback.
+    /// </summary>
+    private IEnumerable<string> BuildPrUrlCandidates(DateTime date)
     {
-        // Filename format: pr{DDMMYYYY}.zip  e.g. pr04032026.zip
-        var dd   = date.ToString("dd",   CultureInfo.InvariantCulture);
-        var mm   = date.ToString("MM",   CultureInfo.InvariantCulture);
-        var yyyy = date.ToString("yyyy", CultureInfo.InvariantCulture);
-        var file = $"pr{dd}{mm}{yyyy}.zip";
-        return $"{_opt.PrBaseUrl.TrimEnd('/')}/{file}";
+        var dd = date.ToString("dd", CultureInfo.InvariantCulture);
+        var mm = date.ToString("MM", CultureInfo.InvariantCulture);
+        var yy = date.ToString("yy", CultureInfo.InvariantCulture);
+
+        var fileUpper = $"PR{dd}{mm}{yy}.zip";  // e.g. PR040326.zip  (canonical NSE casing)
+        var fileLower = $"pr{dd}{mm}{yy}.zip";  // e.g. pr040326.zip  (lowercase fallback)
+
+        var bases = new List<string>();
+        var configBase = _opt.PrBaseUrl?.TrimEnd('/');
+        if (!string.IsNullOrEmpty(configBase)) bases.Add(configBase);
+        bases.Add("https://nsearchives.nseindia.com/content/fo");
+        bases.Add("https://archives.nseindia.com/content/fo");
+
+        foreach (var b in bases.Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            yield return $"{b}/{fileUpper}";
+            yield return $"{b}/{fileLower}";
+        }
     }
 
     private async Task<Stream> DownloadAsync(string url, CancellationToken ct)
@@ -88,15 +109,27 @@ public sealed class PrPcrService(
         return ms;
     }
 
-    private async Task<PrPcrResult?> ParsePcrFromZipAsync(Stream zipStream, CancellationToken ct)
+    private async Task<PrPcrResult?> ParsePcrFromZipAsync(Stream zipStream, DateTime date, CancellationToken ct)
     {
         using var archive = new ZipArchive(zipStream, ZipArchiveMode.Read);
+
+        // CSV inside uses 8-digit year: pr{DDMMYYYY}.csv  e.g. pr04032026.csv
+        var dd = date.ToString("dd", CultureInfo.InvariantCulture);
+        var mm = date.ToString("MM", CultureInfo.InvariantCulture);
+        var yyyy = date.ToString("yyyy", CultureInfo.InvariantCulture);
+        var expectedName = $"pr{dd}{mm}{yyyy}.csv";
+
         var entry = archive.Entries.FirstOrDefault(e =>
-            e.Name.EndsWith(".csv", StringComparison.OrdinalIgnoreCase));
+                        e.Name.Equals(expectedName, StringComparison.OrdinalIgnoreCase))
+                    ?? archive.Entries.FirstOrDefault(e =>
+                        e.Name.StartsWith("pr", StringComparison.OrdinalIgnoreCase) &&
+                        e.Name.EndsWith(".csv", StringComparison.OrdinalIgnoreCase));
 
         if (entry is null)
         {
-            logger.LogWarning("No CSV entry found in NSE PR ZIP.");
+            logger.LogWarning("No pr*.csv entry found in PR{Date}.zip. Entries: {Entries}",
+                date.ToString("ddMMyy"),
+                string.Join(", ", archive.Entries.Select(e => e.Name)));
             return null;
         }
 
@@ -109,7 +142,6 @@ public sealed class PrPcrService(
     {
         using var reader = new StreamReader(stream);
 
-        // First line = header
         var headerLine = await reader.ReadLineAsync(ct);
         if (headerLine is null) return null;
 
@@ -117,10 +149,10 @@ public sealed class PrPcrService(
             .Select(h => h.Trim().Trim('"').ToUpperInvariant())
             .ToList();
 
-        var symbolIdx    = headers.IndexOf("SYMBOL");
-        var optTypeIdx   = headers.IndexOf("OPTION_TYP");
+        var symbolIdx = headers.IndexOf("SYMBOL");
+        var optTypeIdx = headers.IndexOf("OPTION_TYP");
         var contractsIdx = headers.IndexOf("CONTRACTS");
-        var openIntIdx   = headers.IndexOf("OPEN_INT");
+        var openIntIdx = headers.IndexOf("OPEN_INT");
 
         if (symbolIdx < 0 || optTypeIdx < 0 || contractsIdx < 0 || openIntIdx < 0)
         {
@@ -130,7 +162,6 @@ public sealed class PrPcrService(
 
         var maxIdx = Math.Max(openIntIdx, Math.Max(symbolIdx, Math.Max(optTypeIdx, contractsIdx)));
 
-        // Accumulators per symbol
         double niftyPutOi = 0, niftyCallOi = 0;
         double niftyPutVol = 0, niftyCallVol = 0;
         double bankNiftyPutOi = 0, bankNiftyCallOi = 0;
@@ -145,39 +176,37 @@ public sealed class PrPcrService(
             var cols = line.Split(',');
             if (cols.Length <= maxIdx) continue;
 
-            var symbol  = cols[symbolIdx].Trim().Trim('"').ToUpperInvariant();
+            var symbol = cols[symbolIdx].Trim().Trim('"').ToUpperInvariant();
             var optType = cols[optTypeIdx].Trim().Trim('"').ToUpperInvariant();
 
-            bool isNifty      = symbol.Equals("NIFTY",     StringComparison.OrdinalIgnoreCase);
-            bool isBankNifty  = symbol.Equals("BANKNIFTY", StringComparison.OrdinalIgnoreCase);
-
+            bool isNifty = symbol.Equals("NIFTY", StringComparison.OrdinalIgnoreCase);
+            bool isBankNifty = symbol.Equals("BANKNIFTY", StringComparison.OrdinalIgnoreCase);
             if (!isNifty && !isBankNifty) continue;
 
-            var oiStr  = cols[openIntIdx].Trim().Trim('"').Replace(",", "");
+            var oiStr = cols[openIntIdx].Trim().Trim('"').Replace(",", "");
             var volStr = cols[contractsIdx].Trim().Trim('"').Replace(",", "");
-
-            double.TryParse(oiStr,  NumberStyles.Any, CultureInfo.InvariantCulture, out var oi);
+            double.TryParse(oiStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var oi);
             double.TryParse(volStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var vol);
 
-            bool isPut  = optType.Equals("PE", StringComparison.OrdinalIgnoreCase);
+            bool isPut = optType.Equals("PE", StringComparison.OrdinalIgnoreCase);
             bool isCall = optType.Equals("CE", StringComparison.OrdinalIgnoreCase);
 
             if (isNifty)
             {
-                if (isPut)  { niftyPutOi  += oi; niftyPutVol  += vol; }
+                if (isPut) { niftyPutOi += oi; niftyPutVol += vol; }
                 else if (isCall) { niftyCallOi += oi; niftyCallVol += vol; }
             }
-            else // BANKNIFTY
+            else
             {
-                if (isPut)  { bankNiftyPutOi  += oi; bankNiftyPutVol  += vol; }
+                if (isPut) { bankNiftyPutOi += oi; bankNiftyPutVol += vol; }
                 else if (isCall) { bankNiftyCallOi += oi; bankNiftyCallVol += vol; }
             }
         }
 
-        var niftyPcrOi     = ComputeRatio(niftyPutOi,     niftyCallOi,     "NIFTY OI");
-        var niftyPcrVol    = ComputeRatio(niftyPutVol,    niftyCallVol,    "NIFTY Volume");
-        var bnfPcrOi       = ComputeRatio(bankNiftyPutOi, bankNiftyCallOi, "BANKNIFTY OI");
-        var bnfPcrVol      = ComputeRatio(bankNiftyPutVol, bankNiftyCallVol, "BANKNIFTY Volume");
+        var niftyPcrOi = ComputeRatio(niftyPutOi, niftyCallOi, "NIFTY OI");
+        var niftyPcrVol = ComputeRatio(niftyPutVol, niftyCallVol, "NIFTY Volume");
+        var bnfPcrOi = ComputeRatio(bankNiftyPutOi, bankNiftyCallOi, "BANKNIFTY OI");
+        var bnfPcrVol = ComputeRatio(bankNiftyPutVol, bankNiftyCallVol, "BANKNIFTY Volume");
 
         logger.LogInformation(
             "PR PCR — NIFTY OI: {NIO}, Vol: {NV} | BANKNIFTY OI: {BIO}, Vol: {BV}",
@@ -190,7 +219,7 @@ public sealed class PrPcrService(
     {
         if (callValue <= 0)
         {
-            logger.LogWarning("PR PCR: Call value is zero for {Label} — skipping. Put={Put}", label, putValue);
+            logger.LogWarning("PR PCR: Call value is zero for {Label}. Put={Put}", label, putValue);
             return null;
         }
         return Math.Round(putValue / callValue, 4);

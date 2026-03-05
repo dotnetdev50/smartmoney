@@ -8,9 +8,14 @@ namespace SmartMoney.Application.Services;
 
 /// <summary>
 /// Fetches the India VIX closing value from NSE.
-/// Primary method: NSE JSON API at <c>https://www.nseindia.com/api/historicalOR/vixhistory</c>
-/// with cookie/session priming (GET homepage first).
-/// Fallback: full-history CSV at <see cref="NseOptions.VixArchiveUrl"/>.
+///
+/// Strategy (in order):
+///   1. NSE JSON API  — https://www.nseindia.com/api/historicalOR/vixhistory?from=DD-MM-YYYY&amp;to=DD-MM-YYYY
+///      Requires NSE session cookies; homepage is primed first (Akamai bot-protection).
+///      Source page: https://www.nseindia.com/reports-indices-historical-vix
+///   2. Archive CSV   — <see cref="NseOptions.VixArchiveUrl"/> (full history, no session needed)
+///      Date format in CSV: DD-MMM-YYYY (e.g. 05-Mar-2026)
+///      Columns: Date, Open, High, Low, Close, Prev Close, Change
 /// </summary>
 public sealed class VixFetchService(
     HttpClient http,
@@ -31,7 +36,6 @@ public sealed class VixFetchService(
     /// </summary>
     public async Task<double?> FetchVixAsync(DateTime date, CancellationToken ct)
     {
-        // Try NSE API first (requires session/cookie priming)
         var apiVix = await FetchVixFromNseApiAsync(date, ct);
         if (apiVix.HasValue)
         {
@@ -39,27 +43,22 @@ public sealed class VixFetchService(
             return apiVix;
         }
 
-        logger.LogWarning("NSE API VIX fetch returned null for {Date}. Falling back to archives CSV.", date.ToString("yyyy-MM-dd"));
-
-        // Fallback: full-history CSV from NSE archives
+        logger.LogWarning("NSE API VIX fetch returned null for {Date}. Falling back to archive CSV.", date.ToString("yyyy-MM-dd"));
         return await FetchVixFromArchiveCsvAsync(date, ct);
     }
 
     /// <summary>
-    /// Fetches VIX from the NSE JSON API endpoint, priming the session by visiting the NSE
-    /// homepage first so that the required cookies are set before the API call.
-    /// The API requires valid NSE session cookies; without them it returns 401/403 or empty data.
+    /// Fetches VIX from the NSE historicalOR JSON API.
+    /// Primes session cookies via homepage before calling the API endpoint.
+    /// API date format: dd-MM-yyyy  (e.g. 05-03-2026)
     /// </summary>
     private async Task<double?> FetchVixFromNseApiAsync(DateTime date, CancellationToken ct)
     {
         try
         {
-            // NSE API date format: dd-MM-yyyy
             var dateStr = date.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
             var apiUrl = string.Format(CultureInfo.InvariantCulture, NseVixApiTemplate, dateStr, dateStr);
 
-            // Use a dedicated CookieContainer-aware HttpClient so the session cookies set by
-            // the homepage response are automatically attached to the subsequent API call.
             var cookieContainer = new System.Net.CookieContainer();
             var handler = new HttpClientHandler
             {
@@ -68,8 +67,6 @@ public sealed class VixFetchService(
                 AllowAutoRedirect = true,
             };
 
-            // Batch jobs run infrequently — creating a short-lived HttpClient here is intentional
-            // and avoids leaking cookies across unrelated service calls.
             using var sessionClient = new HttpClient(handler)
             {
                 Timeout = TimeSpan.FromSeconds(_opt.RequestTimeoutSeconds > 0 ? _opt.RequestTimeoutSeconds : 30)
@@ -77,12 +74,12 @@ public sealed class VixFetchService(
 
             AddNseHeaders(sessionClient, acceptHtml: true);
 
-            // Step 1: Visit NSE homepage to obtain session cookies (Akamai bot-protection).
+            // Step 1: prime session cookies (Akamai bot-protection).
             logger.LogInformation("Priming NSE session via homepage for VIX API call.");
             var homeResp = await sessionClient.GetAsync(NseHomeUrl, ct);
             logger.LogInformation("NSE homepage responded with HTTP {Status}.", (int)homeResp.StatusCode);
 
-            // Step 2: Call the VIX history API with the cookies obtained above.
+            // Step 2: call VIX history API with session cookies.
             AddNseHeaders(sessionClient, acceptHtml: false);
             var apiResp = await sessionClient.GetAsync(apiUrl, ct);
 
@@ -103,8 +100,8 @@ public sealed class VixFetchService(
     }
 
     /// <summary>
-    /// Fetches VIX from the full-history CSV hosted at <see cref="NseOptions.VixArchiveUrl"/>.
-    /// This is the fallback path when the NSE API is unavailable.
+    /// Fetches VIX from the full-history CSV at <see cref="NseOptions.VixArchiveUrl"/>.
+    /// CSV date format: DD-MMM-YYYY (e.g. 05-Mar-2026). Columns: Date,Open,High,Low,Close,...
     /// </summary>
     private async Task<double?> FetchVixFromArchiveCsvAsync(DateTime date, CancellationToken ct)
     {
@@ -123,23 +120,22 @@ public sealed class VixFetchService(
             var vix = ParseVixClose(content, date);
 
             if (vix.HasValue)
-                logger.LogInformation("India VIX for {Date} via archives CSV: {Vix}", date.ToString("yyyy-MM-dd"), vix.Value);
+                logger.LogInformation("India VIX for {Date} via archive CSV: {Vix}", date.ToString("yyyy-MM-dd"), vix.Value);
             else
-                logger.LogWarning("India VIX not found in archives CSV for {Date}.", date.ToString("yyyy-MM-dd"));
+                logger.LogWarning("India VIX not found in archive CSV for {Date}.", date.ToString("yyyy-MM-dd"));
 
             return vix;
         }
         catch (Exception ex)
         {
-            logger.LogWarning("Archives CSV VIX fetch failed for {Date}: {Msg}", date.ToString("yyyy-MM-dd"), ex.Message);
+            logger.LogWarning("Archive CSV VIX fetch failed for {Date}: {Msg}", date.ToString("yyyy-MM-dd"), ex.Message);
             return null;
         }
     }
 
     /// <summary>
-    /// Parses the VIX close value from the NSE JSON API response.
-    /// Expected format:
-    /// <code>{ "data": [ { "EOD_TIMESTAMP": "04-Mar-2026", "EOD_CLOSE_INDEX_VAL": "15.17", ... } ] }</code>
+    /// Parses VIX close from NSE JSON API response.
+    /// Expected: { "data": [ { "EOD_TIMESTAMP": "05-Mar-2026", "EOD_CLOSE_INDEX_VAL": "14.13" } ] }
     /// </summary>
     private double? ParseVixFromApiJson(string json, DateTime date)
     {
@@ -154,18 +150,13 @@ public sealed class VixFetchService(
                 return null;
             }
 
-            // The API returns data sorted newest-first; find the entry matching our date.
-            // InvariantCulture produces English 3-letter month abbreviations (Jan, Feb, Mar…)
-            // which match the NSE "EOD_TIMESTAMP" format (e.g. "04-Mar-2026").
-            // OrdinalIgnoreCase handles any case differences defensively.
+            // API timestamps use "dd-MMM-yyyy" format (e.g. "05-Mar-2026").
             var targetDate = date.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
 
             foreach (var item in dataArray.EnumerateArray())
             {
                 if (!item.TryGetProperty("EOD_TIMESTAMP", out var ts)) continue;
                 var tsStr = ts.GetString() ?? "";
-
-                // Timestamps from NSE API are in "04-Mar-2026" format.
                 if (!tsStr.Equals(targetDate, StringComparison.OrdinalIgnoreCase)) continue;
 
                 if (!item.TryGetProperty("EOD_CLOSE_INDEX_VAL", out var closeEl)) continue;
@@ -190,31 +181,29 @@ public sealed class VixFetchService(
     }
 
     /// <summary>
-    /// Parses the VIX close value from the full-history CSV for the given date.
-    /// Handles both "DD-Mon-YYYY" (e.g. "27-Feb-2026") and "D-Mon-YYYY" (e.g. "7-Feb-2026").
+    /// Parses VIX close from full-history archive CSV.
+    /// Date column format: DD-MMM-YYYY (e.g. "05-Mar-2026") or D-MMM-YYYY (e.g. "5-Mar-2026").
+    /// Close value is the 5th column (index 4).
     /// </summary>
     private static double? ParseVixClose(string csv, DateTime date)
     {
-        // NSE VIX CSV date format: dd-MMM-yyyy (e.g. "27-Feb-2026") or d-MMM-yyyy (e.g. "7-Feb-2026")
-        var targetDateTwoDigit = date.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
-        var targetDateOneDigit = date.ToString("d-MMM-yyyy", CultureInfo.InvariantCulture);
+        var targetTwoDigit = date.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
+        var targetOneDigit = date.ToString("d-MMM-yyyy", CultureInfo.InvariantCulture);
 
-        var lines = csv.Split('\n');
-        foreach (var rawLine in lines)
+        foreach (var rawLine in csv.Split('\n'))
         {
             var line = rawLine.Trim();
             if (line.Length == 0) continue;
 
-            // Fast prefix match on date token
             var comma = line.IndexOf(',');
             if (comma <= 0) continue;
 
             var datePart = line[..comma].Trim();
-            if (!datePart.Equals(targetDateTwoDigit, StringComparison.OrdinalIgnoreCase) &&
-                !datePart.Equals(targetDateOneDigit, StringComparison.OrdinalIgnoreCase)) continue;
+            if (!datePart.Equals(targetTwoDigit, StringComparison.OrdinalIgnoreCase) &&
+                !datePart.Equals(targetOneDigit, StringComparison.OrdinalIgnoreCase)) continue;
 
             var cols = line.Split(',');
-            // cols: Date, Open, High, Low, Close, Prev Close, Change
+            // Columns: Date, Open, High, Low, Close, Prev Close, Change
             if (cols.Length < 5) continue;
 
             var closeStr = cols[4].Trim();
@@ -225,17 +214,15 @@ public sealed class VixFetchService(
         return null;
     }
 
-    /// <summary>
-    /// Adds standard NSE browser headers to the given <see cref="HttpClient"/>.
-    /// </summary>
     private static void AddNseHeaders(HttpClient client, bool acceptHtml)
     {
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", UserAgent);
         client.DefaultRequestHeaders.TryAddWithoutValidation(
             "Accept",
-            acceptHtml ? "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-                       : "application/json,text/plain,*/*");
+            acceptHtml
+                ? "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                : "application/json,text/plain,*/*");
         client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en-US,en;q=0.9");
         client.DefaultRequestHeaders.TryAddWithoutValidation("Referer", NseHomeUrl);
     }

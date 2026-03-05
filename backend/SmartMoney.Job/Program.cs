@@ -10,101 +10,127 @@ using System.Text.Json;
 // ---- IST helpers ----
 static DateTimeOffset ToIst(DateTimeOffset utc) => utc.ToOffset(TimeSpan.FromHours(5.5));
 
-var istNow = ToIst(DateTimeOffset.UtcNow);
-var today = istNow.Date; // calendar date in IST
+await MainAsync();
 
-// H0: Before 8 PM IST, NSE data for today is not yet published.
-// Target the previous trading day so we process real, available data.
-const int NsePublishHourIst = 20; // NSE publishes end-of-day data at ~8:00 PM IST
-bool isBeforeNsePublish = istNow.Hour < NsePublishHourIst;
-var targetDate = isBeforeNsePublish ? today.AddDays(-1) : today;
-
-// If targetDate rolled back to a weekend, roll back further to Friday
-while (targetDate.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
-    targetDate = targetDate.AddDays(-1);
-
-// Console.WriteLine is used here because the DI logger is not yet available at this point.
-Console.WriteLine($"[H0] IST now: {istNow:HH:mm}. isBeforeNsePublish={isBeforeNsePublish}. targetDate={targetDate:yyyy-MM-dd}");
-
-// H1: Skip weekends – if today is a weekend AND time is >= 8 PM, there is no trading data.
-// (The pre-8 PM case is already handled by H0 rolling back targetDate past weekends.)
-if (today.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+static async Task MainAsync()
 {
-    Console.WriteLine($"[H1] Today ({today:yyyy-MM-dd}, {today.DayOfWeek}) is a weekend. Skipping job.");
-    return;
+    var istNow = ToIst(DateTimeOffset.UtcNow);
+    var today = istNow.Date;
+
+    const int NsePublishHourIst = 20;
+    bool isBeforeNsePublish = istNow.Hour < NsePublishHourIst;
+    var targetDate = GetTargetDate(today, isBeforeNsePublish);
+
+    Console.WriteLine($"[H0] IST now: {istNow:HH:mm}. isBeforeNsePublish={isBeforeNsePublish}. targetDate={targetDate:yyyy-MM-dd}");
+
+    if (IsWeekend(today))
+    {
+        Console.WriteLine($"[H1] Today ({today:yyyy-MM-dd}, {today.DayOfWeek}) is a weekend. Skipping job.");
+        return;
+    }
+
+    var to = targetDate;
+    var from = to.AddDays(-90);
+
+    var services = ConfigureServices();
+    var sp = services.BuildServiceProvider();
+    var log = sp.GetRequiredService<ILoggerFactory>().CreateLogger("SmartMoney.Job");
+    var jobOpts = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<NseJobOptions>>().Value;
+
+    log.LogInformation("[H0] IST now: {IstNow:HH:mm}. isBeforeNsePublish={Flag}. targetDate={TargetDate}",
+        istNow, isBeforeNsePublish, targetDate.ToString("yyyy-MM-dd"));
+
+    await MigrateDbAsync(sp);
+
+    var repoRoot = FindRepoRoot();
+    var publicDataDir = Path.Combine(repoRoot, "frontend", "public", "data");
+    var publicMarketTodayPath = Path.Combine(publicDataDir, "market_today.json");
+
+    bool participantDataAlreadyExported = await CheckExistingExportAsync(publicMarketTodayPath, targetDate, log);
+
+    object ingestResult = "skipped – participant data already exported today";
+
+    if (!participantDataAlreadyExported)
+    {
+        (_, _) = await IngestAndRunPipelineAsync(sp, from, to, log);
+    }
+
+    var (marketToday, history) = await ExportOrReuseParticipantDataAsync(
+        sp, participantDataAlreadyExported, publicDataDir, publicMarketTodayPath, targetDate, log);
+
+    await FetchAndPatchPcrVixAsync(
+        sp, marketToday, history, publicDataDir, publicMarketTodayPath, jobOpts, log);
+
+    log.LogInformation("DONE");
 }
 
-// Working range for ingest (last 90 days → ensures enough history for 20-day window)
-var to = targetDate;
-var from = to.AddDays(-90);
-
-// ---- DI container ----
-var services = new ServiceCollection();
-
-services.AddLogging(b =>
+static DateTime GetTargetDate(DateTime today, bool isBeforeNsePublish)
 {
-    b.AddSimpleConsole(o =>
+    var targetDate = isBeforeNsePublish ? today.AddDays(-1) : today;
+    while (IsWeekend(targetDate))
+        targetDate = targetDate.AddDays(-1);
+    return targetDate;
+}
+
+static bool IsWeekend(DateTime date) =>
+    date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+
+static ServiceCollection ConfigureServices()
+{
+    var services = new ServiceCollection();
+
+    services.AddLogging(b =>
     {
-        o.SingleLine = true;
-        o.TimestampFormat = "HH:mm:ss ";
+        b.AddSimpleConsole(o =>
+        {
+            o.SingleLine = true;
+            o.TimestampFormat = "HH:mm:ss ";
+        });
+        b.SetMinimumLevel(LogLevel.Information);
     });
-    b.SetMinimumLevel(LogLevel.Information);
-});
 
-// Use SQLite file (ephemeral in runner)
-var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "jobdb.sqlite");
-services.AddDbContext<SmartMoneyDbContext>(opt =>
-    opt.UseSqlite($"Data Source={dbPath}"));
+    var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "jobdb.sqlite");
+    services.AddDbContext<SmartMoneyDbContext>(opt =>
+        opt.UseSqlite($"Data Source={dbPath}"));
 
-// Options used by ingestion services
-services.Configure<NseOptions>(o =>
+    // NseOptions: register with defaults defined in the class.
+    // Canonical NSE endpoint configuration lives in the application/library only.
+    // Runtime overrides must be applied at the API/hosting project, not here.
+    services.AddOptions<NseOptions>();
+
+    services.Configure<NseJobOptions>(o =>
+    {
+        if (bool.TryParse(Environment.GetEnvironmentVariable("JOB_ENABLED") ?? "", out var b)) o.Enabled = b;
+        o.StartAtIst = Environment.GetEnvironmentVariable("JOB_START_AT_IST") ?? o.StartAtIst;
+        o.EndAtIst = Environment.GetEnvironmentVariable("JOB_END_AT_IST") ?? o.EndAtIst;
+        if (int.TryParse(Environment.GetEnvironmentVariable("JOB_RETRY_MINUTES") ?? "", out var rm)) o.RetryMinutes = rm;
+        if (int.TryParse(Environment.GetEnvironmentVariable("JOB_EXPECTED_PARTICIPANT_ROWS_PER_DAY") ?? "", out var ep)) o.ExpectedParticipantRowsPerDay = ep;
+        if (int.TryParse(Environment.GetEnvironmentVariable("PCR_VIX_MAX_RETRIES") ?? "", out var mr)) o.PcrVixMaxRetries = mr;
+        if (int.TryParse(Environment.GetEnvironmentVariable("PCR_VIX_RETRY_MINUTES") ?? "", out var pr)) o.PcrVixRetryMinutes = pr;
+    });
+
+    services.AddHttpClient<FoBhavCopyService>();
+    services.AddHttpClient<OpBhavCopyService>();
+    services.AddHttpClient<PrPcrService>();
+    services.AddHttpClient<VixFetchService>();
+    services.AddHttpClient<CsvIngestionService>();
+    services.AddScoped<DailyPipelineService>();
+
+    return services;
+}
+
+static async Task MigrateDbAsync(ServiceProvider sp)
 {
-    // FO Bhavcopy base (legacy PCR fallback – old format with SYMBOL/OPTION_TYP columns)
-    o.FoBhavCopyBaseUrl = "https://nsearchives.nseindia.com/content/historical/DERIVATIVES/";
-    // India VIX full-history CSV
-    o.VixArchiveUrl = "https://nsearchives.nseindia.com/content/indices/hist_vix_data.csv";
-    // Daily FO bhavcopy ZIP (fo{DDMMYYYY}.zip) containing op{DDMMYYYY}.csv – primary PCR source
-    o.FoBhavZipBaseUrl = "https://nsearchives.nseindia.com/content/fo/";
-});
-
-services.Configure<NseJobOptions>(o =>
-{
-    o.Enabled = true;
-    o.ExpectedParticipantRowsPerDay = 4;
-});
-
-// Register services (each gets its own named HttpClient)
-services.AddHttpClient<CsvIngestionService>();
-services.AddHttpClient<FoBhavCopyService>();
-services.AddHttpClient<OpBhavCopyService>();
-services.AddHttpClient<VixFetchService>();
-services.AddHttpClient<PrPcrService>();
-services.AddScoped<DailyPipelineService>();
-
-var sp = services.BuildServiceProvider();
-var log = sp.GetRequiredService<ILoggerFactory>().CreateLogger("SmartMoney.Job");
-var jobOpts = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<NseJobOptions>>().Value;
-
-log.LogInformation("[H0] IST now: {IstNow:HH:mm}. isBeforeNsePublish={Flag}. targetDate={TargetDate}",
-    istNow, isBeforeNsePublish, targetDate.ToString("yyyy-MM-dd"));
-
-// ---- Migrate DB ----
-using (var scope = sp.CreateScope())
-{
+    using var scope = sp.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<SmartMoneyDbContext>();
     await db.Database.MigrateAsync();
 }
 
-// ---- H2: Skip if target date's data is already exported with PCR and VIX present ----
-var repoRoot = FindRepoRoot();
-var publicDataDir = Path.Combine(repoRoot, "frontend", "public", "data");
-var publicMarketTodayPath = Path.Combine(publicDataDir, "market_today.json");
-
-// Track whether participant data was already written in a prior run for targetDate
-bool participantDataAlreadyExported = false;
-
-if (File.Exists(publicMarketTodayPath))
+static async Task<bool> CheckExistingExportAsync(string publicMarketTodayPath, DateTime targetDate, ILogger log)
 {
+    if (!File.Exists(publicMarketTodayPath))
+        return false;
+
     try
     {
         var existingJson = await File.ReadAllTextAsync(publicMarketTodayPath);
@@ -118,17 +144,14 @@ if (File.Exists(publicMarketTodayPath))
             if (hasPcr && hasVix)
             {
                 log.LogInformation("[H2] market_today.json already contains complete data with PCR and VIX ({Date}). Skipping job.", targetDate.ToString("yyyy-MM-dd"));
-                return;
+                return true;
             }
 
-            // Participant data is present but PCR/VIX are still missing — skip re-ingestion and
-            // only retry the PCR/VIX fetch so we can fill in the missing values.
-            participantDataAlreadyExported = true;
             log.LogInformation("[H2] market_today.json has participant data but PCR/VIX are missing ({Date}). Skipping ingestion; will retry PCR/VIX fetch.", targetDate.ToString("yyyy-MM-dd"));
+            return true;
         }
         else
         {
-            // Existing JSON is for a different date than targetDate — perform a full run for targetDate.
             log.LogInformation("[H2] market_today.json is for a different date than targetDate ({TargetDate}). Proceeding with full run.", targetDate.ToString("yyyy-MM-dd"));
         }
     }
@@ -136,245 +159,197 @@ if (File.Exists(publicMarketTodayPath))
     {
         log.LogWarning("[H2] Could not read existing market_today.json: {Msg}. Proceeding.", ex.Message);
     }
+    return false;
 }
 
-// ---- Ingest range + pipeline range (skipped when participant data is already present) ----
-object ingestResult = "skipped – participant data already exported today";
-object runResult = "skipped – participant data already exported today";
-
-if (!participantDataAlreadyExported)
+static async Task<(object ingestResult, object runResult)> IngestAndRunPipelineAsync(
+    ServiceProvider sp, DateTime from, DateTime to, ILogger log)
 {
     using var scope = sp.CreateScope();
     var ingestion = scope.ServiceProvider.GetRequiredService<CsvIngestionService>();
     var pipeline = scope.ServiceProvider.GetRequiredService<DailyPipelineService>();
 
     log.LogInformation("Ingesting range {From} → {To} (IST)", from.ToString("yyyy-MM-dd"), to.ToString("yyyy-MM-dd"));
-    ingestResult = await ingestion.IngestParticipantOiRangeAsync(from, to, CancellationToken.None);
+    var ingestResult = await ingestion.IngestParticipantOiRangeAsync(from, to, CancellationToken.None);
 
     log.LogInformation("Running pipeline range {From} → {To} (IST)", from.ToString("yyyy-MM-dd"), to.ToString("yyyy-MM-dd"));
-    runResult = await pipeline.RunRangeAsync(from, to, CancellationToken.None);
+    var runResult = await pipeline.RunRangeAsync(from, to, CancellationToken.None);
+
+    return (ingestResult, runResult);
 }
 
-// ---- Export participant data immediately so JSON files are updated regardless of PCR/VIX ----
-// (H4: fallback to last available day)
-MarketTodayDto marketToday;
-List<MarketHistoryPointDto> history;
-
-if (!participantDataAlreadyExported)
+static async Task<(MarketTodayDto marketToday, List<MarketHistoryPointDto> history)> ExportOrReuseParticipantDataAsync(
+    ServiceProvider sp, bool participantDataAlreadyExported, string publicDataDir, string publicMarketTodayPath, DateTime targetDate, ILogger log)
 {
-    using var scope = sp.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<SmartMoneyDbContext>();
+    MarketTodayDto marketToday;
+    List<MarketHistoryPointDto> history;
 
-    var latest = await db.MarketBiases
-        .AsNoTracking()
-        .OrderByDescending(x => x.Date)
-        .FirstOrDefaultAsync();
-
-    if (latest is null)
+    if (!participantDataAlreadyExported)
     {
-        log.LogError("[H4] No market_bias rows produced. Exiting with failure.");
-        Environment.ExitCode = 1;
-        return;
-    }
+        using var scope = sp.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<SmartMoneyDbContext>();
 
-    var exportDate = latest.Date;
+        var latest = await db.MarketBiases
+            .AsNoTracking()
+            .OrderByDescending(x => x.Date)
+            .FirstOrDefaultAsync();
 
-    if (exportDate != targetDate)
-    {
-        log.LogWarning("[H4] targetDate's data ({TargetDate}) not available. Falling back to last available: {ExportDate}.",
-            targetDate.ToString("yyyy-MM-dd"), exportDate.ToString("yyyy-MM-dd"));
-    }
-
-    var metrics = await db.ParticipantMetrics
-        .AsNoTracking()
-        .Where(x => x.Date == exportDate)
-        .OrderBy(x => x.Participant)
-        .ToListAsync();
-
-    var participants = metrics
-        .Select(m =>
+        if (latest is null)
         {
-            var name = m.Participant.ToString().ToUpperInvariant();
-            var label = MarketNarrative.ParticipantLabel(m.ParticipantBias);
-            return new ParticipantDto(name, m.ParticipantBias, label);
-        })
-        .OrderBy(p => p.name)
-        .ToList();
+            log.LogError("[H4] No market_bias rows produced. Exiting with failure.");
+            Environment.ExitCode = 1;
+            return (null!, null!);
+        }
 
-    var (biasLabel, strength) = MarketNarrative.ScoreLabel(latest.FinalScore);
-    var regime = latest.Regime.ToString().ToUpperInvariant();
-    var explanation = MarketNarrative.Explanation(regime, latest.ShockScore, participants, latest.FinalScore);
+        var exportDate = latest.Date;
 
-    // Write participant data now with pcr/vix as null; they will be filled in below if available.
-    marketToday = new MarketTodayDto(
-        index: "NIFTY",
-        date: exportDate.ToString("yyyy-MM-dd"),
-        final_score: latest.FinalScore,
-        regime: regime,
-        shock_score: latest.ShockScore,
-        participants: participants,
-        bias_Label: biasLabel,
-        strength: strength,
-        explanation: explanation,
-        pcr: null,
-        vix: null
-    );
+        if (exportDate != targetDate)
+        {
+            log.LogWarning("[H4] targetDate's data ({TargetDate}) not available. Falling back to last available: {ExportDate}.",
+                targetDate.ToString("yyyy-MM-dd"), exportDate.ToString("yyyy-MM-dd"));
+        }
 
-    var fromHist = exportDate.AddDays(-29);
-    var historyRaw = await db.MarketBiases
-        .AsNoTracking()
-        .Where(x => x.Date >= fromHist)
-        .OrderBy(x => x.Date)
-        .ToListAsync();
+        var metrics = await db.ParticipantMetrics
+            .AsNoTracking()
+            .Where(x => x.Date == exportDate)
+            .OrderBy(x => x.Participant)
+            .ToListAsync();
 
-    history = historyRaw
-        .Select(x => new MarketHistoryPointDto(
-            date: x.Date.ToString("yyyy-MM-dd"),
-            final_score: x.FinalScore,
-            regime: x.Regime.ToString().ToUpperInvariant()
-        ))
-        .ToList();
+        var participants = metrics
+            .Select(m =>
+            {
+                var name = m.Participant.ToString().ToUpperInvariant();
+                var label = MarketNarrative.ParticipantLabel(m.ParticipantBias);
+                return new ParticipantDto(name, m.ParticipantBias, label);
+            })
+            .OrderBy(p => p.name)
+            .ToList();
 
-    var jsonOptsIntermediate = new JsonSerializerOptions { WriteIndented = true };
+        var (biasLabel, strength) = MarketNarrative.ScoreLabel(latest.FinalScore);
+        var regime = latest.Regime.ToString().ToUpperInvariant();
+        var explanation = MarketNarrative.Explanation(regime, latest.ShockScore, participants, latest.FinalScore);
 
-    // Write participant data immediately so it is available even if PCR/VIX fetch times out.
-    // Only write to public/data/ — the frontend build (npm run build) copies these files into
-    // dist/data/, so a single source of truth in public/ is sufficient.
-    Directory.CreateDirectory(publicDataDir);
-    await File.WriteAllTextAsync(publicMarketTodayPath,
-        JsonSerializer.Serialize(marketToday, jsonOptsIntermediate));
-    await File.WriteAllTextAsync(Path.Combine(publicDataDir, "market_history_30.json"),
-        JsonSerializer.Serialize(history, jsonOptsIntermediate));
+        marketToday = new MarketTodayDto(
+            index: "NIFTY",
+            date: exportDate.ToString("yyyy-MM-dd"),
+            final_score: latest.FinalScore,
+            regime: regime,
+            shock_score: latest.ShockScore,
+            participants: participants,
+            bias_Label: biasLabel,
+            strength: strength,
+            explanation: explanation,
+            pcr: null,
+            vix: null
+        );
 
-    log.LogInformation("[H4] Participant data exported (PCR/VIX pending). public: {PubDir}", publicDataDir);
-}
-else
-{
-    // Participant data already exported — read the existing snapshot so we can later patch PCR/VIX.
-    log.LogInformation("[H4] Re-using previously exported participant data; will update PCR/VIX only.");
-    var existingJson = await File.ReadAllTextAsync(publicMarketTodayPath);
-    marketToday = JsonSerializer.Deserialize<MarketTodayDto>(existingJson)
-        ?? throw new InvalidOperationException($"Failed to deserialize existing market_today.json from {publicMarketTodayPath}.");
+        var fromHist = exportDate.AddDays(-29);
+        var historyRaw = await db.MarketBiases
+            .AsNoTracking()
+            .Where(x => x.Date >= fromHist)
+            .OrderBy(x => x.Date)
+            .ToListAsync();
 
-    // Reconstruct history from the public file (written in a prior run).
-    var publicHistPath = Path.Combine(publicDataDir, "market_history_30.json");
-    if (File.Exists(publicHistPath))
-    {
-        var histJson = await File.ReadAllTextAsync(publicHistPath);
-        history = JsonSerializer.Deserialize<List<MarketHistoryPointDto>>(histJson) ?? new();
+        history = historyRaw
+            .Select(x => new MarketHistoryPointDto(
+                date: x.Date.ToString("yyyy-MM-dd"),
+                final_score: x.FinalScore,
+                regime: x.Regime.ToString().ToUpperInvariant()
+            ))
+            .ToList();
+
+        var jsonOptsIntermediate = new JsonSerializerOptions { WriteIndented = true };
+
+        Directory.CreateDirectory(publicDataDir);
+        await File.WriteAllTextAsync(publicMarketTodayPath,
+            JsonSerializer.Serialize(marketToday, jsonOptsIntermediate));
+        await File.WriteAllTextAsync(Path.Combine(publicDataDir, "market_history_30.json"),
+            JsonSerializer.Serialize(history, jsonOptsIntermediate));
+
+        log.LogInformation("[H4] Participant data exported (PCR/VIX pending). public: {PubDir}", publicDataDir);
     }
     else
     {
-        history = new();
+        log.LogInformation("[H4] Re-using previously exported participant data; will update PCR/VIX only.");
+        var existingJson = await File.ReadAllTextAsync(publicMarketTodayPath);
+        marketToday = JsonSerializer.Deserialize<MarketTodayDto>(existingJson)
+            ?? throw new InvalidOperationException($"Failed to deserialize existing market_today.json from {publicMarketTodayPath}.");
+
+        var publicHistPath = Path.Combine(publicDataDir, "market_history_30.json");
+        if (File.Exists(publicHistPath))
+        {
+            var histJson = await File.ReadAllTextAsync(publicHistPath);
+            history = JsonSerializer.Deserialize<List<MarketHistoryPointDto>>(histJson) ?? new();
+        }
+        else
+        {
+            history = new();
+        }
     }
+
+    return (marketToday, history);
 }
 
-// ---- Fetch PCR and VIX (H3: up to PcrVixMaxRetries attempts, write partial data after each) ----
-// Use pcrVixDate derived from the actual exported data date (marketToday.date), NOT `today`.
-// This ensures PCR/VIX match the participant data date, especially when H4 fallback is active
-// and exportDate is the prior trading day rather than today.
-if (!DateTime.TryParseExact(marketToday.date, "yyyy-MM-dd",
-        System.Globalization.CultureInfo.InvariantCulture,
-        System.Globalization.DateTimeStyles.None, out var pcrVixDate))
+static async Task FetchAndPatchPcrVixAsync(
+    ServiceProvider sp,
+    MarketTodayDto marketToday,
+    List<MarketHistoryPointDto> history,
+    string publicDataDir,
+    string publicMarketTodayPath,
+    NseJobOptions jobOpts,
+    ILogger log)
 {
-    log.LogError("[H3] Cannot parse marketToday.date '{Date}' as yyyy-MM-dd. Skipping PCR/VIX fetch.", marketToday.date);
-    return;
-}
+    if (!TryParseMarketTodayDate(marketToday, log, out var pcrVixDate))
+        return;
 
-int maxPcrVixRetries = jobOpts.PcrVixMaxRetries;
-int retryDelayMs     = jobOpts.PcrVixRetryMinutes * 60 * 1000;
+    int maxPcrVixRetries = jobOpts.PcrVixMaxRetries;
+    int retryDelayMs = jobOpts.PcrVixRetryMinutes * 60 * 1000;
 
-double? pcr                = null;
-double? pcrVolume          = null;
-double? bankniftyPcr       = null;
-double? bankniftyPcrVolume = null;
-double? vix                = null;
-
-using (var scope = sp.CreateScope())
-{
+    using var scope = sp.CreateScope();
     var opBhavSvc = scope.ServiceProvider.GetRequiredService<OpBhavCopyService>();
-    var prPcrSvc  = scope.ServiceProvider.GetRequiredService<PrPcrService>();
-    var bhavSvc   = scope.ServiceProvider.GetRequiredService<FoBhavCopyService>();
-    var vixSvc    = scope.ServiceProvider.GetRequiredService<VixFetchService>();
+    var prPcrSvc = scope.ServiceProvider.GetRequiredService<PrPcrService>();
+    var bhavSvc = scope.ServiceProvider.GetRequiredService<FoBhavCopyService>();
+    var vixSvc = scope.ServiceProvider.GetRequiredService<VixFetchService>();
 
     var jsonOpts = new JsonSerializerOptions { WriteIndented = true };
+
+    double? pcr = null, pcrVolume = null, bankniftyPcr = null, bankniftyPcrVolume = null, vix = null;
 
     for (int attempt = 1; attempt <= maxPcrVixRetries; attempt++)
     {
         log.LogInformation("[H3] Fetching PCR/VIX for {Date}, attempt {Attempt}/{Max}",
             pcrVixDate.ToString("yyyy-MM-dd"), attempt, maxPcrVixRetries);
 
-        // Primary PCR source: NSE op-bhavcopy (op{DDMMYYYY}.csv from fo{DDMMYYYY}.zip)
-        // Aggregates CE and PE across ALL expiries for NIFTY and BANKNIFTY.
         if (pcr is null)
         {
-            var opResult = await opBhavSvc.FetchPcrAsync(pcrVixDate, CancellationToken.None);
-            if (opResult is not null)
+            var pcrResult = await FetchPcrFromSourcesAsync(opBhavSvc, prPcrSvc, bhavSvc, pcrVixDate, log);
+            if (pcrResult.pcr.HasValue)
             {
-                pcr                = opResult.NiftyPcrOi;
-                pcrVolume          = opResult.NiftyPcrVolume;
-                bankniftyPcr       = opResult.BankniftyPcrOi;
-                bankniftyPcrVolume = opResult.BankniftyPcrVolume;
-                log.LogInformation(
-                    "[H3] PCR sourced from op-bhavcopy: OI={Pcr}, Vol={PcrVol}, BNF OI={BnfPcr}, BNF Vol={BnfVol}",
-                    pcr, pcrVolume, bankniftyPcr, bankniftyPcrVolume);
+                pcr = pcrResult.pcr;
+                pcrVolume = pcrResult.pcrVolume;
+                bankniftyPcr = pcrResult.bankniftyPcr;
+                bankniftyPcrVolume = pcrResult.bankniftyPcrVolume;
             }
-        }
-
-        // Secondary PCR source: NSE PR file (OI + Volume PCR for NIFTY and BANKNIFTY)
-        if (pcr is null)
-        {
-            var prResult = await prPcrSvc.FetchPcrAsync(pcrVixDate, CancellationToken.None);
-            if (prResult is not null)
-            {
-                pcr                = prResult.NiftyPcrOi;
-                pcrVolume          = prResult.NiftyPcrVolume;
-                bankniftyPcr       = prResult.BankniftyPcrOi;
-                bankniftyPcrVolume = prResult.BankniftyPcrVolume;
-                log.LogInformation(
-                    "[H3] PCR sourced from PR file: OI={Pcr}, Vol={PcrVol}, BNF OI={BnfPcr}, BNF Vol={BnfVol}",
-                    pcr, pcrVolume, bankniftyPcr, bankniftyPcrVolume);
-            }
-        }
-
-        // Tertiary fallback: FO Bhavcopy (NIFTY OI PCR only)
-        if (pcr is null)
-        {
-            pcr = await bhavSvc.FetchPcrAsync(pcrVixDate, CancellationToken.None);
-            if (pcr.HasValue)
-                log.LogInformation("[H3] NIFTY OI PCR sourced from FO bhavcopy fallback: {Pcr}", pcr);
         }
 
         if (vix is null)
-            vix = await vixSvc.FetchVixAsync(pcrVixDate, CancellationToken.None);
+        {
+            vix = await FetchVixFromServiceAsync(vixSvc, pcrVixDate);
+        }
 
-        // Write whatever is available right now so the dashboard shows partial data immediately.
-        // This covers the case where e.g. PCR is obtained on attempt 1 but VIX is still pending.
         bool anyData = pcr.HasValue || vix.HasValue || pcrVolume.HasValue
                        || bankniftyPcr.HasValue || bankniftyPcrVolume.HasValue;
         if (anyData)
         {
-            marketToday = marketToday with
-            {
-                pcr                  = pcr,
-                vix                  = vix,
-                pcr_volume           = pcrVolume,
-                banknifty_pcr        = bankniftyPcr,
-                banknifty_pcr_volume = bankniftyPcrVolume,
-            };
+            marketToday = PatchMarketToday(marketToday, pcr, vix, pcrVolume, bankniftyPcr, bankniftyPcrVolume);
 
-            Directory.CreateDirectory(publicDataDir);
-            await File.WriteAllTextAsync(publicMarketTodayPath,
-                JsonSerializer.Serialize(marketToday, jsonOpts));
-            await File.WriteAllTextAsync(Path.Combine(publicDataDir, "market_history_30.json"),
-                JsonSerializer.Serialize(history, jsonOpts));
+            await SavePatchedJsonAsync(marketToday, history, publicDataDir, publicMarketTodayPath, jsonOpts);
 
             log.LogInformation(
                 "[H3] JSON patched after attempt {Attempt}: PCR={Pcr}, PCRVol={PcrVol}, BNF={BnfPcr}, VIX={Vix}. public: {PubDir}",
                 attempt, pcr, pcrVolume, bankniftyPcr, vix, publicDataDir);
         }
 
-        // All data complete — no need to retry further.
         if (pcr.HasValue && vix.HasValue)
         {
             log.LogInformation("[H3] All data complete on attempt {Attempt}. PCR={Pcr}, VIX={Vix}. Done.",
@@ -398,6 +373,95 @@ using (var scope = sp.CreateScope())
     }
 }
 
+static bool TryParseMarketTodayDate(MarketTodayDto marketToday, ILogger log, out DateTime pcrVixDate)
+{
+    if (!DateTime.TryParseExact(marketToday.date, "yyyy-MM-dd",
+            System.Globalization.CultureInfo.InvariantCulture,
+            System.Globalization.DateTimeStyles.None, out pcrVixDate))
+    {
+        log.LogError("[H3] Cannot parse marketToday.date '{Date}' as yyyy-MM-dd. Skipping PCR/VIX fetch.", marketToday.date);
+        return false;
+    }
+    return true;
+}
+
+static async Task<(double? pcr, double? pcrVolume, double? bankniftyPcr, double? bankniftyPcrVolume)> FetchPcrFromSourcesAsync(
+    OpBhavCopyService opBhavSvc,
+    PrPcrService prPcrSvc,
+    FoBhavCopyService bhavSvc,
+    DateTime pcrVixDate,
+    ILogger log)
+{
+    // Try op-bhavcopy first
+    var opResult = await opBhavSvc.FetchPcrAsync(pcrVixDate, CancellationToken.None);
+    if (opResult is not null)
+    {
+        log.LogInformation(
+            "[H3] PCR sourced from op-bhavcopy: OI={Pcr}, Vol={PcrVol}, BNF OI={BnfPcr}, BNF Vol={BnfVol}",
+            opResult.NiftyPcrOi, opResult.NiftyPcrVolume, opResult.BankniftyPcrOi, opResult.BankniftyPcrVolume);
+
+        return (opResult.NiftyPcrOi, opResult.NiftyPcrVolume, opResult.BankniftyPcrOi, opResult.BankniftyPcrVolume);
+    }
+
+    // Try PR file next
+    var prResult = await prPcrSvc.FetchPcrAsync(pcrVixDate, CancellationToken.None);
+    if (prResult is not null)
+    {
+        log.LogInformation(
+            "[H3] PCR sourced from PR file: OI={Pcr}, Vol={PrcVol}, BNF OI={BnfPcr}, BNF Vol={BnfVol}",
+            prResult.NiftyPcrOi, prResult.NiftyPcrVolume, prResult.BankniftyPcrOi, prResult.BankniftyPcrVolume);
+
+        return (prResult.NiftyPcrOi, prResult.NiftyPcrVolume, prResult.BankniftyPcrOi, prResult.BankniftyPcrVolume);
+    }
+
+    // Fallback to FO bhavcopy (only NIFTY OI PCR)
+    var bhavPcr = await bhavSvc.FetchPcrAsync(pcrVixDate, CancellationToken.None);
+    if (bhavPcr.HasValue)
+    {
+        log.LogInformation("[H3] NIFTY OI PCR sourced from FO bhavcopy fallback: {Pcr}", bhavPcr);
+        return (bhavPcr, null, null, null);
+    }
+
+    return (null, null, null, null);
+}
+
+static async Task<double?> FetchVixFromServiceAsync(VixFetchService vixSvc, DateTime pcrVixDate)
+{
+    return await vixSvc.FetchVixAsync(pcrVixDate, CancellationToken.None);
+}
+
+static async Task SavePatchedJsonAsync(
+    MarketTodayDto marketToday,
+    List<MarketHistoryPointDto> history,
+    string publicDataDir,
+    string publicMarketTodayPath,
+    JsonSerializerOptions jsonOpts)
+{
+    Directory.CreateDirectory(publicDataDir);
+    await File.WriteAllTextAsync(publicMarketTodayPath,
+        JsonSerializer.Serialize(marketToday, jsonOpts));
+    await File.WriteAllTextAsync(Path.Combine(publicDataDir, "market_history_30.json"),
+        JsonSerializer.Serialize(history, jsonOpts));
+}
+
+static MarketTodayDto PatchMarketToday(
+    MarketTodayDto marketToday,
+    double? pcr,
+    double? vix,
+    double? pcrVolume,
+    double? bankniftyPcr,
+    double? bankniftyPcrVolume)
+{
+    return marketToday with
+    {
+        pcr = pcr,
+        vix = vix,
+        pcr_volume = pcrVolume,
+        banknifty_pcr = bankniftyPcr,
+        banknifty_pcr_volume = bankniftyPcrVolume,
+    };
+}
+
 static string FindRepoRoot()
 {
     var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
@@ -410,5 +474,3 @@ static string FindRepoRoot()
     }
     throw new InvalidOperationException("Repo root not found (expected /frontend and /backend).");
 }
-
-log.LogInformation("DONE");
