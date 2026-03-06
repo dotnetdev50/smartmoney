@@ -1,37 +1,37 @@
 {
   "index": "NIFTY",
-  "date": "2026-03-05",
-  "final_score": -67.87231834245432,
+  "date": "2026-03-06",
+  "final_score": -78.45989716376648,
   "regime": "SHOCK",
-  "shock_score": 4.0294818030396735,
+  "shock_score": 3.1902492274385263,
   "participants": [
     {
       "name": "DII",
-      "bias": -0.2907363084997381,
-      "label": "Neutral"
+      "bias": -1.0317160973650439,
+      "label": "Bearish"
     },
     {
       "name": "FII",
-      "bias": -4.283003522936811,
+      "bias": -4.751245493584204,
       "label": "Strong Bearish"
     },
     {
       "name": "PRO",
-      "bias": -0.19149939535809574,
-      "label": "Neutral"
+      "bias": -1.125168140589012,
+      "label": "Bearish"
     },
     {
       "name": "RETAIL",
-      "bias": 1.753128243518447,
-      "label": "Bullish"
+      "bias": 3.299443947692826,
+      "label": "Strong Bullish"
     }
   ],
   "bias_Label": "Bearish",
-  "strength": "Moderate",
-  "explanation": "Shock regime detected (shock=4.0). Top driver: FII (-4.28, Strong Bearish). Composite bias is bearish.",
-  "pcr": 1.0149,
+  "strength": "Strong",
+  "explanation": "Shock regime detected (shock=3.2). Top driver: FII (-4.75, Strong Bearish). Composite bias is bearish.",
+  "pcr": 0.8351,
   "vix": null,
-  "pcr_volume": 0.7997,
-  "banknifty_pcr": 0.9192,
-  "banknifty_pcr_volume": 0.8622
+  "pcr_volume": 1.0008,
+  "banknifty_pcr": 0.8189,
+  "banknifty_pcr_volume": 1.1933
 }
