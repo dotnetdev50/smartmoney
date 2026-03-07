@@ -28,7 +28,6 @@ namespace SmartMoney.Application.Services;
 /// PCR (Volume) = Sum(TtlTradgV  for PE) / Sum(TtlTradgV  for CE)  — all expiries
 /// </summary>
 public sealed class BhavCopyService(
-    HttpClient _,
     IOptions<NseOptions> options,
     ILogger<BhavCopyService> logger)
 {

@@ -125,8 +125,8 @@ namespace SmartMoney.Job
                 if (int.TryParse(Environment.GetEnvironmentVariable("PCR_VIX_RETRY_MINUTES"), out var pr)) o.PcrVixRetryMinutes = pr;
             });
 
-            services.AddHttpClient<BhavCopyService>();
-            services.AddHttpClient<OpBhavCopyService>();
+            services.AddTransient<BhavCopyService>();
+            services.AddTransient<OpBhavCopyService>();
             services.AddHttpClient<PrPcrService>();
             services.AddHttpClient<FoBhavCopyService>();
             services.AddHttpClient<VixFetchService>();
@@ -248,7 +248,6 @@ namespace SmartMoney.Job
                 var regime = latest.Regime.ToString().ToUpperInvariant();
                 var explanation = MarketNarrative.Explanation(regime, latest.ShockScore, participants, latest.FinalScore);
 
-                var participantActivity = await ComputeParticipantActivityAsync(db, exportDate, log);
                 // Build participant activity rows (FII + DII, Futures/Calls/Puts, net OI change + % vs yesterday)
                 var activityParticipants = new[] { ParticipantType.FII, ParticipantType.DII };
 
@@ -314,7 +313,6 @@ namespace SmartMoney.Job
                     explanation: explanation,
                     pcr: null,
                     vix: null,
-                    participant_activity: participantActivity
                     participant_activity: activityRows
                 );
 
@@ -404,48 +402,46 @@ namespace SmartMoney.Job
 
             // Participant order: FII, DII, PRO, RETAIL (Client)
             var order = new[] { "FII", "DII", "PRO", "RETAIL" };
+            var orderMap = order.Select((name, i) => (name, i)).ToDictionary(x => x.name, x => x.i);
 
-            var rows = todayRaw
-                .Select(r =>
+            var rows = new List<ParticipantActivityRowDto>();
+            foreach (var r in todayRaw.OrderBy(r =>
+            {
+                var name = r.Participant.ToString().ToUpperInvariant();
+                return orderMap.TryGetValue(name, out var idx) ? idx : 99;
+            }))
+            {
+                // Net long positions:
+                //   futures_net = Col B - Col C = FutLong - FutShort = FuturesNet
+                //   calls_net   = Col F - Col H = CallLong - CallShort = -(CallOiChange)
+                //   puts_net    = Col G - Col I = PutLong  - PutShort  = -(PutOiChange)
+                var futuresNet = r.FuturesNet;
+                var callsNet = -r.CallOiChange;
+                var putsNet = -r.PutOiChange;
+
+                double? futuresPct = null;
+                double? callsPct = null;
+                double? putsPct = null;
+
+                if (yesterdayMap.TryGetValue(r.Participant, out var prev))
                 {
-                    // Net long positions:
-                    //   futures_net = Col B - Col C = FutLong - FutShort = FuturesNet
-                    //   calls_net   = Col F - Col H = CallLong - CallShort = -(CallOiChange)
-                    //   puts_net    = Col G - Col I = PutLong  - PutShort  = -(PutOiChange)
-                    var futuresNet = r.FuturesNet;
-                    var callsNet = -r.CallOiChange;
-                    var putsNet = -r.PutOiChange;
+                    var prevFutures = prev.FuturesNet;
+                    var prevCalls = -prev.CallOiChange;
+                    var prevPuts = -prev.PutOiChange;
 
-                    double? futuresPct = null;
-                    double? callsPct = null;
-                    double? putsPct = null;
+                    if (Math.Abs(prevFutures) > 1e-10)
+                        futuresPct = Math.Round((futuresNet - prevFutures) / Math.Abs(prevFutures) * 100.0, 2);
+                    if (Math.Abs(prevCalls) > 1e-10)
+                        callsPct = Math.Round((callsNet - prevCalls) / Math.Abs(prevCalls) * 100.0, 2);
+                    if (Math.Abs(prevPuts) > 1e-10)
+                        putsPct = Math.Round((putsNet - prevPuts) / Math.Abs(prevPuts) * 100.0, 2);
+                }
 
-                    if (yesterdayMap.TryGetValue(r.Participant, out var prev))
-                    {
-                        var prevFutures = prev.FuturesNet;
-                        var prevCalls = -prev.CallOiChange;
-                        var prevPuts = -prev.PutOiChange;
-
-                        if (Math.Abs(prevFutures) > 1e-10)
-                            futuresPct = Math.Round((futuresNet - prevFutures) / Math.Abs(prevFutures) * 100.0, 2);
-                        if (Math.Abs(prevCalls) > 1e-10)
-                            callsPct = Math.Round((callsNet - prevCalls) / Math.Abs(prevCalls) * 100.0, 2);
-                        if (Math.Abs(prevPuts) > 1e-10)
-                            putsPct = Math.Round((putsNet - prevPuts) / Math.Abs(prevPuts) * 100.0, 2);
-                    }
-
-                    return new ParticipantActivityRowDto(
-                        name: r.Participant.ToString().ToUpperInvariant(),
-                        futures_net: futuresNet,
-                        calls_net: callsNet,
-                        puts_net: putsNet,
-                        futures_pct: futuresPct,
-                        calls_pct: callsPct,
-                        puts_pct: putsPct
-                    );
-                })
-                .OrderBy(r => Array.IndexOf(order, r.name) is var idx && idx >= 0 ? idx : 99)
-                .ToList();
+                var pName = r.Participant.ToString().ToUpperInvariant();
+                rows.Add(new ParticipantActivityRowDto(pName, "Futures", futuresNet, futuresPct));
+                rows.Add(new ParticipantActivityRowDto(pName, "Calls", callsNet, callsPct));
+                rows.Add(new ParticipantActivityRowDto(pName, "Puts", putsNet, putsPct));
+            }
 
             return rows;
         }
