@@ -28,7 +28,6 @@ namespace SmartMoney.Application.Services;
 /// Aggregated across ALL expiries.
 /// </summary>
 public sealed partial class OpBhavCopyService(
-    HttpClient http,
     IOptions<NseOptions> options,
     ILogger<OpBhavCopyService> logger)
 {

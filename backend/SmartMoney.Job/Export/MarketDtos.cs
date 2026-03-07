@@ -7,13 +7,6 @@ public sealed record ParticipantDto(
 );
 
 public sealed record ParticipantActivityRowDto(
-    string name,
-    double futures_net,
-    double calls_net,
-    double puts_net,
-    double? futures_pct,
-    double? calls_pct,
-    double? puts_pct
     string participant,
     string instrument,
     double net_oi_change,
