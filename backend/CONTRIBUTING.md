@@ -29,8 +29,8 @@ This repository separates runtime configuration into two concerns:
 ```text
 # Environment variables (for job)
 JOB_START_AT_IST=20:30
-PCR_VIX_MAX_RETRIES=3
-PCR_VIX_RETRY_MINUTES=30
+PCR_VIX_MAX_RETRIES=2
+PCR_VIX_RETRY_MINUTES=10
 ```
 
 ## Example (API host)
