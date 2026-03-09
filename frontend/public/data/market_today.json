@@ -70,6 +70,24 @@
       "instrument": "Puts",
       "net_oi_change": 2380,
       "vs_yesterday_pct": 8.04
+    },
+    {
+      "participant": "PRO",
+      "instrument": "Futures",
+      "net_oi_change": 16058,
+      "vs_yesterday_pct": 129.98
+    },
+    {
+      "participant": "PRO",
+      "instrument": "Calls",
+      "net_oi_change": 20451,
+      "vs_yesterday_pct": 27.75
+    },
+    {
+      "participant": "PRO",
+      "instrument": "Puts",
+      "net_oi_change": 94335,
+      "vs_yesterday_pct": 62.84
     }
   ]
 }
