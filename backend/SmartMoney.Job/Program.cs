@@ -155,6 +155,30 @@ namespace SmartMoney.Job
                 if (existing.TryGetProperty("date", out var dateEl) &&
                     dateEl.GetString() == targetDate.ToString("yyyy-MM-dd"))
                 {
+                    // Verify participant_activity includes PRO; if not, force a full re-ingest
+                    // so the data is regenerated with the complete set of participants.
+                    bool hasProActivity = false;
+                    if (existing.TryGetProperty("participant_activity", out var activityEl) &&
+                        activityEl.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var item in activityEl.EnumerateArray())
+                        {
+                            if (item.TryGetProperty("participant", out var pEl) &&
+                                "PRO".Equals(pEl.GetString(), StringComparison.OrdinalIgnoreCase))
+                            {
+                                hasProActivity = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!hasProActivity)
+                    {
+                        log.LogInformation("[H2] market_today.json for {Date} is missing PRO activity data. Proceeding with full run.",
+                            targetDate.ToString("yyyy-MM-dd"));
+                        return false;
+                    }
+
                     bool hasPcr = existing.TryGetProperty("pcr", out var pcrEl) && pcrEl.ValueKind != JsonValueKind.Null;
                     bool hasVix = existing.TryGetProperty("vix", out var vixEl) && vixEl.ValueKind != JsonValueKind.Null;
 
