@@ -10,10 +10,10 @@ public sealed class NseJobOptions
 
     /// <summary>
     /// Maximum number of PCR/VIX fetch attempts (H3).
-    /// 3 = 1 initial attempt + 2 retries, 30 min apart → covers 8:30–9:30 PM IST window.
+    /// 2 = 1 initial attempt + 1 retry, 10 min apart.
     /// </summary>
-    public int PcrVixMaxRetries { get; set; } = 3;
+    public int PcrVixMaxRetries { get; set; } = 2;
 
     /// <summary>Delay in minutes between PCR/VIX fetch retries (H3).</summary>
-    public int PcrVixRetryMinutes { get; set; } = 30;
+    public int PcrVixRetryMinutes { get; set; } = 10;
 }
