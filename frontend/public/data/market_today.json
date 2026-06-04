@@ -1,93 +1,93 @@
 {
   "index": "NIFTY",
-  "date": "2026-06-03",
-  "final_score": -78.18208151846108,
+  "date": "2026-06-04",
+  "final_score": -90.91446523884206,
   "regime": "SHOCK",
-  "shock_score": 9.067863134428059,
+  "shock_score": 18.074601898653167,
   "participants": [
     {
       "name": "DII",
-      "bias": 0.8426873584875569,
+      "bias": 0.8065960878467933,
       "label": "Mild Bullish"
     },
     {
       "name": "FII",
-      "bias": -7.098535222036787,
+      "bias": -9.066288572894834,
       "label": "Strong Bearish"
     },
     {
       "name": "PRO",
-      "bias": -0.43347008628312644,
-      "label": "Mild Bearish"
+      "bias": -1.4671991840817622,
+      "label": "Bearish"
     },
     {
       "name": "RETAIL",
-      "bias": 7.008432665419608,
+      "bias": 8.602140271486222,
       "label": "Strong Bullish"
     }
   ],
   "bias_Label": "Bearish",
   "strength": "Strong",
-  "explanation": "Shock regime detected (shock=9.1). Top driver: FII (-7.10, Strong Bearish). Composite bias is bearish.",
-  "pcr": 1.0164,
+  "explanation": "Shock regime detected (shock=18.1). Top driver: FII (-9.07, Strong Bearish). Composite bias is bearish.",
+  "pcr": 1.0032,
   "vix": null,
-  "pcr_volume": 0.9363,
-  "banknifty_pcr": 0.8717,
-  "banknifty_pcr_volume": 0.6935,
+  "pcr_volume": 0.9456,
+  "banknifty_pcr": 0.8722,
+  "banknifty_pcr_volume": 0.6888,
   "participant_activity": [
     {
       "participant": "FII",
       "instrument": "Futures",
-      "net_oi_change": -29157,
-      "vs_yesterday_pct": -12.67
+      "net_oi_change": -5315,
+      "vs_yesterday_pct": -2.05
     },
     {
       "participant": "FII",
       "instrument": "Calls",
-      "net_oi_change": -28438,
-      "vs_yesterday_pct": -10.16
+      "net_oi_change": 22643,
+      "vs_yesterday_pct": 9.01
     },
     {
       "participant": "FII",
       "instrument": "Puts",
-      "net_oi_change": -42902,
-      "vs_yesterday_pct": -8.67
+      "net_oi_change": 21138,
+      "vs_yesterday_pct": 3.93
     },
     {
       "participant": "DII",
       "instrument": "Futures",
-      "net_oi_change": 3553,
-      "vs_yesterday_pct": 10.81
+      "net_oi_change": 344,
+      "vs_yesterday_pct": 0.94
     },
     {
       "participant": "DII",
       "instrument": "Calls",
-      "net_oi_change": -505,
-      "vs_yesterday_pct": -6.99
+      "net_oi_change": -20,
+      "vs_yesterday_pct": -0.26
     },
     {
       "participant": "DII",
       "instrument": "Puts",
-      "net_oi_change": 0,
-      "vs_yesterday_pct": 0
+      "net_oi_change": -20,
+      "vs_yesterday_pct": -0.08
     },
     {
       "participant": "PRO",
       "instrument": "Futures",
-      "net_oi_change": 16044,
-      "vs_yesterday_pct": 150.08
+      "net_oi_change": -2613,
+      "vs_yesterday_pct": -9.77
     },
     {
       "participant": "PRO",
       "instrument": "Calls",
-      "net_oi_change": -100100,
-      "vs_yesterday_pct": -516.57
+      "net_oi_change": -28011,
+      "vs_yesterday_pct": -34.7
     },
     {
       "participant": "PRO",
       "instrument": "Puts",
-      "net_oi_change": 6417,
-      "vs_yesterday_pct": 3.13
+      "net_oi_change": -28642,
+      "vs_yesterday_pct": -14.42
     }
   ]
 }
