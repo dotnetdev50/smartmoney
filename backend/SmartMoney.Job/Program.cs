@@ -14,9 +14,9 @@ namespace SmartMoney.Job
 {
     internal static class Program
     {
-        private static async Task Main()
+        private static async Task Main(string[] args)
         {
-            await MainAsync();
+            await MainAsync(args);
         }
 
         private static DateTimeOffset ToIst(DateTimeOffset utc)
@@ -34,18 +34,19 @@ namespace SmartMoney.Job
 
         // ---- IST helpers ----
 
-        private static async Task MainAsync()
+        private static async Task MainAsync(string[] args)
         {
             var istNow = ToIst(DateTimeOffset.UtcNow);
             var today = istNow.Date;
 
             const int NsePublishHourIst = 20;
             bool isBeforeNsePublish = istNow.Hour < NsePublishHourIst;
-            var targetDate = GetTargetDate(today, isBeforeNsePublish);
+            var explicitTargetDate = ParseExplicitTargetDate(args);
+            var targetDate = explicitTargetDate ?? GetTargetDate(today, isBeforeNsePublish);
 
-            Console.WriteLine($"[H0] IST now: {istNow:HH:mm}. isBeforeNsePublish={isBeforeNsePublish}. targetDate={targetDate:yyyy-MM-dd}");
+            Console.WriteLine($"[H0] IST now: {istNow:HH:mm}. isBeforeNsePublish={isBeforeNsePublish}. targetDate={targetDate:yyyy-MM-dd}. explicitDate={explicitTargetDate.HasValue}");
 
-            if (IsWeekend(today))
+            if (!explicitTargetDate.HasValue && IsWeekend(today))
             {
                 Console.WriteLine($"[H1] Today ({today:yyyy-MM-dd}, {today.DayOfWeek}) is a weekend. Skipping job.");
                 return;
@@ -82,6 +83,22 @@ namespace SmartMoney.Job
                 sp, marketToday, history, publicDataDir, publicMarketTodayPath, jobOpts, log);
 
             log.LogInformation("DONE");
+        }
+
+        private static DateTime? ParseExplicitTargetDate(IReadOnlyList<string> args)
+        {
+            if (args.Count == 0) return null;
+
+            if (args.Count != 2 || !args[0].Equals("--date", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("Usage: SmartMoney.Job [--date yyyy-MM-dd]");
+
+            if (!TryParseDateExact(args[1], out var targetDate))
+                throw new ArgumentException("The --date value must use yyyy-MM-dd format.");
+
+            if (IsWeekend(targetDate))
+                throw new ArgumentException("The explicit --date must be a weekday trading-date candidate.");
+
+            return targetDate.Date;
         }
 
         private static DateTime GetTargetDate(DateTime today, bool isBeforeNsePublish)

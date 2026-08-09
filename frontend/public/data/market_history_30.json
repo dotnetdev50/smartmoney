@@ -1,112 +1,112 @@
 [
   {
+    "date": "2026-07-07",
+    "final_score": 4.144998911669625,
+    "regime": "SHOCK"
+  },
+  {
+    "date": "2026-07-08",
+    "final_score": -23.510369767279997,
+    "regime": "SHOCK"
+  },
+  {
     "date": "2026-07-09",
-    "final_score": -84.00847071132068,
+    "final_score": -5.21564253121422,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-10",
-    "final_score": -81.69514453819183,
-    "regime": "SHOCK"
+    "final_score": 3.7417842482466983,
+    "regime": "NORMAL"
   },
   {
     "date": "2026-07-13",
-    "final_score": -70.83357955931737,
-    "regime": "SHOCK"
+    "final_score": 5.893328605857913,
+    "regime": "NORMAL"
   },
   {
     "date": "2026-07-14",
-    "final_score": -68.72714322154233,
-    "regime": "SHOCK"
+    "final_score": -11.919324807882703,
+    "regime": "NORMAL"
   },
   {
     "date": "2026-07-15",
-    "final_score": -83.70603462551097,
+    "final_score": 1.8518473542693714,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-16",
-    "final_score": -96.61738983556454,
+    "final_score": -8.161800188206385,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-17",
-    "final_score": -99.99723825975771,
+    "final_score": 27.44757613224541,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-20",
-    "final_score": -93.96879926761964,
+    "final_score": 2.3175194820076674,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-21",
-    "final_score": -91.6303124752649,
+    "final_score": -9.78829542863209,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-22",
-    "final_score": 20.615245722618347,
-    "regime": "SHOCK"
+    "final_score": -15.433430330497355,
+    "regime": "NORMAL"
   },
   {
     "date": "2026-07-23",
-    "final_score": 49.09559622582218,
-    "regime": "SHOCK"
+    "final_score": -15.32167841545653,
+    "regime": "NORMAL"
   },
   {
     "date": "2026-07-24",
-    "final_score": 57.48685643309423,
+    "final_score": -10.866008080373547,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-27",
-    "final_score": 26.95720922166608,
+    "final_score": 9.474154101526311,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-28",
-    "final_score": -91.2311190621777,
+    "final_score": -9.96974259634161,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-29",
-    "final_score": -76.02069209041228,
+    "final_score": 17.76437628128213,
     "regime": "SHOCK"
   },
   {
     "date": "2026-07-30",
-    "final_score": -74.87889292728576,
-    "regime": "SHOCK"
+    "final_score": 5.381452338749671,
+    "regime": "NORMAL"
   },
   {
     "date": "2026-07-31",
-    "final_score": -82.59632463242414,
-    "regime": "SHOCK"
+    "final_score": -5.453084954538122,
+    "regime": "NORMAL"
   },
   {
     "date": "2026-08-03",
-    "final_score": -65.66134471839732,
+    "final_score": 11.71846466161315,
     "regime": "SHOCK"
   },
   {
     "date": "2026-08-04",
-    "final_score": -94.19709674074207,
+    "final_score": -22.250194113725293,
     "regime": "SHOCK"
   },
   {
     "date": "2026-08-05",
-    "final_score": -95.508630532785,
-    "regime": "SHOCK"
-  },
-  {
-    "date": "2026-08-06",
-    "final_score": -83.46344991660033,
-    "regime": "SHOCK"
-  },
-  {
-    "date": "2026-08-07",
-    "final_score": -90.86545752323106,
+    "final_score": 0.07170125969317986,
     "regime": "SHOCK"
   }
 ]

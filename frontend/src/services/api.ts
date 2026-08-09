@@ -24,6 +24,36 @@ export type ParticipantActivityRow = {
   vs_yesterday_pct?: number | null;
 };
 
+export type NarrativeContribution = {
+  name: string;
+  contribution: number;
+};
+
+export type NarrativeCounts = {
+  positive: number;
+  negative: number;
+  zero: number;
+};
+
+export type MarketNarrativeDecomposition = {
+  participant_contributions: NarrativeContribution[];
+  main_participant_driver?: string | null;
+  indicator_contributions: NarrativeContribution[];
+  main_indicator_driver?: string | null;
+  participant_counts: NarrativeCounts;
+  indicator_counts: NarrativeCounts;
+  participant_concentration: number;
+  participant_alignment: string;
+  indicator_alignment: string;
+  dii_smart_relationship: string;
+  smart_bias: number;
+  retail_bias: number;
+  dii_bias: number;
+  smart_retail_divergence: number;
+  smart_dii_divergence: number;
+  smart_retail_state: string;
+};
+
 export type MarketTodayResponse = {
   index: string;
   date: string;
@@ -52,6 +82,9 @@ export type MarketTodayResponse = {
   smart_retail_divergence?: number | null;
   smart_dii_divergence?: number | null;
   smart_retail_state?: string | null;
+
+  // Deterministic narrative diagnostics (Phase 5)
+  decomposition?: MarketNarrativeDecomposition | null;
 
   // Optional if you keep the old API contract too
   final_Score?: number;
