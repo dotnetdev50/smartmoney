@@ -44,6 +44,7 @@ builder.Services.AddScoped<DailyPipelineService>();
 
 //Market presentation service
 builder.Services.AddScoped<MarketPresentationService>();
+builder.Services.AddScoped<MarketCloseCsvImportService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

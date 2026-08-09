@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartMoney.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SmartMoney.Infrastructure.Persistence;
 namespace SmartMoney.Infrastructure.Migrations
 {
     [DbContext(typeof(SmartMoneyDbContext))]
-    partial class SmartMoneyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809122619_AddMarketClose")]
+    partial class AddMarketClose
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
