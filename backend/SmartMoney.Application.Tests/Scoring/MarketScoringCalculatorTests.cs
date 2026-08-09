@@ -801,6 +801,183 @@ public sealed class MarketScoringCalculatorTests
         Assert.InRange(finalScore, expectedFinal - 1e-7, expectedFinal + 1e-7);
     }
 
+    [Fact]
+    public void ComputeSmartBiasNormalized_UsesExactWeightedFormula()
+    {
+        var sut = new MarketScoringCalculator();
+
+        var participantBias = new Dictionary<ParticipantType, double>
+        {
+            [ParticipantType.FII] = 1.0,
+            [ParticipantType.Pro] = 2.0,
+            [ParticipantType.DII] = -4.0,
+            [ParticipantType.Retail] = -5.0
+        };
+
+        var weighted = sut.ComputeSmartBiasWeighted(participantBias);
+        var normalized = sut.ComputeSmartBiasNormalized(participantBias);
+
+        Assert.InRange(weighted, 1.0 - Tolerance, 1.0 + Tolerance);
+        Assert.InRange(normalized, (1.0 / 0.7) - Tolerance, (1.0 / 0.7) + Tolerance);
+    }
+
+    [Fact]
+    public void ComputeSmartRetailDivergence_ReturnsPositiveWhenSmartExceedsRetail()
+    {
+        var sut = new MarketScoringCalculator();
+
+        var participantBias = new Dictionary<ParticipantType, double>
+        {
+            [ParticipantType.FII] = 1.0,
+            [ParticipantType.Pro] = 1.0,
+            [ParticipantType.Retail] = -0.5,
+            [ParticipantType.DII] = 0.0
+        };
+
+        var divergence = sut.ComputeSmartRetailDivergence(participantBias);
+
+        Assert.True(divergence > 0);
+    }
+
+    [Fact]
+    public void ComputeSmartRetailDivergence_ReturnsNegativeWhenRetailExceedsSmart()
+    {
+        var sut = new MarketScoringCalculator();
+
+        var participantBias = new Dictionary<ParticipantType, double>
+        {
+            [ParticipantType.FII] = -0.5,
+            [ParticipantType.Pro] = -0.5,
+            [ParticipantType.Retail] = 1.0,
+            [ParticipantType.DII] = 0.0
+        };
+
+        var divergence = sut.ComputeSmartRetailDivergence(participantBias);
+
+        Assert.True(divergence < 0);
+    }
+
+    [Fact]
+    public void ComputeSmartRetailState_ReturnsSmartBullRetailBear()
+    {
+        var sut = new MarketScoringCalculator();
+
+        var participantBias = new Dictionary<ParticipantType, double>
+        {
+            [ParticipantType.FII] = 1.0,
+            [ParticipantType.Pro] = 1.0,
+            [ParticipantType.Retail] = -1.0
+        };
+
+        var state = sut.ComputeSmartRetailState(participantBias);
+
+        Assert.Equal(SmartRetailState.SmartBullRetailBear, state);
+    }
+
+    [Fact]
+    public void ComputeSmartRetailState_ReturnsSmartBearRetailBull()
+    {
+        var sut = new MarketScoringCalculator();
+
+        var participantBias = new Dictionary<ParticipantType, double>
+        {
+            [ParticipantType.FII] = -1.0,
+            [ParticipantType.Pro] = -1.0,
+            [ParticipantType.Retail] = 1.0
+        };
+
+        var state = sut.ComputeSmartRetailState(participantBias);
+
+        Assert.Equal(SmartRetailState.SmartBearRetailBull, state);
+    }
+
+    [Fact]
+    public void ComputeSmartRetailState_ReturnsBothBull()
+    {
+        var sut = new MarketScoringCalculator();
+
+        var participantBias = new Dictionary<ParticipantType, double>
+        {
+            [ParticipantType.FII] = 2.0,
+            [ParticipantType.Pro] = 1.0,
+            [ParticipantType.Retail] = 0.5
+        };
+
+        var state = sut.ComputeSmartRetailState(participantBias);
+
+        Assert.Equal(SmartRetailState.BothBull, state);
+    }
+
+    [Fact]
+    public void ComputeSmartRetailState_ReturnsBothBear()
+    {
+        var sut = new MarketScoringCalculator();
+
+        var participantBias = new Dictionary<ParticipantType, double>
+        {
+            [ParticipantType.FII] = -2.0,
+            [ParticipantType.Pro] = -1.0,
+            [ParticipantType.Retail] = -0.5
+        };
+
+        var state = sut.ComputeSmartRetailState(participantBias);
+
+        Assert.Equal(SmartRetailState.BothBear, state);
+    }
+
+    [Fact]
+    public void ComputeSmartRetailState_WithZeroOnEitherSide_ReturnsMixedNeutral()
+    {
+        var sut = new MarketScoringCalculator();
+
+        var participantBias = new Dictionary<ParticipantType, double>
+        {
+            [ParticipantType.FII] = 0.5,
+            [ParticipantType.Pro] = -0.5,
+            [ParticipantType.Retail] = 0.0
+        };
+
+        var state = sut.ComputeSmartRetailState(participantBias);
+
+        Assert.Equal(SmartRetailState.MixedNeutral, state);
+    }
+
+    [Fact]
+    public void DivergenceDiagnostics_DoNotChangeRawFinalShockOrRegime()
+    {
+        var sut = new MarketScoringCalculator();
+
+        var participantBias = new Dictionary<ParticipantType, double>
+        {
+            [ParticipantType.FII] = 1.2,
+            [ParticipantType.Pro] = -0.5,
+            [ParticipantType.DII] = 0.8,
+            [ParticipantType.Retail] = 0.0
+        };
+
+        var rawBefore = sut.ComputeMarketRawScore(participantBias);
+        var finalBefore = sut.ComputeFinalScore(rawBefore);
+        var shockScore = 1.51;
+        var regimeBefore = sut.ComputeRegime(shockScore);
+
+        _ = sut.ComputeSmartBiasWeighted(participantBias);
+        _ = sut.ComputeSmartBiasNormalized(participantBias);
+        _ = sut.ComputeRetailBias(participantBias);
+        _ = sut.ComputeDiiBias(participantBias);
+        _ = sut.ComputeSmartRetailDivergence(participantBias);
+        _ = sut.ComputeSmartDiiDivergence(participantBias);
+        _ = sut.ComputeSmartRetailState(participantBias);
+
+        var rawAfter = sut.ComputeMarketRawScore(participantBias);
+        var finalAfter = sut.ComputeFinalScore(rawAfter);
+        var regimeAfter = sut.ComputeRegime(shockScore);
+
+        Assert.InRange(rawAfter, rawBefore - Tolerance, rawBefore + Tolerance);
+        Assert.InRange(finalAfter, finalBefore - 1e-7, finalBefore + 1e-7);
+        Assert.InRange(shockScore, 1.51 - Tolerance, 1.51 + Tolerance);
+        Assert.Equal(regimeBefore, regimeAfter);
+    }
+
     private static double ExpectedZ(IReadOnlyList<double> values)
     {
         var mean = values.Sum() / values.Count;

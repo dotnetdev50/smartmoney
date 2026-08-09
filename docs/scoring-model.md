@@ -148,23 +148,23 @@ No Phase-0 change should be made here merely to compensate for corrected z-score
 
 ## 6. Classification
 
-| Score range / rule | Classification |
+Canonical Job-generated frontend output uses `MarketNarrative.ScoreLabel`:
+
+| Score range / rule | Job presentation |
 |---|---|
-| abs(finalScore) < 15 | Label = Neutral, Strength = Weak |
-| abs(finalScore) >= 15 and < 35, finalScore >= 0 | Label = Bullish, Strength = Mild |
-| abs(finalScore) >= 15 and < 35, finalScore < 0 | Label = Bearish, Strength = Mild |
-| abs(finalScore) >= 35 and < 60, finalScore >= 0 | Label = Bullish, Strength = Moderate |
-| abs(finalScore) >= 35 and < 60, finalScore < 0 | Label = Bearish, Strength = Moderate |
-| abs(finalScore) >= 60, finalScore >= 0 | Label = Bullish, Strength = Strong |
-| abs(finalScore) >= 60, finalScore < 0 | Label = Bearish, Strength = Strong |
+| abs(finalScore) < 20 | Strength = Neutral |
+| abs(finalScore) >= 20 and < 40 | Strength = Mild |
+| abs(finalScore) >= 40 and < 70 | Strength = Moderate |
+| abs(finalScore) >= 70 | Strength = Strong |
+| finalScore >= 40 | Bias label = Bullish |
+| finalScore <= -40 | Bias label = Bearish |
+| finalScore > -40 and < 40 | Bias label = Neutral |
+
+The user-facing narrative direction uses the canonical Job bias label: scores at or above 40 are displayed as Bullish, scores at or below -40 are displayed as Bearish, and scores between those boundaries are displayed as Neutral. Raw positive, negative, or zero sign remains a quantitative diagnostic for decomposition, comparisons, and backtesting; it is not the displayed user-facing bias label.
+
+The previously documented 15 / 35 / 60 boundaries and Weak / Mild / Moderate / Strong names belong to the non-canonical legacy/API presentation logic. They are not used by the Job-generated `market_today.json` frontend output.
 
 Phase 0 rule: **record current thresholds; do not retune them.**
-
-Known Phase-0 observation — classification consistency:
-
-- MarketPresentationService (backend API path) and MarketNarrative (job export path) contain separate classification logic.
-- These can produce inconsistent labels/strength values for the same score.
-- This is recorded for Phase 0 visibility only; no resolution is applied here.
 
 Additional participant label logic in active API presentation path (DescribeParticipant):
 

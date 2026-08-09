@@ -18,6 +18,7 @@
     <ProjectReference Include="..\SmartMoney.Application\SmartMoney.Application.csproj" />
     <ProjectReference Include="..\SmartMoney.Domain\SmartMoney.Domain.csproj" />
     <ProjectReference Include="..\SmartMoney.Infrastructure\SmartMoney.Infrastructure.csproj" />
+    <ProjectReference Include="..\SmartMoney.Job\SmartMoney.Job.csproj" />
   </ItemGroup>
 
 </Project>

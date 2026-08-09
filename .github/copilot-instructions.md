@@ -49,6 +49,40 @@ If fixing the z-score materially changes output, report the impact rather than c
 
 The frontend displays/explains backend results. It must not independently recreate model calculations.
 
+## Runtime Architecture
+
+Canonical SmartMoney runtime path:
+
+     Raw/source data
+     -> SmartMoney.Job / DailyNseJob
+     -> DailyPipelineService
+     -> MarketScoringCalculator
+     -> persisted state where applicable
+     -> job-generated JSON/output files
+     -> frontend
+
+Runtime rules:
+
+1. The frontend primarily consumes job-generated output files, such as:
+    - market_today.json
+    - market_history_30.json
+2. The API/controller layer is not the canonical frontend/runtime path.
+3. API/AdminController functionality should be treated as debugging, diagnostics, and local/admin utilities unless a task explicitly requires API behavior.
+4. For new features, prefer integration with:
+    - SmartMoney.Job
+    - scoring/domain/application services
+    - job DTO/output generation
+    - frontend JSON contracts
+5. Do not automatically modify MarketController, AdminController, or API response DTOs when implementing dashboard/runtime features.
+6. Include API changes only when explicitly requested or when a feature genuinely requires an API consumer.
+7. For Phase 4 Smart/Retail divergence, expected runtime path is:
+    calculation
+    -> job output DTO
+    -> generated frontend JSON
+    -> dashboard
+    Do not include API changes in Phase 4 V1.
+8. Preserve the principle that quantitative logic stays deterministic and outside frontend/AI.
+
 ## AI Roadmap
 
 Runtime AI capabilities are planned only after the quantitative foundation is validated. Until then, AI is an engineering assistant only.
