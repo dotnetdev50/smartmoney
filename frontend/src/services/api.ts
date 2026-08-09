@@ -45,6 +45,14 @@ export type MarketTodayResponse = {
   // Participant activity: FII/DII Futures/Calls/Puts net OI changes
   participant_activity?: ParticipantActivityRow[] | null;
 
+  // Smart vs Retail diagnostics (Phase 4)
+  smart_bias?: number | null;
+  retail_bias?: number | null;
+  dii_bias?: number | null;
+  smart_retail_divergence?: number | null;
+  smart_dii_divergence?: number | null;
+  smart_retail_state?: string | null;
+
   // Optional if you keep the old API contract too
   final_Score?: number;
   bias_Label?: string;

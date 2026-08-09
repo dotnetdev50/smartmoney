@@ -56,4 +56,49 @@ public sealed class MarketScoringCalculator
 
     public double ComputeFinalScore(double rawBias)
         => Math.Tanh(rawBias / 2.0) * 100.0;
+
+    public double ComputeSmartBiasWeighted(IReadOnlyDictionary<ParticipantType, double> participantBias)
+        =>
+            GetParticipantBias(participantBias, ParticipantType.FII) * GetParticipantWeight(ParticipantType.FII) +
+            GetParticipantBias(participantBias, ParticipantType.Pro) * GetParticipantWeight(ParticipantType.Pro);
+
+    public double ComputeSmartBiasNormalized(IReadOnlyDictionary<ParticipantType, double> participantBias)
+        => ComputeSmartBiasWeighted(participantBias) / 0.7;
+
+    public double ComputeRetailBias(IReadOnlyDictionary<ParticipantType, double> participantBias)
+        => GetParticipantBias(participantBias, ParticipantType.Retail);
+
+    public double ComputeDiiBias(IReadOnlyDictionary<ParticipantType, double> participantBias)
+        => GetParticipantBias(participantBias, ParticipantType.DII);
+
+    public double ComputeSmartRetailDivergence(IReadOnlyDictionary<ParticipantType, double> participantBias)
+        => ComputeSmartBiasNormalized(participantBias) - ComputeRetailBias(participantBias);
+
+    public double ComputeSmartDiiDivergence(IReadOnlyDictionary<ParticipantType, double> participantBias)
+        => ComputeSmartBiasNormalized(participantBias) - ComputeDiiBias(participantBias);
+
+    public SmartRetailState ComputeSmartRetailState(IReadOnlyDictionary<ParticipantType, double> participantBias)
+    {
+        var smart = ComputeSmartBiasNormalized(participantBias);
+        var retail = ComputeRetailBias(participantBias);
+
+        if (smart > 0 && retail < 0) return SmartRetailState.SmartBullRetailBear;
+        if (smart < 0 && retail > 0) return SmartRetailState.SmartBearRetailBull;
+        if (smart > 0 && retail > 0) return SmartRetailState.BothBull;
+        if (smart < 0 && retail < 0) return SmartRetailState.BothBear;
+
+        return SmartRetailState.MixedNeutral;
+    }
+
+    private static double GetParticipantBias(IReadOnlyDictionary<ParticipantType, double> participantBias, ParticipantType participant)
+        => participantBias.TryGetValue(participant, out var bias) ? bias : 0.0;
+}
+
+public enum SmartRetailState
+{
+    SmartBullRetailBear,
+    SmartBearRetailBull,
+    BothBull,
+    BothBear,
+    MixedNeutral
 }

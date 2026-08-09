@@ -28,7 +28,14 @@ public sealed record MarketTodayDto(
     double? pcr_volume = null,
     double? banknifty_pcr = null,
     double? banknifty_pcr_volume = null,
-    IReadOnlyList<ParticipantActivityRowDto>? participant_activity = null
+    IReadOnlyList<ParticipantActivityRowDto>? participant_activity = null,
+    double? smart_bias = null,
+    double? retail_bias = null,
+    double? dii_bias = null,
+    double? smart_retail_divergence = null,
+    double? smart_dii_divergence = null,
+    string? smart_retail_state = null,
+    MarketNarrativeDecomposition? decomposition = null
 );
 
 public sealed record MarketHistoryPointDto(

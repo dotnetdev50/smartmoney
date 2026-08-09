@@ -9,6 +9,23 @@ namespace SmartMoney.Controllers;
 [Route("api/admin")]
 public class AdminController(CsvIngestionService ingestion) : ControllerBase
 {
+    [HttpPost("import/market-close-csv")]
+    public async Task<IActionResult> ImportMarketCloseCsv(
+        [FromQuery] string csvFilePath,
+        [FromServices] MarketCloseCsvImportService importer,
+        CancellationToken ct)
+    {
+        try
+        {
+            var result = await importer.ImportFromCsvFileAsync(csvFilePath, ct);
+            return Ok(result);
+        }
+        catch (MarketCloseCsvValidationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpPost("ingest/participant-oi")]
     public async Task<IActionResult> Ingest([FromQuery] DateTime date, CancellationToken ct)
     {

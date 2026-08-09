@@ -14,6 +14,40 @@ SmartMoney is a quantitative market-analysis application. AI coding agents may a
 6. Do not introduce LLM-generated values into quantitative scores.
 7. Any future AI interpretation must consume deterministic SmartMoney outputs; it must not replace the scoring engine.
 
+## Canonical Runtime Architecture
+
+Canonical SmartMoney runtime path:
+
+     Raw/source data
+     -> SmartMoney.Job / DailyNseJob
+     -> DailyPipelineService
+     -> MarketScoringCalculator
+     -> persisted state where applicable
+     -> job-generated JSON/output files
+     -> frontend
+
+Important runtime guidance:
+
+1. The frontend primarily consumes job-generated output files, including:
+    - market_today.json
+    - market_history_30.json
+2. The API/controller layer is not the canonical frontend/runtime path.
+3. Treat API/AdminController functionality as debugging, diagnostics, and local/admin utilities unless a task explicitly requires API behavior.
+4. For new features, prefer integration with:
+    - SmartMoney.Job
+    - scoring/domain/application services
+    - job DTO/output generation
+    - frontend JSON contracts
+5. Do not automatically modify MarketController, AdminController, or API response DTOs when implementing dashboard/runtime features.
+6. Include API changes only when explicitly requested or when a feature genuinely requires an API consumer.
+7. For Phase 4 Smart/Retail divergence, expected runtime path is:
+    calculation
+    -> job output DTO
+    -> generated frontend JSON
+    -> dashboard
+    Do not include API changes in Phase 4 V1.
+8. Preserve the existing principle that quantitative logic stays deterministic and outside frontend/AI.
+
 ## Quantitative Change Protocol
 
 For every change affecting the model:

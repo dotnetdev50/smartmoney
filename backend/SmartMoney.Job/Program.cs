@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using SmartMoney.Application.Options;
 using SmartMoney.Application.Scoring;
 using SmartMoney.Application.Services;
+using SmartMoney.Domain.Entities;
 using SmartMoney.Domain.Enums;
 using SmartMoney.Infrastructure.Persistence;
 using SmartMoney.Job.Export;
@@ -233,6 +234,7 @@ namespace SmartMoney.Job
             {
                 using var scope = sp.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<SmartMoneyDbContext>();
+                var scoring = scope.ServiceProvider.GetRequiredService<MarketScoringCalculator>();
 
                 var latest = await db.MarketBiases
                     .AsNoTracking()
@@ -272,7 +274,19 @@ namespace SmartMoney.Job
 
                 var (biasLabel, strength) = MarketNarrative.ScoreLabel(latest.FinalScore);
                 var regime = latest.Regime.ToString().ToUpperInvariant();
-                var explanation = MarketNarrative.Explanation(regime, latest.ShockScore, participants, latest.FinalScore);
+                var smartBias = ComputeSmartBiasNormalized(scoring, metrics);
+                var retailBias = ComputeRetailBias(metrics);
+                var diiBias = ComputeDiiBias(metrics);
+                var smartRetailDivergence = ComputeSmartRetailDivergence(scoring, metrics);
+                var smartDiiDivergence = ComputeSmartDiiDivergence(scoring, metrics);
+                var smartRetailState = ComputeSmartRetailState(scoring, metrics);
+                var decomposition = MarketNarrativeDecomposer.Decompose(metrics, latest.Regime, scoring);
+
+                var explanation = MarketNarrative.Explanation(
+                    regime,
+                    latest.ShockScore,
+                    latest.FinalScore,
+                    decomposition);
 
                 // Build participant activity rows (FII + DII + PRO, Futures/Calls/Puts, net OI change + % vs yesterday)
                 var activityParticipants = new[] { ParticipantType.FII, ParticipantType.DII, ParticipantType.Pro };
@@ -339,7 +353,14 @@ namespace SmartMoney.Job
                     explanation: explanation,
                     pcr: null,
                     vix: null,
-                    participant_activity: activityRows
+                    participant_activity: activityRows,
+                    smart_bias: smartBias,
+                    retail_bias: retailBias,
+                    dii_bias: diiBias,
+                    smart_retail_divergence: smartRetailDivergence,
+                    smart_dii_divergence: smartDiiDivergence,
+                    smart_retail_state: smartRetailState,
+                    decomposition: decomposition
                 );
 
                 var fromHist = exportDate.AddDays(-29);
@@ -375,13 +396,51 @@ namespace SmartMoney.Job
                     ?? throw new InvalidOperationException(
                         $"Failed to deserialize existing market_today.json from {publicMarketTodayPath}.");
 
-                // Backfill participant_activity if it is absent in an older JSON export
-                if (marketToday.participant_activity is null
-                    && TryParseDateExact(marketToday.date, out var existingDate))
+                if (TryParseDateExact(marketToday.date, out var existingDate))
                 {
                     using var scope = sp.CreateScope();
                     var db = scope.ServiceProvider.GetRequiredService<SmartMoneyDbContext>();
-                    var participantActivity = await ComputeParticipantActivityAsync(db, existingDate, log);
+                    var scoring = scope.ServiceProvider.GetRequiredService<MarketScoringCalculator>();
+
+                    var metrics = await db.ParticipantMetrics
+                        .AsNoTracking()
+                        .Where(x => x.Date == existingDate)
+                        .ToListAsync();
+
+                    if (metrics.Count > 0)
+                    {
+                        var regime = marketToday.regime;
+                        var parsedRegime = Enum.TryParse<Regime>(regime, true, out var existingRegime)
+                            ? existingRegime
+                            : Regime.Normal;
+                        var decomposition = MarketNarrativeDecomposer.Decompose(metrics, parsedRegime, scoring);
+                        var explanation = MarketNarrative.Explanation(
+                            regime,
+                            marketToday.shock_score,
+                            marketToday.final_score,
+                            decomposition);
+
+                        marketToday = marketToday with
+                        {
+                            smart_bias = ComputeSmartBiasNormalized(scoring, metrics),
+                            retail_bias = ComputeRetailBias(metrics),
+                            dii_bias = ComputeDiiBias(metrics),
+                            smart_retail_divergence = ComputeSmartRetailDivergence(scoring, metrics),
+                            smart_dii_divergence = ComputeSmartDiiDivergence(scoring, metrics),
+                            smart_retail_state = ComputeSmartRetailState(scoring, metrics),
+                            decomposition = decomposition,
+                            explanation = explanation
+                        };
+                    }
+                }
+
+                // Backfill participant_activity if it is absent in an older JSON export
+                if (marketToday.participant_activity is null
+                    && TryParseDateExact(marketToday.date, out var existingDateForActivity))
+                {
+                    using var scope = sp.CreateScope();
+                    var db = scope.ServiceProvider.GetRequiredService<SmartMoneyDbContext>();
+                    var participantActivity = await ComputeParticipantActivityAsync(db, existingDateForActivity, log);
                     marketToday = marketToday with { participant_activity = participantActivity };
                     log.LogInformation("[H4] Backfilled participant_activity for {Date}.", marketToday.date);
                 }
@@ -666,6 +725,47 @@ namespace SmartMoney.Job
                 banknifty_pcr = bankniftyPcr,
                 banknifty_pcr_volume = bankniftyPcrVolume,
             };
+        }
+
+        private static Dictionary<ParticipantType, double> BuildParticipantBiasMap(IReadOnlyList<ParticipantMetric> metrics)
+            => metrics
+                .GroupBy(m => m.Participant)
+                .ToDictionary(g => g.Key, g => g.Last().ParticipantBias);
+
+        private static double ComputeSmartBiasNormalized(MarketScoringCalculator scoring, IReadOnlyList<ParticipantMetric> metrics)
+        {
+            var participantBias = BuildParticipantBiasMap(metrics);
+            return scoring.ComputeSmartBiasNormalized(participantBias);
+        }
+
+        private static double ComputeRetailBias(IReadOnlyList<ParticipantMetric> metrics)
+        {
+            var participantBias = BuildParticipantBiasMap(metrics);
+            return participantBias.TryGetValue(ParticipantType.Retail, out var bias) ? bias : 0.0;
+        }
+
+        private static double ComputeDiiBias(IReadOnlyList<ParticipantMetric> metrics)
+        {
+            var participantBias = BuildParticipantBiasMap(metrics);
+            return participantBias.TryGetValue(ParticipantType.DII, out var bias) ? bias : 0.0;
+        }
+
+        private static double ComputeSmartRetailDivergence(MarketScoringCalculator scoring, IReadOnlyList<ParticipantMetric> metrics)
+        {
+            var participantBias = BuildParticipantBiasMap(metrics);
+            return scoring.ComputeSmartRetailDivergence(participantBias);
+        }
+
+        private static double ComputeSmartDiiDivergence(MarketScoringCalculator scoring, IReadOnlyList<ParticipantMetric> metrics)
+        {
+            var participantBias = BuildParticipantBiasMap(metrics);
+            return scoring.ComputeSmartDiiDivergence(participantBias);
+        }
+
+        private static string ComputeSmartRetailState(MarketScoringCalculator scoring, IReadOnlyList<ParticipantMetric> metrics)
+        {
+            var participantBias = BuildParticipantBiasMap(metrics);
+            return scoring.ComputeSmartRetailState(participantBias).ToString();
         }
 
         private static string FindRepoRoot()
