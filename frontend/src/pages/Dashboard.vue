@@ -122,12 +122,6 @@ const participantRows = computed<ParticipantRow[]>(() => {
   );
 });
 
-const topParticipant = computed(() => {
-  const available = participantRows.value.filter((row) => row.hasData);
-  if (available.length === 0) return null;
-  return [...available].sort((a, b) => Math.abs(b.bias) - Math.abs(a.bias))[0] ?? null;
-});
-
 const historyDeltaClass = computed(() => {
   const delta = historyDelta.value;
   if (delta === null) return "text-gray-600 dark:text-gray-300";
@@ -290,7 +284,6 @@ onMounted(load);
 
               <QuickFactsSection
                 :today="today"
-                :top-participant="topParticipant"
                 :signal-date="signalDate"
                 :format-score="fmtScore"
                 :tone-class="participantToneClass"

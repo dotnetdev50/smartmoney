@@ -1,19 +1,24 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import type { MarketTodayResponse } from "@/services/api";
 
-type TopParticipant = {
-  name: string;
-  bias: number;
-  label: string;
-};
-
-defineProps<{
+const props = defineProps<{
   today: MarketTodayResponse;
-  topParticipant: TopParticipant | null;
   signalDate: string;
   formatScore: (value: number) => string;
   toneClass: (value: number) => string;
 }>();
+
+const topDriver = computed(() => {
+  const name = props.today.decomposition?.main_participant_driver;
+  if (!name) return null;
+
+  const contribution = props.today.decomposition?.participant_contributions?.find(
+    (item) => item.name.toUpperCase() === name.toUpperCase(),
+  )?.contribution;
+
+  return { name, contribution };
+});
 
 function fmtPcr(value: number | null | undefined): string {
   if (value == null) return "—";
@@ -51,12 +56,12 @@ function pcrLabelClass(value: number | null | undefined): string {
       <div>
         <dt class="text-xs text-gray-500 dark:text-gray-400">Top Driver</dt>
         <dd class="text-sm font-semibold leading-tight text-gray-900 dark:text-gray-100">
-          {{ topParticipant ? topParticipant.name : "-" }}
+          {{ topDriver ? topDriver.name : "—" }}
           <span
-            v-if="topParticipant"
-            :class="['ml-1 text-xs font-medium', toneClass(topParticipant.bias)]"
+            v-if="topDriver?.contribution != null"
+            :class="['ml-1 text-xs font-medium', toneClass(topDriver.contribution)]"
           >
-            {{ formatScore(topParticipant.bias) }} ({{ topParticipant.label }})
+            {{ formatScore(topDriver.contribution) }}
           </span>
         </dd>
       </div>
