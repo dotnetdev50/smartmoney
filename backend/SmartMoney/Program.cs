@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SmartMoney.Application.Options;
+using SmartMoney.Application.Scoring;
 using SmartMoney.Application.Services;
 using SmartMoney.Infrastructure.Persistence;
 
@@ -38,6 +39,7 @@ builder.Services.AddHttpClient<CsvIngestionService>((sp, http) =>
 });
 
 //Daily pipeline service
+builder.Services.AddScoped<MarketScoringCalculator>();
 builder.Services.AddScoped<DailyPipelineService>();
 
 //Market presentation service

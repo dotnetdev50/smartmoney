@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SmartMoney.Application.Options;
+using SmartMoney.Application.Scoring;
 using SmartMoney.Application.Services;
 using SmartMoney.Domain.Enums;
 using SmartMoney.Infrastructure.Persistence;
@@ -131,6 +132,7 @@ namespace SmartMoney.Job
             services.AddHttpClient<FoBhavCopyService>();
             services.AddHttpClient<VixFetchService>();
             services.AddHttpClient<CsvIngestionService>();
+            services.AddScoped<MarketScoringCalculator>();
             services.AddScoped<DailyPipelineService>();
 
             return services;

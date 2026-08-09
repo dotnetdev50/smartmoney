@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SmartMoney.Application.Scoring;
 using SmartMoney.Domain.Entities;
 using SmartMoney.Domain.Enums;
 using SmartMoney.Infrastructure.Persistence;
 
 namespace SmartMoney.Application.Services;
 
-public sealed class DailyPipelineService(SmartMoneyDbContext db, ILogger<DailyPipelineService> log)
+public sealed class DailyPipelineService(
+    SmartMoneyDbContext db,
+    ILogger<DailyPipelineService> log,
+    MarketScoringCalculator scoring)
 {
-    private const int ShortWindow = 5;
-    private const int LongWindow = 20;
-    private const double ShockThreshold = 1.5;
-
     public async Task<bool> IsMarketBiasPresentAsync(DateTime date, CancellationToken ct)
     {
         date = date.Date;
@@ -55,10 +55,10 @@ public sealed class DailyPipelineService(SmartMoneyDbContext db, ILogger<DailyPi
             if (todayRow is null) continue;
 
             // Use only last LongWindow points up to date
-            var window = series.Where(x => x.Date <= date).TakeLast(LongWindow).ToList();
-            if (window.Count < LongWindow)
+            var window = series.Where(x => x.Date <= date).TakeLast(MarketScoringCalculator.LongWindow).ToList();
+            if (window.Count < MarketScoringCalculator.LongWindow)
             {
-                log.LogInformation("Not enough data for {Participant}: {Count}/{Need}", participant, window.Count, LongWindow);
+                log.LogInformation("Not enough data for {Participant}: {Count}/{Need}", participant, window.Count, MarketScoringCalculator.LongWindow);
                 continue;
             }
 
@@ -67,9 +67,9 @@ public sealed class DailyPipelineService(SmartMoneyDbContext db, ILogger<DailyPi
             var puts = window.Select(x => x.PutOiChange).ToList();
             var calls = window.Select(x => x.CallOiChange).ToList();
 
-            var fz = ComputeZShortLong(futures);
-            var pz = ComputeZShortLong(puts);
-            var cz = ComputeZShortLong(calls);
+            var fz = scoring.ComputeZShortLong(futures);
+            var pz = scoring.ComputeZShortLong(puts);
+            var cz = scoring.ComputeZShortLong(calls);
 
             var z = new ZPack(fz.Short, fz.Long, pz.Short, pz.Long, cz.Short, cz.Long);
             zStore[participant] = z;
@@ -80,24 +80,21 @@ public sealed class DailyPipelineService(SmartMoneyDbContext db, ILogger<DailyPi
                 Math.Abs(pz.Short - pz.Long) +
                 Math.Abs(cz.Short - cz.Long);
 
-            shockScore += ParticipantWeight(participant) * divergence;
+            shockScore += scoring.GetParticipantWeight(participant) * divergence;
         }
 
-        var regime = shockScore > ShockThreshold ? Regime.Shock : Regime.Normal;
+        var regime = scoring.ComputeRegime(shockScore);
 
         // 4) Now compute bias and persist metrics rows (idempotent overwrite for date)
         foreach (var (participant, z) in zStore)
         {
-            var fEff = Blend(z.FuturesShort, z.FuturesLong, regime);
-            var pEff = Blend(z.PutShort, z.PutLong, regime);
-            var cEff = Blend(z.CallShort, z.CallLong, regime);
+            var fEff = scoring.Blend(z.FuturesShort, z.FuturesLong, regime);
+            var pEff = scoring.Blend(z.PutShort, z.PutLong, regime);
+            var cEff = scoring.Blend(z.CallShort, z.CallLong, regime);
 
             // For V1: futures = directional, put writing = bullish, call writing = bearish
             // We subtract call component.
-            var bias =
-                0.5 * fEff +
-                0.3 * pEff -
-                0.2 * cEff;
+            var bias = scoring.ComputeParticipantBias(fEff, pEff, cEff);
 
             participantBias[participant] = bias;
 
@@ -122,10 +119,10 @@ public sealed class DailyPipelineService(SmartMoneyDbContext db, ILogger<DailyPi
             return new PipelineRunResult(date, false, "No metrics produced (likely insufficient history).");
 
         // 5) Composite market bias + tanh scaling
-        var marketRaw = participantBias.Sum(kvp => ParticipantWeight(kvp.Key) * kvp.Value);
+        var marketRaw = scoring.ComputeMarketRawScore(participantBias);
 
         // scale [-100..100] feel; tanh keeps it bounded
-        var finalScore = Math.Tanh(marketRaw / 2.0) * 100.0;
+        var finalScore = scoring.ComputeFinalScore(marketRaw);
 
         // 6) Persist: delete existing date rows then insert (simple idempotency)
         var existingMetrics = await db.ParticipantMetrics.Where(x => x.Date == date).ToListAsync(ct);
@@ -199,40 +196,6 @@ public sealed class DailyPipelineService(SmartMoneyDbContext db, ILogger<DailyPi
             failed
         };
     }
-
-    // ---- math helpers ----
-
-    private static (double Short, double Long) ComputeZShortLong(List<double> values)
-    {
-        var shortVals = values.TakeLast(ShortWindow).ToList();
-        var longVals = values.TakeLast(LongWindow).ToList();
-        return (Z(shortVals), Z(longVals));
-    }
-
-    private static double Z(List<double> values)
-    {
-        var mean = values.Average();
-        var variance = values.Sum(v => (v - mean) * (v - mean)) / values.Count;
-        var std = Math.Sqrt(variance);
-        const double epsilon = 1e-8;
-        if (Math.Abs(std) < epsilon) return 0;
-        return (values.Count > 0 ? values[^1] : 0 - mean) / std;
-    }
-
-    private static double Blend(double shortZ, double longZ, Regime regime)
-        => regime == Regime.Shock
-            ? 0.7 * shortZ + 0.3 * longZ
-            : 0.7 * longZ + 0.3 * shortZ;
-
-    private static double ParticipantWeight(ParticipantType p)
-        => p switch
-        {
-            ParticipantType.FII => 0.4,
-            ParticipantType.Pro => 0.3,
-            ParticipantType.DII => 0.2,
-            ParticipantType.Retail => 0.1,
-            _ => 0.0
-        };
 
     private sealed record ZPack(
         double FuturesShort, double FuturesLong,
