@@ -7,6 +7,7 @@ using SmartMoney.Application.Services;
 using SmartMoney.Domain.Entities;
 using SmartMoney.Domain.Enums;
 using SmartMoney.Infrastructure.Persistence;
+using SmartMoney.Job.AI;
 using SmartMoney.Job.Export;
 using System.Text.Json;
 
@@ -68,6 +69,8 @@ namespace SmartMoney.Job
             var repoRoot = FindRepoRoot();
             var publicDataDir = Path.Combine(repoRoot, "frontend", "public", "data");
             var publicMarketTodayPath = Path.Combine(publicDataDir, "market_today.json");
+            var previousAiInterpretation = await ReadExistingAiInterpretationAsync(
+                publicMarketTodayPath, targetDate, log);
 
             bool participantDataAlreadyExported = await CheckExistingExportAsync(publicMarketTodayPath, targetDate, log);
 
@@ -78,6 +81,16 @@ namespace SmartMoney.Job
 
             var (marketToday, history) = await ExportOrReuseParticipantDataAsync(
                 sp, participantDataAlreadyExported, publicDataDir, publicMarketTodayPath, targetDate, log);
+
+            marketToday = await AttachMarketInterpretationAsync(
+                sp, marketToday, previousAiInterpretation, log);
+
+            await SavePatchedJsonAsync(
+                marketToday,
+                history,
+                publicDataDir,
+                publicMarketTodayPath,
+                new JsonSerializerOptions { WriteIndented = true });
 
             await FetchAndPatchPcrVixAsync(
                 sp, marketToday, history, publicDataDir, publicMarketTodayPath, jobOpts, log);
@@ -144,6 +157,14 @@ namespace SmartMoney.Job
                 if (int.TryParse(Environment.GetEnvironmentVariable("PCR_VIX_RETRY_MINUTES"), out var pr)) o.PcrVixRetryMinutes = pr;
             });
 
+            var interpretationOptions = BuildMarketInterpretationOptions();
+            services.AddSingleton(interpretationOptions);
+            services.AddSingleton(LoadMarketInterpretationPrompt(interpretationOptions));
+            services.AddSingleton(TimeProvider.System);
+            services.AddSingleton<MarketInterpretationValidator>();
+            services.AddSingleton<IMarketInterpretationProvider, DisabledMarketInterpretationProvider>();
+            services.AddSingleton<IMarketInterpretationService, MarketInterpretationService>();
+
             services.AddTransient<BhavCopyService>();
             services.AddTransient<OpBhavCopyService>();
             services.AddHttpClient<PrPcrService>();
@@ -154,6 +175,38 @@ namespace SmartMoney.Job
             services.AddScoped<DailyPipelineService>();
 
             return services;
+        }
+
+        private static MarketInterpretationOptions BuildMarketInterpretationOptions()
+        {
+            var options = new MarketInterpretationOptions();
+            if (bool.TryParse(Environment.GetEnvironmentVariable("AI_INTERPRETATION_ENABLED"), out var enabled))
+                options.Enabled = enabled;
+            options.Provider = Environment.GetEnvironmentVariable("AI_INTERPRETATION_PROVIDER") ?? options.Provider;
+            options.Model = Environment.GetEnvironmentVariable("AI_INTERPRETATION_MODEL") ?? options.Model;
+            options.Endpoint = Environment.GetEnvironmentVariable("AI_INTERPRETATION_ENDPOINT");
+            options.ApiCredentialEnvironmentVariable =
+                Environment.GetEnvironmentVariable("AI_INTERPRETATION_API_CREDENTIAL_ENVIRONMENT_VARIABLE");
+            if (int.TryParse(Environment.GetEnvironmentVariable("AI_INTERPRETATION_TIMEOUT_SECONDS"), out var timeoutSeconds))
+                options.TimeoutSeconds = timeoutSeconds;
+            options.PromptVersion =
+                Environment.GetEnvironmentVariable("AI_INTERPRETATION_PROMPT_VERSION") ?? options.PromptVersion;
+            return options;
+        }
+
+        private static MarketInterpretationPrompt LoadMarketInterpretationPrompt(MarketInterpretationOptions options)
+        {
+            const string supportedVersion = "market-daily-v1";
+            if (!string.Equals(options.PromptVersion, supportedVersion, StringComparison.Ordinal))
+                return new MarketInterpretationPrompt(options.PromptVersion, string.Empty);
+
+            var promptPath = Path.Combine(
+                AppContext.BaseDirectory,
+                "AI",
+                "Prompts",
+                "market-daily-interpretation-v1.md");
+            var content = File.Exists(promptPath) ? File.ReadAllText(promptPath) : string.Empty;
+            return new MarketInterpretationPrompt(supportedVersion, content);
         }
 
         private static async Task MigrateDbAsync(ServiceProvider sp)
@@ -711,6 +764,107 @@ namespace SmartMoney.Job
             log.LogWarning("[H3] All PCR sources returned no data for {Date}.", pcrVixDate.ToString("yyyy-MM-dd"));
             return (null, null, null, null);
         }
+
+        private static async Task<AiInterpretationDto?> ReadExistingAiInterpretationAsync(
+            string marketTodayPath,
+            DateTime targetDate,
+            ILogger log)
+        {
+            if (!File.Exists(marketTodayPath)) return null;
+
+            try
+            {
+                var json = await File.ReadAllTextAsync(marketTodayPath);
+                var existing = JsonSerializer.Deserialize<MarketTodayDto>(json);
+                return existing?.date == targetDate.ToString("yyyy-MM-dd")
+                    ? existing.ai_interpretation
+                    : null;
+            }
+            catch (Exception ex)
+            {
+                log.LogWarning("[AI] Existing interpretation could not be read: {Message}", ex.Message);
+                return null;
+            }
+        }
+
+        private static async Task<MarketTodayDto> AttachMarketInterpretationAsync(
+            ServiceProvider sp,
+            MarketTodayDto marketToday,
+            AiInterpretationDto? previousDto,
+            ILogger log)
+        {
+            if (marketToday.decomposition is null
+                || marketToday.explanation is null
+                || marketToday.bias_Label is null
+                || marketToday.strength is null)
+            {
+                log.LogWarning("[AI] Deterministic interpretation inputs are incomplete. AI output omitted.");
+                return marketToday with { ai_interpretation = null };
+            }
+
+            var input = MarketInterpretationInputFactory.Create(
+                marketToday.date,
+                marketToday.final_score,
+                marketToday.bias_Label,
+                marketToday.strength,
+                marketToday.regime,
+                marketToday.shock_score,
+                marketToday.decomposition,
+                marketToday.explanation);
+
+            var service = sp.GetRequiredService<IMarketInterpretationService>();
+            var previous = ToInterpretationAttempt(previousDto ?? marketToday.ai_interpretation);
+            var attempt = await service.InterpretAsync(input, previous, CancellationToken.None);
+
+            if (attempt is null)
+            {
+                log.LogInformation("[AI] Daily interpretation is disabled.");
+                return marketToday with { ai_interpretation = null };
+            }
+
+            log.LogInformation("[AI] Daily interpretation status: {Status}", attempt.status);
+            return marketToday with { ai_interpretation = ToAiInterpretationDto(attempt) };
+        }
+
+        private static MarketInterpretationAttempt? ToInterpretationAttempt(AiInterpretationDto? dto)
+        {
+            if (dto is null
+                || !Enum.TryParse<MarketInterpretationStatus>(dto.status, true, out var status)
+                || dto.input_fingerprint is null)
+            {
+                return null;
+            }
+
+            MarketInterpretationResult? result = null;
+            if (dto.summary is not null
+                || dto.key_observation is not null
+                || dto.uncertainty is not null
+                || dto.context is not null)
+            {
+                result = new MarketInterpretationResult(
+                    dto.summary!,
+                    dto.key_observation!,
+                    dto.uncertainty!,
+                    dto.context);
+            }
+
+            return new MarketInterpretationAttempt(
+                status,
+                dto.prompt_version,
+                dto.input_fingerprint,
+                dto.generated_at,
+                result);
+        }
+
+        private static AiInterpretationDto ToAiInterpretationDto(MarketInterpretationAttempt attempt) => new(
+            status: attempt.status.ToString().ToLowerInvariant(),
+            prompt_version: attempt.prompt_version,
+            input_fingerprint: attempt.input_fingerprint,
+            generated_at: attempt.generated_at,
+            summary: attempt.interpretation?.summary,
+            key_observation: attempt.interpretation?.key_observation,
+            uncertainty: attempt.interpretation?.uncertainty,
+            context: attempt.interpretation?.context);
 
         private static async Task SavePatchedJsonAsync(
             MarketTodayDto marketToday,
