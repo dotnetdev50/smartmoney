@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace SmartMoney.Job.Export;
 
 public sealed record ParticipantDto(
@@ -11,6 +13,17 @@ public sealed record ParticipantActivityRowDto(
     string instrument,
     double net_oi_change,
     double? vs_yesterday_pct = null
+);
+
+public sealed record AiInterpretationDto(
+    string status,
+    string prompt_version,
+    string? input_fingerprint = null,
+    DateTimeOffset? generated_at = null,
+    string? summary = null,
+    string? key_observation = null,
+    string? uncertainty = null,
+    string? context = null
 );
 
 public sealed record MarketTodayDto(
@@ -35,7 +48,9 @@ public sealed record MarketTodayDto(
     double? smart_retail_divergence = null,
     double? smart_dii_divergence = null,
     string? smart_retail_state = null,
-    MarketNarrativeDecomposition? decomposition = null
+    MarketNarrativeDecomposition? decomposition = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    AiInterpretationDto? ai_interpretation = null
 );
 
 public sealed record MarketHistoryPointDto(

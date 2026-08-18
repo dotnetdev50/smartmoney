@@ -20,4 +20,10 @@
     <ProjectReference Include="..\SmartMoney.Infrastructure\SmartMoney.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="AI\Prompts\market-daily-interpretation-v1.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
