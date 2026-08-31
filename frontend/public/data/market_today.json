@@ -29,11 +29,11 @@
   "bias_Label": "Neutral",
   "strength": "Neutral",
   "explanation": "Composite bias is neutral, with neutral strength (\u002B9.4). The model classification is Shock regime with ShockScore 1.9. PRO is the largest weighted participant driver, with futures contributing most to the aggregate score. Smart participants and Retail are aligned (divergence -0.03); DII agrees with Smart positioning, and participant contributions are mixed.",
-  "pcr": null,
+  "pcr": 0.9063,
   "vix": null,
-  "pcr_volume": null,
-  "banknifty_pcr": null,
-  "banknifty_pcr_volume": null,
+  "pcr_volume": 1.0472,
+  "banknifty_pcr": 1.1448,
+  "banknifty_pcr_volume": 0.9368,
   "participant_activity": [
     {
       "participant": "FII",
