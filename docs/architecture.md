@@ -81,3 +81,26 @@ decomposition, deterministic explanation, AI interpretation input, or backtestin
 written into `market_today.json`. If the external fetch fails, the previous valid
 `layoffs_summary.json` is preserved (or the KPI shows "Unavailable"); the NSE/scoring pipeline is
 never blocked by this fetch.
+
+## External Context
+
+The SmartMoney core pipeline remains independent and deterministic:
+
+    SmartMoney Core
+        └── independent deterministic market pipeline
+
+The External Context subsystem is a separate informational stream that can later ingest
+approved news providers, normalize content, deduplicate candidate items, rank them, and export
+public JSON for the dashboard:
+
+    External Context
+        ├── approved news providers
+        ├── normalize
+        ├── deduplicate
+        ├── rank
+        └── market_news.json
+
+External Context is informational and does not participate in `FinalScore`, `Regime`, or
+participant calculations.
+
+External Context failures must not fail the core SmartMoney market-data pipeline.

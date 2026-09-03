@@ -1,0 +1,66 @@
+{
+  "generated_at_utc": "2026-09-03T13:36:22.1787737+00:00",
+  "lookback_hours": 24,
+  "items": [
+    {
+      "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "India policy signal suggests tightening remains on the table",
+      "why_it_matters": "Policy and domestic sentiment shifts can influence local market positioning and risk appetite.",
+      "source": "fixture",
+      "published_at_utc": "2026-09-03T13:16:22.1808108+00:00",
+      "url": "https://example.com/fixture/india-rbi-policy"
+    },
+    {
+      "rank": 2,
+      "scope": "Global",
+      "category": "Geopolitical",
+      "impact": "High",
+      "sentiment": "Negative",
+      "headline": "Global geopolitical tensions rise as shipping routes remain volatile",
+      "why_it_matters": "Global dynamics can affect commodity prices, capital flows, and risk sentiment for Indian equities.",
+      "source": "fixture",
+      "published_at_utc": "2026-09-03T13:26:22.1808108+00:00",
+      "url": "https://example.com/fixture/global-geopolitical"
+    },
+    {
+      "rank": 3,
+      "scope": "India",
+      "category": "NaturalDisaster",
+      "impact": "Medium",
+      "sentiment": "Mixed",
+      "headline": "Heavy rainfall disrupts logistics and power supply across regions",
+      "why_it_matters": "Policy and domestic sentiment shifts can influence local market positioning and risk appetite.",
+      "source": "fixture",
+      "published_at_utc": "2026-09-03T12:26:22.1808108+00:00",
+      "url": "https://example.com/fixture/india-natural-disaster"
+    },
+    {
+      "rank": 4,
+      "scope": "Global",
+      "category": "OilEnergy",
+      "impact": "High",
+      "sentiment": "Mixed",
+      "headline": "Oil and energy markets react to supply disruption warnings",
+      "why_it_matters": "Global dynamics can affect commodity prices, capital flows, and risk sentiment for Indian equities.",
+      "source": "fixture",
+      "published_at_utc": "2026-09-03T12:56:22.1808108+00:00",
+      "url": "https://example.com/fixture/oil-supply-shock"
+    },
+    {
+      "rank": 5,
+      "scope": "India",
+      "category": "Other",
+      "impact": "Low",
+      "sentiment": "Neutral",
+      "headline": "Corporate press release extends a local operational update",
+      "why_it_matters": "Policy and domestic sentiment shifts can influence local market positioning and risk appetite.",
+      "source": "fixture",
+      "published_at_utc": "2026-09-03T11:16:22.1808108+00:00",
+      "url": "https://example.com/fixture/minor-event"
+    }
+  ]
+}
