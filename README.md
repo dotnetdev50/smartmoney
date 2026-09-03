@@ -17,6 +17,21 @@ Backend Job (C#) → frontend/public/data/*.json → npm run build → dist/data
 
 The backend job is run by the GitHub Actions workflow (`.github/workflows/pages.yml`) every weekday at 9:40 PM IST.
 
+### External Context: Tech Layoffs (layoffs.fyi)
+
+Independent of the NSE/scoring pipeline above, `scripts/fetch-layoffs-summary.mjs` scrapes the
+current-year summary from [layoffs.fyi](https://layoffs.fyi) and writes
+`frontend/public/data/layoffs_summary.json`:
+
+```
+layoffs.fyi → scheduled external-context fetch → frontend/public/data/layoffs_summary.json → dashboard KPI
+```
+
+This value is **informational only** — it is displayed on the dashboard as a "Tech Layoffs YTD" KPI
+and does not participate in FinalScore, Regime, ShockScore, Smart/Retail/DII calculations, narrative
+decomposition, or AI interpretation. If the fetch fails, the last known-good file is preserved (or the
+KPI shows "Unavailable"); the market-data pipeline is never affected.
+
 ---
 
 ## PCR and VIX Integration

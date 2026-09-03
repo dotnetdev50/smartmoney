@@ -8,7 +8,7 @@ import MarketStructureSection from "@/components/dashboard/MarketStructureSectio
 import ParticipantActivityCard from "@/components/dashboard/ParticipantActivityCard.vue";
 import ParticipantGrid from "@/components/dashboard/ParticipantGrid.vue";
 import QuickFactsSection from "@/components/dashboard/QuickFactsSection.vue";
-import { api, type MarketHistoryPoint, type MarketTodayResponse } from "@/services/api";
+import { api, type LayoffsSummary, type MarketHistoryPoint, type MarketTodayResponse } from "@/services/api";
 
 const loading = ref(true);
 const error = ref<string | null>(null);
@@ -16,6 +16,9 @@ const isDark = ref(document.documentElement.classList.contains("dark"));
 
 const today = ref<MarketTodayResponse | null>(null);
 const history = ref<MarketHistoryPoint[]>([]);
+
+// External context only (layoffs.fyi). Optional; failures never surface as page-level errors.
+const layoffs = ref<LayoffsSummary | null>(null);
 
 function formatDate(value?: string | null) {
   if (!value) return "-";
@@ -140,6 +143,15 @@ function participantToneClass(value: number) {
   return "text-gray-700 dark:text-gray-200";
 }
 
+async function loadLayoffsSummary() {
+  try {
+    layoffs.value = await api.layoffsSummary();
+  } catch {
+    // Optional external-context data; unavailability must not affect the rest of the dashboard.
+    layoffs.value = null;
+  }
+}
+
 async function load() {
   loading.value = true;
   error.value = null;
@@ -153,6 +165,8 @@ async function load() {
   } finally {
     loading.value = false;
   }
+
+  void loadLayoffsSummary();
 }
 
 function setTheme(dark: boolean) {
@@ -215,10 +229,10 @@ onMounted(load);
         :history-delta="historyDelta"
         :history-delta-class="historyDeltaClass"
         :history-count="history.length"
-        :as-of-date="asOfDate"
         :score-color-class="scoreColorClass"
         :regime-badge-class="regimeBadgeClass"
         :format-score="fmtScore"
+        :layoffs="layoffs"
       />
 
       <div v-if="loading" class="space-y-2">
