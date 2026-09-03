@@ -64,3 +64,20 @@ Do not include API changes in Phase 4 V1.
 ## Deterministic Quantitative Principle
 
 Quantitative logic must remain deterministic and must stay outside frontend/AI decision paths.
+
+## External Context: Tech Layoffs (layoffs.fyi)
+
+A separate, independent path feeds the dashboard's "Tech Layoffs YTD" KPI:
+
+    layoffs.fyi
+    -> scheduled external-context fetch (scripts/fetch-layoffs-summary.mjs)
+    -> frontend/public/data/layoffs_summary.json
+    -> dashboard KPI
+
+This path is intentionally decoupled from `SmartMoney.Job`, `DailyPipelineService`, and
+`MarketScoringCalculator`. Layoffs data is informational only: it does not affect FinalScore,
+participant scoring, PCR/VIX, Regime, ShockScore, Smart/Retail/DII calculations, narrative
+decomposition, deterministic explanation, AI interpretation input, or backtesting, and it is never
+written into `market_today.json`. If the external fetch fails, the previous valid
+`layoffs_summary.json` is preserved (or the KPI shows "Unavailable"); the NSE/scoring pipeline is
+never blocked by this fetch.

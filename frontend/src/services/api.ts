@@ -99,6 +99,18 @@ export type MarketHistoryPoint = {
   regime: string;
 };
 
+// External-context only: reported tech layoffs from layoffs.fyi.
+// Does not participate in SmartMoney scoring, regime, or AI interpretation.
+export type LayoffsSummary = {
+  year: number;
+  employees_laid_off: number;
+  companies_with_layoffs: number;
+  layoff_events: number;
+  retrieved_at_utc: string;
+  source: string;
+  source_url: string;
+};
+
 const JSON_BASE = import.meta.env.VITE_JSON_BASE_URL ?? "/data";
 
 async function jsonGet<T>(file: string): Promise<T> {
@@ -110,6 +122,7 @@ async function jsonGet<T>(file: string): Promise<T> {
 export const api = {
   marketToday: () => jsonGet<MarketTodayResponse>("market_today.json"),
   marketHistory: () => jsonGet<MarketHistoryPoint[]>("market_history_30.json"),
+  layoffsSummary: () => jsonGet<LayoffsSummary>("layoffs_summary.json"),
 };
 
 // export type ParticipantDto = {

@@ -1,0 +1,13 @@
+{
+  "name": "smartmoney-scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated external-context scripts for SmartMoney. Not part of the deterministic scoring pipeline.",
+  "scripts": {
+    "fetch-layoffs-summary": "node fetch-layoffs-summary.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0"
+  }
+}
