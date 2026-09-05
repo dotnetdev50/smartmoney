@@ -1,11 +1,6 @@
-namespace SmartMoney.ExternalContext.Providers;
-
 using SmartMoney.ExternalContext.Contracts;
 
-public interface INewsSourceProvider
-{
-    Task<IReadOnlyList<NewsCandidate>> GetNewsAsync(NewsSourceRequest request, CancellationToken cancellationToken);
-}
+namespace SmartMoney.ExternalContext.Providers;
 
 public sealed class FixtureNewsSourceProvider : INewsSourceProvider
 {
@@ -23,8 +18,8 @@ public sealed class FixtureNewsSourceProvider : INewsSourceProvider
         cancellationToken.ThrowIfCancellationRequested();
 
         var now = DateTimeOffset.UtcNow;
-        var candidates = new List<NewsCandidate>
-        {
+        IReadOnlyList<NewsCandidate> candidates =
+        [
             new()
             {
                 Id = "fixture-global-geopolitical",
@@ -100,8 +95,8 @@ public sealed class FixtureNewsSourceProvider : INewsSourceProvider
                 Country = "India",
                 Tags = ["company", "minor"]
             }
-        };
+        ];
 
-        return Task.FromResult<IReadOnlyList<NewsCandidate>>(candidates);
+        return Task.FromResult(candidates);
     }
 }

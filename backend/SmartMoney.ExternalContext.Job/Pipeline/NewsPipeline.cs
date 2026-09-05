@@ -1,5 +1,7 @@
 namespace SmartMoney.ExternalContext.Pipeline;
 
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using SmartMoney.ExternalContext.Configuration;
 using SmartMoney.ExternalContext.Contracts;
 using SmartMoney.ExternalContext.Providers;
@@ -179,19 +181,22 @@ public sealed class MarketNewsPipeline
     private readonly INewsDeduplicator _deduplicator;
     private readonly INewsRanker _ranker;
     private readonly IMarketNewsExporter _exporter;
+    private readonly ILogger<MarketNewsPipeline> _logger;
 
     public MarketNewsPipeline(
         IEnumerable<INewsSourceProvider> providers,
         INewsNormalizer normalizer,
         INewsDeduplicator deduplicator,
         INewsRanker ranker,
-        IMarketNewsExporter exporter)
+        IMarketNewsExporter exporter,
+        ILogger<MarketNewsPipeline>? logger = null)
     {
         _providers = providers.ToList();
         _normalizer = normalizer;
         _deduplicator = deduplicator;
         _ranker = ranker;
         _exporter = exporter;
+        _logger = logger ?? NullLogger<MarketNewsPipeline>.Instance;
     }
 
     public async Task<MarketNewsDocument> RunAsync(ExternalContextOptions options, CancellationToken cancellationToken)
@@ -204,15 +209,32 @@ public sealed class MarketNewsPipeline
 
         foreach (var provider in _providers)
         {
-            var results = await provider.GetNewsAsync(
-                new NewsSourceRequest
-                {
-                    FromUtc = fromUtc,
-                    ToUtc = now
-                },
-                cancellationToken);
+            if (!provider.Enabled)
+            {
+                continue;
+            }
 
-            collected.AddRange(results);
+            try
+            {
+                var results = await provider.GetNewsAsync(
+                    new NewsSourceRequest
+                    {
+                        FromUtc = fromUtc,
+                        ToUtc = now
+                    },
+                    cancellationToken);
+
+                collected.AddRange(results);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // Caller/host requested cancellation; stop the pipeline instead of swallowing it.
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "External Context provider {ProviderName} failed with {ExceptionType} and was skipped.", provider.Name, ex.GetType().Name);
+            }
         }
 
         if (options.MaxCandidates > 0 && collected.Count > options.MaxCandidates)

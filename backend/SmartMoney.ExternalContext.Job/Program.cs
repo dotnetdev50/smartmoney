@@ -3,6 +3,8 @@ using SmartMoney.ExternalContext.Contracts;
 using SmartMoney.ExternalContext.Export;
 using SmartMoney.ExternalContext.Pipeline;
 using SmartMoney.ExternalContext.Providers;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var options = BuildOptions(args);
 if (!options.Enabled)
@@ -10,11 +12,6 @@ if (!options.Enabled)
     Console.WriteLine("External Context job is disabled. Set --enabled true to generate market_news.json.");
     return;
 }
-
-var providers = new INewsSourceProvider[]
-{
-    new FixtureNewsSourceProvider()
-};
 
 var outputPath = string.IsNullOrWhiteSpace(options.OutputPath)
     ? ResolveDefaultOutputPath()
@@ -25,12 +22,17 @@ if (string.IsNullOrWhiteSpace(options.OutputPath))
     Console.WriteLine($"Using default output path: {outputPath}");
 }
 
-var pipeline = new MarketNewsPipeline(
-    providers,
-    new DefaultNewsNormalizer(),
-    new DefaultNewsDeduplicator(),
-    new SimpleNewsRanker(),
-    new JsonMarketNewsExporter(Path.GetFullPath(outputPath)));
+var builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddExternalContextProviders(builder.Configuration);
+builder.Services.AddSingleton(options);
+builder.Services.AddSingleton<INewsNormalizer, DefaultNewsNormalizer>();
+builder.Services.AddSingleton<INewsDeduplicator, DefaultNewsDeduplicator>();
+builder.Services.AddSingleton<INewsRanker, SimpleNewsRanker>();
+builder.Services.AddSingleton<IMarketNewsExporter>(_ => new JsonMarketNewsExporter(Path.GetFullPath(outputPath)));
+builder.Services.AddSingleton<MarketNewsPipeline>();
+
+using var host = builder.Build();
+var pipeline = host.Services.GetRequiredService<MarketNewsPipeline>();
 
 var document = await pipeline.RunAsync(options, CancellationToken.None);
 

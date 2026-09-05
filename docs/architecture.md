@@ -104,3 +104,59 @@ External Context is informational and does not participate in `FinalScore`, `Reg
 participant calculations.
 
 External Context failures must not fail the core SmartMoney market-data pipeline.
+
+### External Context Provider Architecture
+
+External Context providers are plugins behind `INewsSourceProvider`. Adding or removing a
+provider must not require changes to collection, normalization, deduplication, ranking, or
+export pipeline logic.
+
+```
+                       INewsSourceProvider
+                              ↑
+          ┌───────────────────┼───────────────────┐
+          │                   │                   │
+         RBI                 Fed                GDACS
+          │                   │                   │
+          └───────────────────┼───────────────────┘
+                              ↓
+              IEnumerable<INewsSourceProvider>
+                              ↓
+                   MarketNewsPipeline
+                              ↓
+                      Normalization
+                              ↓
+                     Deduplication
+                              ↓
+                        Ranking
+                              ↓
+                        Export
+```
+
+- Each provider owns its source-specific HTTP request construction, XML/JSON parsing,
+  filtering, stable ID generation, and mapping to `NewsCandidate`.
+- Provider-specific options (e.g. `RbiNewsSourceOptions`, `FederalReserveNewsSourceOptions`,
+  `GdacsNewsSourceOptions`) are independent of each other and of `ExternalContextOptions`.
+- Each provider can be enabled/disabled independently (`Enabled` on its options); disabling one
+  provider does not affect the others, and `MarketNewsPipeline` skips disabled providers
+  generically without any provider-name branching.
+- A failure in one provider is isolated by `MarketNewsPipeline` and does not block or fail the
+  other providers' candidates from being collected.
+- Explicit DI registration (`AddExternalContextProviders`) is the composition boundary where new
+  providers are wired up; `MarketNewsPipeline` itself has no concrete provider references.
+- Runtime reflection or plugin DLL loading is intentionally not used — explicit interfaces and
+  DI registration are sufficient for this plugin model.
+- External Context remains independent of SmartMoney scoring, as described above.
+
+#### Adding a future provider (example: SEBI)
+
+Adding a new provider such as SEBI is expected to require only:
+
+- `SebiNewsSourceProvider.cs`
+- `SebiNewsSourceOptions.cs`
+- provider-specific tests
+- DI registration in `AddExternalContextProviders`
+- configuration under `ExternalContext:Providers:SEBI`
+
+and no changes to `MarketNewsPipeline`, normalization, deduplication, ranking, export, or any
+existing provider.

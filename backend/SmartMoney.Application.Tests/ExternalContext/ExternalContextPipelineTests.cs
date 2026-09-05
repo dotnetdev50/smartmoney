@@ -1,5 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Net;
+using System.Xml.Linq;
+using Microsoft.Extensions.Options;
 using SmartMoney.ExternalContext.Configuration;
 using SmartMoney.ExternalContext.Contracts;
 using SmartMoney.ExternalContext.Export;
@@ -197,6 +200,139 @@ public sealed class ExternalContextPipelineTests
         await Assert.ThrowsAsync<OperationCanceledException>(() =>
             provider.GetNewsAsync(new NewsSourceRequest { FromUtc = DateTimeOffset.UtcNow.AddHours(-1), ToUtc = DateTimeOffset.UtcNow }, cts.Token));
     }
+
+        [Fact]
+        public async Task RbiProvider_ParsesOfficialPressReleases()
+        {
+                const string xml = """
+                        <rss version="2.0">
+                            <channel>
+                                <item>
+                                    <title>RBI announces policy rate decisions</title>
+                                    <link>https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx?prid=5723</link>
+                                    <description>RBI announces policy rate decisions to support growth and price stability.</description>
+                                    <pubDate>Thu, 29 Aug 2026 12:30:00 GMT</pubDate>
+                                </item>
+                            </channel>
+                        </rss>
+                        """;
+
+                var provider = new RbiNewsSourceProvider(
+                    new HttpClient(new StubHttpMessageHandler(xml)) { BaseAddress = new Uri("https://www.rbi.org.in/") },
+                    Microsoft.Extensions.Options.Options.Create(new RbiNewsSourceOptions { Endpoint = "https://www.rbi.org.in/" }));
+
+                var candidates = await provider.GetNewsAsync(new NewsSourceRequest
+                {
+                        FromUtc = new DateTimeOffset(2026, 8, 28, 0, 0, 0, TimeSpan.Zero),
+                        ToUtc = new DateTimeOffset(2026, 9, 3, 0, 0, 0, TimeSpan.Zero)
+                }, CancellationToken.None);
+
+                var item = Assert.Single(candidates);
+                Assert.Equal("RBI", item.SourceName);
+                Assert.Equal(NewsScope.India, item.Scope);
+                Assert.Equal(NewsCategory.MonetaryMacro, item.Category);
+                Assert.Equal(NewsSourceType.Official, item.SourceType);
+                Assert.Contains("policy", item.Headline, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task FederalReserveProvider_ParsesOfficialPressReleases()
+        {
+                const string xml = """
+                        <rss version="2.0">
+                            <channel>
+                                <item>
+                                    <title>Federal Reserve issues FOMC statement</title>
+                                    <link>https://www.federalreserve.gov/newsevents/pressreleases/monetary20260729a.htm</link>
+                                    <description>Federal Reserve issues FOMC statement after policy meeting.</description>
+                                    <category>Monetary Policy</category>
+                                    <pubDate>Wed, 29 Jul 2026 18:00:00 GMT</pubDate>
+                                </item>
+                            </channel>
+                        </rss>
+                        """;
+
+                var provider = new FederalReserveNewsSourceProvider(
+                    new HttpClient(new StubHttpMessageHandler(xml)) { BaseAddress = new Uri("https://www.federalreserve.gov/") },
+                    Microsoft.Extensions.Options.Options.Create(new FederalReserveNewsSourceOptions { Endpoint = "https://www.federalreserve.gov/" }));
+
+                var candidates = await provider.GetNewsAsync(new NewsSourceRequest
+                {
+                        FromUtc = new DateTimeOffset(2026, 7, 1, 0, 0, 0, TimeSpan.Zero),
+                        ToUtc = new DateTimeOffset(2026, 8, 1, 0, 0, 0, TimeSpan.Zero)
+                }, CancellationToken.None);
+
+                var item = Assert.Single(candidates);
+                Assert.Equal("Federal Reserve", item.SourceName);
+                Assert.Equal(NewsScope.Global, item.Scope);
+                Assert.Equal(NewsCategory.MonetaryMacro, item.Category);
+                Assert.Equal(NewsSourceType.Official, item.SourceType);
+                Assert.Contains("FOMC", item.Headline, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task GdacsProvider_FiltersToHighSeverityEvents()
+        {
+                const string json = """
+                        {
+                            "events": [
+                                {
+                                    "eventid": 12345,
+                                    "title": "Severe storm threat",
+                                    "description": "Heavy storms and flooding expected across the region.",
+                                    "alertlevel": "Orange",
+                                    "eventtype": "TC",
+                                    "fromDate": "2026-09-02T06:00:00Z",
+                                    "url": "https://www.gdacs.org/report.aspx?eventid=12345&episodeid=12345&eventtype=TC"
+                                },
+                                {
+                                    "eventid": 54321,
+                                    "title": "Low severity advisory",
+                                    "description": "Minor pressure system with limited disruption.",
+                                    "alertlevel": "Green",
+                                    "eventtype": "TC",
+                                    "fromDate": "2026-09-02T08:00:00Z",
+                                    "url": "https://www.gdacs.org/report.aspx?eventid=54321"
+                                }
+                            ]
+                        }
+                        """;
+
+                var provider = new GdacsNewsSourceProvider(
+                    new HttpClient(new StubHttpMessageHandler(json)) { BaseAddress = new Uri("https://www.gdacs.org/") },
+                    Microsoft.Extensions.Options.Options.Create(new GdacsNewsSourceOptions { Endpoint = "https://www.gdacs.org/gdacsapi/api/events" }));
+
+                var candidates = await provider.GetNewsAsync(new NewsSourceRequest
+                {
+                        FromUtc = new DateTimeOffset(2026, 9, 1, 0, 0, 0, TimeSpan.Zero),
+                        ToUtc = new DateTimeOffset(2026, 9, 3, 0, 0, 0, TimeSpan.Zero)
+                }, CancellationToken.None);
+
+                var item = Assert.Single(candidates);
+                Assert.Equal("GDACS", item.SourceName);
+                Assert.Equal(NewsScope.Global, item.Scope);
+                Assert.Equal(NewsCategory.NaturalDisaster, item.Category);
+                Assert.Equal(NewsSourceType.Official, item.SourceType);
+                Assert.Equal("Orange", item.Tags?.FirstOrDefault());
+        }
+
+        private sealed class StubHttpMessageHandler : HttpMessageHandler
+        {
+                private readonly string _responseBody;
+
+                public StubHttpMessageHandler(string responseBody)
+                {
+                        _responseBody = responseBody;
+                }
+
+                protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+                {
+                        return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+                        {
+                                Content = new StringContent(_responseBody, System.Text.Encoding.UTF8, "application/json")
+                        });
+                }
+        }
 
     private sealed class DuplicateCandidateProvider : INewsSourceProvider
     {
