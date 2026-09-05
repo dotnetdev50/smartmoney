@@ -111,6 +111,30 @@ export type LayoffsSummary = {
   source_url: string;
 };
 
+export type NewsScope = "India" | "Global";
+export type NewsImpact = "High" | "Medium" | "Low";
+export type NewsSentiment = "Positive" | "Negative" | "Mixed" | "Neutral";
+export type NewsCategory = "Geopolitical" | "OilEnergy" | "MonetaryMacro" | "IndiaPolicyRegulation" | "FinancialSystem" | "NaturalDisaster" | "Other";
+
+export type MarketNewsItem = {
+  rank: number;
+  scope: NewsScope;
+  category: NewsCategory;
+  impact: NewsImpact;
+  sentiment: NewsSentiment;
+  headline: string;
+  why_it_matters: string;
+  source: string;
+  published_at_utc: string;
+  url: string;
+};
+
+export type MarketNewsDocument = {
+  generated_at_utc: string;
+  lookback_hours: number;
+  items: MarketNewsItem[];
+};
+
 const JSON_BASE = import.meta.env.VITE_JSON_BASE_URL ?? "/data";
 
 async function jsonGet<T>(file: string): Promise<T> {
@@ -123,6 +147,7 @@ export const api = {
   marketToday: () => jsonGet<MarketTodayResponse>("market_today.json"),
   marketHistory: () => jsonGet<MarketHistoryPoint[]>("market_history_30.json"),
   layoffsSummary: () => jsonGet<LayoffsSummary>("layoffs_summary.json"),
+  marketNews: () => jsonGet<MarketNewsDocument>("market_news.json"),
 };
 
 // export type ParticipantDto = {

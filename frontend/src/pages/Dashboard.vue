@@ -5,10 +5,11 @@ import ExplanationCard from "@/components/dashboard/ExplanationCard.vue";
 import HeadlineSignalCard from "@/components/dashboard/HeadlineSignalCard.vue";
 import HistoryChart from "@/components/dashboard/HistoryChart.vue";
 import MarketStructureSection from "@/components/dashboard/MarketStructureSection.vue";
+import MarketMovingNews from "@/components/dashboard/MarketMovingNews.vue";
 import ParticipantActivityCard from "@/components/dashboard/ParticipantActivityCard.vue";
 import ParticipantGrid from "@/components/dashboard/ParticipantGrid.vue";
 import QuickFactsSection from "@/components/dashboard/QuickFactsSection.vue";
-import { api, type LayoffsSummary, type MarketHistoryPoint, type MarketTodayResponse } from "@/services/api";
+import { api, type LayoffsSummary, type MarketHistoryPoint, type MarketNewsDocument, type MarketTodayResponse } from "@/services/api";
 
 const loading = ref(true);
 const error = ref<string | null>(null);
@@ -19,6 +20,8 @@ const history = ref<MarketHistoryPoint[]>([]);
 
 // External context only (layoffs.fyi). Optional; failures never surface as page-level errors.
 const layoffs = ref<LayoffsSummary | null>(null);
+const marketNews = ref<MarketNewsDocument | null>(null);
+const marketNewsUnavailable = ref(false);
 
 function formatDate(value?: string | null) {
   if (!value) return "-";
@@ -152,6 +155,16 @@ async function loadLayoffsSummary() {
   }
 }
 
+async function loadMarketNews() {
+  try {
+    marketNews.value = await api.marketNews();
+    marketNewsUnavailable.value = false;
+  } catch {
+    marketNews.value = null;
+    marketNewsUnavailable.value = true;
+  }
+}
+
 async function load() {
   loading.value = true;
   error.value = null;
@@ -167,6 +180,7 @@ async function load() {
   }
 
   void loadLayoffsSummary();
+  void loadMarketNews();
 }
 
 function setTheme(dark: boolean) {
@@ -186,7 +200,7 @@ onMounted(load);
   <div
     class="dashboard-shell flex min-h-dvh items-stretch justify-center overflow-y-auto bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 lg:h-dvh lg:overflow-hidden"
   >
-    <div class="dashboard-inner flex w-full max-w-[1280px] flex-col gap-2 px-3 py-2 sm:px-4 sm:py-3 lg:h-full">
+    <div class="dashboard-inner flex w-full max-w-[1280px] flex-col gap-2 px-3 py-2 sm:px-4 sm:py-3">
       <header class="flex shrink-0 flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Dashboard</p>
@@ -246,7 +260,7 @@ onMounted(load);
       <template v-else>
         <div
           v-if="today"
-          class="dashboard-main-grid grid gap-2 lg:min-h-0 lg:flex-1 lg:grid-rows-[minmax(0,0.86fr)_minmax(0,0.8fr)_minmax(0,1.12fr)]"
+          class="dashboard-main-grid grid gap-2 lg:min-h-0 lg:flex-none lg:grid-rows-[minmax(0,0.86fr)_minmax(0,0.8fr)_minmax(0,1.12fr)]"
         >
           <section class="grid gap-2 lg:min-h-0 lg:grid-cols-12">
             <article
@@ -320,6 +334,12 @@ onMounted(load);
           </section>
         </div>
 
+        <MarketMovingNews
+          v-if="today"
+          :document="marketNews"
+          :unavailable="marketNewsUnavailable"
+        />
+
         <div
           v-else
           class="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
@@ -378,10 +398,6 @@ onMounted(load);
     height: auto;
     overflow-y: auto;
     align-items: flex-start;
-  }
-
-  .dashboard-inner {
-    height: auto;
   }
 
   .dashboard-main-grid {

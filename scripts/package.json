@@ -5,7 +5,9 @@
   "type": "module",
   "description": "Isolated external-context scripts for SmartMoney. Not part of the deterministic scoring pipeline.",
   "scripts": {
-    "fetch-layoffs-summary": "node fetch-layoffs-summary.mjs"
+    "fetch-layoffs-summary": "node fetch-layoffs-summary.mjs",
+    "refresh-market-news": "node refresh-market-news.mjs",
+    "validate-market-news": "node validate-market-news.mjs"
   },
   "devDependencies": {
     "playwright": "^1.48.0"
