@@ -48,6 +48,24 @@ public sealed class NewsSourceRequest
     public DateTimeOffset ToUtc { get; set; }
 }
 
+public enum NewsProviderRunStatus
+{
+    Success,
+    Degraded,
+    Failed,
+    Disabled
+}
+
+public sealed class NewsProviderResult
+{
+    public string ProviderName { get; init; } = string.Empty;
+    public NewsProviderRunStatus Status { get; init; }
+    public IReadOnlyList<NewsCandidate> Candidates { get; init; } = Array.Empty<NewsCandidate>();
+    public DateTimeOffset RetrievedAtUtc { get; init; }
+    public string? DiagnosticCode { get; init; }
+    public int? FetchedItemCount { get; init; }
+}
+
 public sealed class NewsCandidate
 {
     public string Id { get; set; } = string.Empty;

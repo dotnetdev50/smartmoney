@@ -36,6 +36,18 @@ var pipeline = host.Services.GetRequiredService<MarketNewsPipeline>();
 
 var document = await pipeline.RunAsync(options, CancellationToken.None);
 
+foreach (var result in pipeline.LastProviderResults)
+{
+    var fetchedItemCount = result.FetchedItemCount?.ToString() ?? "Unknown";
+    var diagnosticCode = result.DiagnosticCode ?? "None";
+    Console.WriteLine($"Provider={result.ProviderName} Status={result.Status} FetchedItems={fetchedItemCount} AcceptedCandidates={result.Candidates.Count} Diagnostic={diagnosticCode}");
+}
+
+foreach (var entry in pipeline.LastSelectedCandidates.Select((candidate, index) => (candidate, index)))
+{
+    Console.WriteLine($"Rank={entry.index + 1} Score={entry.candidate.MarketRelevanceScore} Impact={entry.candidate.Impact} Sentiment={entry.candidate.Sentiment} Scope={entry.candidate.NormalizedCandidate.Scope} Category={entry.candidate.NormalizedCandidate.Category} Provider={entry.candidate.NormalizedCandidate.SourceName} Headline={entry.candidate.NormalizedCandidate.Headline} WhyItMatters={entry.candidate.WhyItMatters}");
+}
+
 Console.WriteLine($"Generated {document.Items.Count} market news items at {document.GeneratedAtUtc:O}");
 
 static string ResolveDefaultOutputPath()

@@ -15,8 +15,6 @@ The project is split into two parts:
 Backend Job (C#) → frontend/public/data/*.json → npm run build → dist/data/ → GitHub Pages
 ```
 
-The backend job is run by the GitHub Actions workflow (`.github/workflows/pages.yml`) every weekday at 9:40 PM IST.
-
 ### External Context: Tech Layoffs (layoffs.fyi)
 
 Independent of the NSE/scoring pipeline above, `scripts/fetch-layoffs-summary.mjs` scrapes the
@@ -31,6 +29,17 @@ This value is **informational only** — it is displayed on the dashboard as a "
 and does not participate in FinalScore, Regime, ShockScore, Smart/Retail/DII calculations, narrative
 decomposition, or AI interpretation. If the fetch fails, the last known-good file is preserved (or the
 KPI shows "Unavailable"); the market-data pipeline is never affected.
+
+### External Context: Market-Moving News
+
+The GitHub Actions workflow runs scheduled refreshes every weekday at 9:30 AM and 8:30, 9:00, and
+9:30 PM IST.
+
+Six official sources (RBI, SEBI, PIB, NSE, Federal Reserve, and GDACS) feed the External Context
+job, which deterministically selects up to five material events and writes
+`frontend/public/data/market_news.json` for the Vue dashboard. This is optional informational
+context and does not affect SmartMoney scoring. Production refreshes retain the previous valid
+document when the job fails; a valid zero-event document replaces stale news.
 
 ---
 

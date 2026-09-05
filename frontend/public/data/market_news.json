@@ -1,66 +1,42 @@
 {
-  "generated_at_utc": "2026-09-03T13:36:22.1787737+00:00",
-  "lookback_hours": 24,
+  "generated_at_utc": "2026-09-05T08:00:07.7594869+00:00",
+  "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
       "scope": "India",
-      "category": "MonetaryMacro",
+      "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "India policy signal suggests tightening remains on the table",
-      "why_it_matters": "Policy and domestic sentiment shifts can influence local market positioning and risk appetite.",
-      "source": "fixture",
-      "published_at_utc": "2026-09-03T13:16:22.1808108+00:00",
-      "url": "https://example.com/fixture/india-rbi-policy"
+      "headline": "SEBI signs MoU with European Securities and Markets Authority on cooperation and exchange of information relating to Central Counterparties",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-09-03T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2026/sebi-signs-mou-with-european-securities-and-markets-authority-on-cooperation-and-exchange-of-information-relating-to-central-counterparties_104279.html"
     },
     {
       "rank": 2,
-      "scope": "Global",
-      "category": "Geopolitical",
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
       "impact": "High",
-      "sentiment": "Negative",
-      "headline": "Global geopolitical tensions rise as shipping routes remain volatile",
-      "why_it_matters": "Global dynamics can affect commodity prices, capital flows, and risk sentiment for Indian equities.",
-      "source": "fixture",
-      "published_at_utc": "2026-09-03T13:26:22.1808108+00:00",
-      "url": "https://example.com/fixture/global-geopolitical"
+      "sentiment": "Mixed",
+      "headline": "SEBI to review Settlement Price methodology for Derivative Contracts in the light of CAS rollout",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-09-02T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2026/sebi-to-review-settlement-price-methodology-for-derivative-contracts-in-the-light-of-cas-rollout_104260.html"
     },
     {
       "rank": 3,
       "scope": "India",
       "category": "NaturalDisaster",
       "impact": "Medium",
-      "sentiment": "Mixed",
-      "headline": "Heavy rainfall disrupts logistics and power supply across regions",
-      "why_it_matters": "Policy and domestic sentiment shifts can influence local market positioning and risk appetite.",
-      "source": "fixture",
-      "published_at_utc": "2026-09-03T12:26:22.1808108+00:00",
-      "url": "https://example.com/fixture/india-natural-disaster"
-    },
-    {
-      "rank": 4,
-      "scope": "Global",
-      "category": "OilEnergy",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Oil and energy markets react to supply disruption warnings",
-      "why_it_matters": "Global dynamics can affect commodity prices, capital flows, and risk sentiment for Indian equities.",
-      "source": "fixture",
-      "published_at_utc": "2026-09-03T12:56:22.1808108+00:00",
-      "url": "https://example.com/fixture/oil-supply-shock"
-    },
-    {
-      "rank": 5,
-      "scope": "India",
-      "category": "Other",
-      "impact": "Low",
       "sentiment": "Neutral",
-      "headline": "Corporate press release extends a local operational update",
-      "why_it_matters": "Policy and domestic sentiment shifts can influence local market positioning and risk appetite.",
-      "source": "fixture",
-      "published_at_utc": "2026-09-03T11:16:22.1808108+00:00",
-      "url": "https://example.com/fixture/minor-event"
+      "headline": "Flood in India",
+      "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
+      "source": "GDACS",
+      "published_at_utc": "2026-08-09T01:00:00+00:00",
+      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=11\u0026eventtype=FL"
     }
   ]
 }

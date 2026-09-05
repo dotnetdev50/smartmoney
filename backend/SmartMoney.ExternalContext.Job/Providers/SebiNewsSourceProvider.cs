@@ -4,27 +4,27 @@ using SmartMoney.ExternalContext.Contracts;
 
 namespace SmartMoney.ExternalContext.Providers;
 
-public sealed class FederalReserveNewsSourceOptions
+public sealed class SebiNewsSourceOptions
 {
     public bool Enabled { get; set; } = true;
-    public string Endpoint { get; set; } = "https://www.federalreserve.gov/feeds/press_monetary.xml";
+    public string Endpoint { get; set; } = "https://www.sebi.gov.in/sebirss.xml";
     public int TimeoutSeconds { get; set; } = 30;
 
     public TimeSpan Timeout => TimeSpan.FromSeconds(TimeoutSeconds);
 }
 
-public sealed class FederalReserveNewsSourceProvider : INewsSourceProvider
+public sealed class SebiNewsSourceProvider : INewsSourceProvider
 {
     private readonly HttpClient _httpClient;
-    private readonly FederalReserveNewsSourceOptions _options;
+    private readonly SebiNewsSourceOptions _options;
 
-    public FederalReserveNewsSourceProvider(HttpClient httpClient, IOptions<FederalReserveNewsSourceOptions> options)
+    public SebiNewsSourceProvider(HttpClient httpClient, IOptions<SebiNewsSourceOptions> options)
     {
         _httpClient = httpClient;
         _options = options.Value;
     }
 
-    public string Name => "Federal Reserve";
+    public string Name => "SEBI";
     public bool Enabled => _options.Enabled;
 
     public async Task<IReadOnlyList<NewsCandidate>> GetNewsAsync(NewsSourceRequest request, CancellationToken cancellationToken)
@@ -49,32 +49,62 @@ public sealed class FederalReserveNewsSourceProvider : INewsSourceProvider
         var title = NewsProviderUtilities.GetElementValue(item, "title");
         var link = NewsProviderUtilities.GetElementValue(item, "link");
         var summary = NewsProviderUtilities.GetElementValue(item, "description");
-        var category = NewsProviderUtilities.GetElementValue(item, "category");
         var published = NewsProviderUtilities.GetElementValue(item, "pubDate");
-        var guid = NewsProviderUtilities.GetElementValue(item, "guid");
+
         if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(link)
-            || !string.Equals(category, "Monetary Policy", StringComparison.OrdinalIgnoreCase)
             || !NewsProviderUtilities.TryParseFeedDate(published, out var publishedAtUtc)
             || publishedAtUtc < request.FromUtc || publishedAtUtc > request.ToUtc)
         {
             return null;
         }
 
+        if (IsRoutineEnforcementOrAppeal(title))
+        {
+            return null;
+        }
+
         return new NewsCandidate
         {
-            Id = NewsProviderUtilities.BuildStableId("fed", string.IsNullOrWhiteSpace(guid) ? link : guid, publishedAtUtc),
-            Scope = NewsScope.Global,
-            Category = NewsCategory.MonetaryMacro,
+            Id = NewsProviderUtilities.BuildStableId("sebi", title, publishedAtUtc),
+            Scope = NewsScope.India,
+            Category = MapCategory(title),
             Headline = title,
-            Summary = string.IsNullOrWhiteSpace(summary) ? null : summary,
-            SourceName = "Federal Reserve",
+            Summary = string.IsNullOrWhiteSpace(summary) || string.Equals(summary, title, StringComparison.OrdinalIgnoreCase) ? null : summary,
+            SourceName = "SEBI",
             SourceType = NewsSourceType.Official,
             ArticleUrl = new Uri(link),
             PublishedAtUtc = publishedAtUtc,
             RetrievedAtUtc = DateTimeOffset.UtcNow,
-            Country = "United States",
-            Tags = ["fed", "monetary-policy"],
-            ExternalId = guid
+            Country = "India",
+            Tags = ["sebi", "regulation", "india"]
         };
+    }
+
+    private static bool IsRoutineEnforcementOrAppeal(string title)
+    {
+        var t = title.ToLowerInvariant();
+         return t.Contains("settlement order") ||
+             t.Contains("adjudication order") ||
+               t.Contains("appeal no") ||
+               t.Contains("notice of demand") ||
+               t.Contains("recovery proceedings") ||
+               t.Contains("release order") ||
+               t.Contains("recovery certificate") ||
+               t.Contains("notice of attachment") ||
+               t.Contains("in the matter of") ||
+               t.Contains("illiquid stock options") ||
+               t.Contains("grant of certificate") ||
+               t.Contains("surrender of certificate") ||
+               t.Contains("in the matter of illiquid");
+    }
+
+    private static NewsCategory MapCategory(string title)
+    {
+        var t = title.ToLowerInvariant();
+        if (t.Contains("monetary") || t.Contains("macro") || t.Contains("repo"))
+        {
+            return NewsCategory.MonetaryMacro;
+        }
+        return NewsCategory.IndiaPolicyRegulation;
     }
 }

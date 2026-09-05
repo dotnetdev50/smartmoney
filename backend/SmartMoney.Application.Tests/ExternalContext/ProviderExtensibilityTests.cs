@@ -135,11 +135,16 @@ public sealed class ProviderExtensibilityTests
             return Task.FromResult<IReadOnlyList<NewsCandidate>>([new NewsCandidate
             {
                 Id = Name,
-                Scope = NewsScope.Global,
-                Category = NewsCategory.Other,
+                Scope = NewsScope.India,
+                Category = Name switch
+                {
+                    "ProviderB" => NewsCategory.MonetaryMacro,
+                    "ProviderC" => NewsCategory.FinancialSystem,
+                    _ => NewsCategory.IndiaPolicyRegulation
+                },
                 Headline = Name,
                 SourceName = Name,
-                SourceType = NewsSourceType.Other,
+                SourceType = NewsSourceType.Official,
                 ArticleUrl = new Uri($"https://example.com/{Name}"),
                 PublishedAtUtc = now,
                 RetrievedAtUtc = now

@@ -38,7 +38,9 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: |
+            frontend/package-lock.json
+            scripts/package-lock.json
 
       - name: Install frontend deps
         working-directory: frontend
@@ -46,7 +48,7 @@ jobs:
 
       - name: Install layoffs-summary script deps
         working-directory: scripts
-        run: npm install
+        run: npm ci
 
       - name: Install Playwright Chromium runtime
         working-directory: scripts
@@ -73,20 +75,9 @@ jobs:
         run: |
           dotnet run -c Release --project backend/SmartMoney.Job/SmartMoney.Job.csproj
 
-      - name: Commit public/data back to repo (H2 support)
-        if: ${{ always() }}
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add frontend/public/data/ || true
-          if git diff --cached --quiet; then
-            echo "No changes to frontend/public/data — nothing to commit."
-          else
-            DATA_DATE=$(date -u '+%Y-%m-%d')
-            git commit -m "chore: update market data ${DATA_DATE} [skip ci]"
-            git push
-          fi
+      - name: Refresh market-moving news (external context; preserves last-known-good on failure)
+        working-directory: scripts
+        run: node refresh-market-news.mjs
 
       - name: Validate data JSON files
         shell: bash
@@ -101,11 +92,32 @@ jobs:
           else
             echo "layoffs_summary.json not present (external fetch may have failed); dashboard will show Unavailable."
           fi
+          if [ -f frontend/public/data/market_news.json ]; then
+            node scripts/validate-market-news.mjs frontend/public/data/market_news.json \
+              || { echo "ERROR: market_news.json does not match the public contract"; exit 1; }
+          else
+            echo "market_news.json not present (external refresh may have failed with no last-known-good document); dashboard will show Unavailable."
+          fi
           echo "JSON validation passed"
 
       - name: Build frontend
         working-directory: frontend
         run: npm run build
+
+      - name: Commit public/data back to repo (H2 support)
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add frontend/public/data/ || true
+          if git diff --cached --quiet; then
+            echo "No changes to frontend/public/data — nothing to commit."
+          else
+            DATA_DATE=$(date -u '+%Y-%m-%d')
+            git commit -m "chore: update market data ${DATA_DATE} [skip ci]"
+            git push
+          fi
 
       - name: Debug dist output
         shell: bash

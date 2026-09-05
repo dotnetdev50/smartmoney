@@ -26,12 +26,23 @@ public interface IMarketNewsExporter
     Task ExportAsync(MarketNewsDocument document, CancellationToken cancellationToken);
 }
 
+public sealed record NewsScoreBreakdown(
+    int BaseMarketRelevance,
+    int PotentialImpact,
+    int SourceAuthority,
+    int IndiaRelevance,
+    int Recency)
+{
+    public int Total => BaseMarketRelevance + PotentialImpact + SourceAuthority + IndiaRelevance + Recency;
+}
+
 public sealed record RankedNewsCandidate(
     NewsCandidate NormalizedCandidate,
     int MarketRelevanceScore,
     NewsImpact Impact,
     NewsSentiment Sentiment,
-    string WhyItMatters);
+    string WhyItMatters,
+    NewsScoreBreakdown ScoreBreakdown);
 
 public sealed class DefaultNewsNormalizer : INewsNormalizer
 {
@@ -81,95 +92,168 @@ public sealed class DefaultNewsDeduplicator : INewsDeduplicator
                 candidate.ExternalId ?? string.Empty
             };
 
-            var key = keys.FirstOrDefault(k => !string.IsNullOrWhiteSpace(k));
-            if (string.IsNullOrWhiteSpace(key) || seen.Add(key))
+            var nonEmptyKeys = keys.Where(key => !string.IsNullOrWhiteSpace(key)).ToList();
+            if (nonEmptyKeys.All(key => !seen.Contains(key)))
             {
                 deduplicated.Add(candidate);
+                foreach (var key in nonEmptyKeys)
+                {
+                    seen.Add(key);
+                }
             }
         }
 
-        return deduplicated;
+        return DeduplicateEvents(deduplicated);
     }
+
+    private static IReadOnlyList<NewsCandidate> DeduplicateEvents(IReadOnlyList<NewsCandidate> candidates)
+    {
+        var events = new List<NewsCandidate>(candidates.Count);
+        foreach (var candidate in candidates.OrderByDescending(item => item.PublishedAtUtc))
+        {
+            if (!events.Any(existing => IsSameEvent(existing, candidate)))
+            {
+                events.Add(candidate);
+            }
+        }
+
+        return events;
+    }
+
+    private static bool IsSameEvent(NewsCandidate first, NewsCandidate second)
+    {
+        if (first.Scope != second.Scope || first.Category != second.Category
+            || (first.PublishedAtUtc - second.PublishedAtUtc).Duration() > TimeSpan.FromHours(24))
+        {
+            return false;
+        }
+
+        var firstTokens = ImportantTokens(first.Headline);
+        var secondTokens = ImportantTokens(second.Headline);
+        if (firstTokens.Count >= 3 && firstTokens.SetEquals(secondTokens))
+        {
+            return true;
+        }
+
+        var overlap = firstTokens.Intersect(secondTokens, StringComparer.Ordinal).Count();
+        var union = firstTokens.Union(secondTokens, StringComparer.Ordinal).Count();
+        return overlap >= 3 && union > 0 && (double)overlap / union >= 0.8;
+    }
+
+    private static HashSet<string> ImportantTokens(string value) => value
+        .ToLowerInvariant()
+        .Split([' ', '-', '/', ',', ':', ';', '(', ')'], StringSplitOptions.RemoveEmptyEntries)
+        .Where(token => token.Length >= 4 && token is not ("with" or "from" or "that" or "this" or "under" or "into" or "market" or "india"))
+        .ToHashSet(StringComparer.Ordinal);
 }
 
 public sealed class SimpleNewsRanker : INewsRanker
 {
+    public const int MinimumOutputScore = 45;
+
     public IReadOnlyList<RankedNewsCandidate> Rank(IReadOnlyList<NewsCandidate> candidates)
     {
         return candidates
-            .Select(candidate => new RankedNewsCandidate(
-                candidate,
-                CalculateMarketRelevanceScore(candidate),
-                DetermineImpact(candidate),
-                DetermineSentiment(candidate),
-                BuildWhyItMatters(candidate)))
+            .Select(Score)
             .OrderByDescending(r => r.MarketRelevanceScore)
             .ThenByDescending(r => r.NormalizedCandidate.PublishedAtUtc)
             .ToList();
     }
 
-    private static int CalculateMarketRelevanceScore(NewsCandidate candidate)
+    public RankedNewsCandidate Score(NewsCandidate candidate)
     {
-        var score = candidate.Scope switch
-        {
-            NewsScope.India => 50,
-            NewsScope.Global => 40,
-            _ => 10
-        };
+        var breakdown = new NewsScoreBreakdown(
+            BaseMarketRelevance: BaseMarketRelevance(candidate.Category),
+            PotentialImpact: PotentialImpact(candidate.Category),
+            SourceAuthority: SourceAuthority(candidate.SourceType),
+            IndiaRelevance: IndiaRelevance(candidate),
+            Recency: Recency(candidate.PublishedAtUtc, DateTimeOffset.UtcNow));
+        var score = Math.Clamp(breakdown.Total, 0, 100);
 
-        score += candidate.Category switch
-        {
-            NewsCategory.Geopolitical => 25,
-            NewsCategory.OilEnergy => 20,
-            NewsCategory.MonetaryMacro => 18,
-            NewsCategory.IndiaPolicyRegulation => 18,
-            NewsCategory.FinancialSystem => 22,
-            NewsCategory.NaturalDisaster => 15,
-            _ => 5
-        };
-
-        score += candidate.SourceType switch
-        {
-            NewsSourceType.Official => 10,
-            NewsSourceType.Aggregator => 8,
-            NewsSourceType.Publisher => 6,
-            _ => 2
-        };
-
-        return score;
+        return new RankedNewsCandidate(
+            candidate,
+            score,
+            score >= 75 ? NewsImpact.High : score >= 50 ? NewsImpact.Medium : NewsImpact.Low,
+            DetermineSentiment(candidate),
+            BuildWhyItMatters(candidate),
+            breakdown);
     }
 
-    private static NewsImpact DetermineImpact(NewsCandidate candidate) =>
-        candidate.Category switch
-        {
-            NewsCategory.Geopolitical => NewsImpact.High,
-            NewsCategory.OilEnergy => NewsImpact.High,
-            NewsCategory.MonetaryMacro => NewsImpact.High,
-            NewsCategory.IndiaPolicyRegulation => NewsImpact.Medium,
-            NewsCategory.FinancialSystem => NewsImpact.High,
-            NewsCategory.NaturalDisaster => NewsImpact.Medium,
-            _ => NewsImpact.Low
-        };
+    private static int BaseMarketRelevance(NewsCategory category) => category switch
+    {
+        NewsCategory.MonetaryMacro => 30,
+        NewsCategory.FinancialSystem => 28,
+        NewsCategory.Geopolitical => 27,
+        NewsCategory.OilEnergy => 27,
+        NewsCategory.IndiaPolicyRegulation => 24,
+        NewsCategory.NaturalDisaster => 12,
+        _ => 5
+    };
 
-    private static NewsSentiment DetermineSentiment(NewsCandidate candidate) =>
-        candidate.Category switch
+    private static int PotentialImpact(NewsCategory category) => category switch
+    {
+        NewsCategory.MonetaryMacro => 25,
+        NewsCategory.FinancialSystem => 24,
+        NewsCategory.Geopolitical => 23,
+        NewsCategory.OilEnergy => 23,
+        NewsCategory.IndiaPolicyRegulation => 18,
+        NewsCategory.NaturalDisaster => 10,
+        _ => 3
+    };
+
+    private static int SourceAuthority(NewsSourceType sourceType) => sourceType switch
+    {
+        NewsSourceType.Official => 15,
+        NewsSourceType.Aggregator => 9,
+        NewsSourceType.Publisher => 7,
+        _ => 3
+    };
+
+    private static int IndiaRelevance(NewsCandidate candidate)
+    {
+        if (candidate.Scope == NewsScope.India)
         {
-            NewsCategory.Geopolitical => NewsSentiment.Negative,
-            NewsCategory.OilEnergy => NewsSentiment.Mixed,
-            NewsCategory.MonetaryMacro => NewsSentiment.Neutral,
-            NewsCategory.IndiaPolicyRegulation => NewsSentiment.Mixed,
-            NewsCategory.FinancialSystem => NewsSentiment.Negative,
-            NewsCategory.NaturalDisaster => NewsSentiment.Mixed,
-            _ => NewsSentiment.Neutral
+            return 20;
+        }
+
+        return candidate.Category is NewsCategory.MonetaryMacro or NewsCategory.FinancialSystem or NewsCategory.Geopolitical or NewsCategory.OilEnergy ? 12 : 3;
+    }
+
+    private static int Recency(DateTimeOffset publishedAtUtc, DateTimeOffset now)
+    {
+        var age = now - publishedAtUtc;
+        return age.TotalHours switch
+        {
+            <= 6 => 10,
+            <= 24 => 8,
+            <= 48 => 6,
+            <= 72 => 4,
+            <= 120 => 2,
+            _ => 0
         };
+    }
+
+    private static NewsSentiment DetermineSentiment(NewsCandidate candidate)
+    {
+        var text = $"{candidate.Headline} {candidate.Summary}".ToLowerInvariant();
+        if (new[] { "ceasefire", "resolution", "liquidity support", "substantial easing" }.Any(text.Contains)) return NewsSentiment.Positive;
+        if (new[] { "escalation", "war expansion", "major disruption", "emergency rate hike", "systemic failure", "severe supply disruption" }.Any(text.Contains)) return NewsSentiment.Negative;
+        if (new[] { "policy", "rate decision", "framework", "methodology", "regulation" }.Any(text.Contains)) return NewsSentiment.Mixed;
+        return NewsSentiment.Neutral;
+    }
 
     private static string BuildWhyItMatters(NewsCandidate candidate)
     {
-        return candidate.Scope switch
+        return candidate.Category switch
         {
-            NewsScope.India => $"Policy and domestic sentiment shifts can influence local market positioning and risk appetite.",
-            NewsScope.Global => $"Global dynamics can affect commodity prices, capital flows, and risk sentiment for Indian equities.",
-            _ => $"This item may influence broader market sentiment and macro expectations."
+            NewsCategory.MonetaryMacro when candidate.Scope == NewsScope.India => "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+            NewsCategory.MonetaryMacro => "Could influence global yields, dollar strength, foreign flows and Indian risk sentiment.",
+            NewsCategory.OilEnergy => "Could affect India's import bill, inflation, rupee and crude-sensitive sectors.",
+            NewsCategory.Geopolitical => "Could affect global risk appetite, commodity prices and foreign capital flows.",
+            NewsCategory.IndiaPolicyRegulation => "Could affect market structure, derivatives positioning or investor behavior.",
+            NewsCategory.FinancialSystem => "Could affect financial stability, liquidity and risk appetite.",
+            NewsCategory.NaturalDisaster => "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
+            _ => "Could affect market context if the development becomes material."
         };
     }
 }
@@ -182,6 +266,9 @@ public sealed class MarketNewsPipeline
     private readonly INewsRanker _ranker;
     private readonly IMarketNewsExporter _exporter;
     private readonly ILogger<MarketNewsPipeline> _logger;
+
+    public IReadOnlyList<NewsProviderResult> LastProviderResults { get; private set; } = Array.Empty<NewsProviderResult>();
+    public IReadOnlyList<RankedNewsCandidate> LastSelectedCandidates { get; private set; } = Array.Empty<RankedNewsCandidate>();
 
     public MarketNewsPipeline(
         IEnumerable<INewsSourceProvider> providers,
@@ -206,17 +293,13 @@ public sealed class MarketNewsPipeline
         var now = DateTimeOffset.UtcNow;
         var fromUtc = now.AddHours(-Math.Max(1, options.LookbackHours));
         var collected = new List<NewsCandidate>();
+        var providerResults = new List<NewsProviderResult>();
 
         foreach (var provider in _providers)
         {
-            if (!provider.Enabled)
-            {
-                continue;
-            }
-
             try
             {
-                var results = await provider.GetNewsAsync(
+                var result = await provider.GetNewsResultAsync(
                     new NewsSourceRequest
                     {
                         FromUtc = fromUtc,
@@ -224,7 +307,12 @@ public sealed class MarketNewsPipeline
                     },
                     cancellationToken);
 
-                collected.AddRange(results);
+                providerResults.Add(result);
+                collected.AddRange(result.Candidates);
+                if (result.Status is NewsProviderRunStatus.Degraded or NewsProviderRunStatus.Failed)
+                {
+                    _logger.LogWarning("External Context provider {ProviderName} completed with {Status}: {DiagnosticCode}.", result.ProviderName, result.Status, result.DiagnosticCode);
+                }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -234,8 +322,17 @@ public sealed class MarketNewsPipeline
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "External Context provider {ProviderName} failed with {ExceptionType} and was skipped.", provider.Name, ex.GetType().Name);
+                providerResults.Add(new NewsProviderResult
+                {
+                    ProviderName = provider.Name,
+                    Status = NewsProviderRunStatus.Failed,
+                    RetrievedAtUtc = DateTimeOffset.UtcNow,
+                    DiagnosticCode = "PIPELINE_PROVIDER_FAILURE"
+                });
             }
         }
+
+        LastProviderResults = providerResults;
 
         if (options.MaxCandidates > 0 && collected.Count > options.MaxCandidates)
         {
@@ -247,8 +344,9 @@ public sealed class MarketNewsPipeline
         var ranked = _ranker.Rank(deduplicated);
         var outputLimit = Math.Max(1, options.MaxOutputItems);
 
-        var items = ranked
-            .Take(outputLimit)
+        var selected = ApplyOutputSelection(ranked, outputLimit);
+        LastSelectedCandidates = selected;
+        var items = selected
             .Select((entry, index) => new MarketNewsItem
             {
                 Rank = index + 1,
@@ -274,5 +372,28 @@ public sealed class MarketNewsPipeline
         await _exporter.ExportAsync(document, cancellationToken);
 
         return document;
+    }
+
+    private static IReadOnlyList<RankedNewsCandidate> ApplyOutputSelection(IReadOnlyList<RankedNewsCandidate> ranked, int outputLimit)
+    {
+        var selected = new List<RankedNewsCandidate>(outputLimit);
+        var categoryCounts = new Dictionary<NewsCategory, int>();
+        foreach (var entry in ranked.Where(entry => entry.MarketRelevanceScore >= SimpleNewsRanker.MinimumOutputScore))
+        {
+            categoryCounts.TryGetValue(entry.NormalizedCandidate.Category, out var categoryCount);
+            if (categoryCount >= 2)
+            {
+                continue;
+            }
+
+            selected.Add(entry);
+            categoryCounts[entry.NormalizedCandidate.Category] = categoryCount + 1;
+            if (selected.Count == outputLimit)
+            {
+                break;
+            }
+        }
+
+        return selected;
     }
 }

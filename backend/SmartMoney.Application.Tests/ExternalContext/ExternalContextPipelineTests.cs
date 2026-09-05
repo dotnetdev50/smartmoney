@@ -219,7 +219,7 @@ public sealed class ExternalContextPipelineTests
 
                 var provider = new RbiNewsSourceProvider(
                     new HttpClient(new StubHttpMessageHandler(xml)) { BaseAddress = new Uri("https://www.rbi.org.in/") },
-                    Microsoft.Extensions.Options.Options.Create(new RbiNewsSourceOptions { Endpoint = "https://www.rbi.org.in/" }));
+                    Microsoft.Extensions.Options.Options.Create(new RbiNewsSourceOptions { Endpoint = "https://www.rbi.org.in/pressreleases_rss.xml" }));
 
                 var candidates = await provider.GetNewsAsync(new NewsSourceRequest
                 {
@@ -275,24 +275,31 @@ public sealed class ExternalContextPipelineTests
         {
                 const string json = """
                         {
-                            "events": [
+                            "type": "FeatureCollection",
+                            "features": [
                                 {
-                                    "eventid": 12345,
-                                    "title": "Severe storm threat",
-                                    "description": "Heavy storms and flooding expected across the region.",
-                                    "alertlevel": "Orange",
-                                    "eventtype": "TC",
-                                    "fromDate": "2026-09-02T06:00:00Z",
-                                    "url": "https://www.gdacs.org/report.aspx?eventid=12345&episodeid=12345&eventtype=TC"
+                                    "properties": {
+                                        "eventtype": "TC",
+                                        "eventid": 12345,
+                                        "name": "Severe storm threat",
+                                        "description": "Heavy storms and flooding expected across the region.",
+                                        "alertlevel": "Orange",
+                                        "country": "Philippines",
+                                        "fromdate": "2026-09-02T06:00:00",
+                                        "url": { "report": "https://www.gdacs.org/report.aspx?eventid=12345&episodeid=1&eventtype=TC" }
+                                    }
                                 },
                                 {
-                                    "eventid": 54321,
-                                    "title": "Low severity advisory",
-                                    "description": "Minor pressure system with limited disruption.",
-                                    "alertlevel": "Green",
-                                    "eventtype": "TC",
-                                    "fromDate": "2026-09-02T08:00:00Z",
-                                    "url": "https://www.gdacs.org/report.aspx?eventid=54321"
+                                    "properties": {
+                                        "eventtype": "TC",
+                                        "eventid": 54321,
+                                        "name": "Low severity advisory",
+                                        "description": "Minor pressure system with limited disruption.",
+                                        "alertlevel": "Green",
+                                        "country": "Philippines",
+                                        "fromdate": "2026-09-02T08:00:00",
+                                        "url": { "report": "https://www.gdacs.org/report.aspx?eventid=54321" }
+                                    }
                                 }
                             ]
                         }
@@ -300,7 +307,7 @@ public sealed class ExternalContextPipelineTests
 
                 var provider = new GdacsNewsSourceProvider(
                     new HttpClient(new StubHttpMessageHandler(json)) { BaseAddress = new Uri("https://www.gdacs.org/") },
-                    Microsoft.Extensions.Options.Options.Create(new GdacsNewsSourceOptions { Endpoint = "https://www.gdacs.org/gdacsapi/api/events" }));
+                    Microsoft.Extensions.Options.Options.Create(new GdacsNewsSourceOptions { Endpoint = "https://www.gdacs.org/gdacsapi/api/Events/geteventlist/search" }));
 
                 var candidates = await provider.GetNewsAsync(new NewsSourceRequest
                 {

@@ -77,11 +77,11 @@ public sealed class PipelineCancellationTests
             return Task.FromResult<IReadOnlyList<NewsCandidate>>([new NewsCandidate
             {
                 Id = Name,
-                Scope = NewsScope.Global,
-                Category = NewsCategory.Other,
+                Scope = NewsScope.India,
+                Category = NewsCategory.IndiaPolicyRegulation,
                 Headline = Name,
                 SourceName = Name,
-                SourceType = NewsSourceType.Other,
+                SourceType = NewsSourceType.Official,
                 ArticleUrl = new Uri($"https://example.com/{Name}"),
                 PublishedAtUtc = now,
                 RetrievedAtUtc = now
