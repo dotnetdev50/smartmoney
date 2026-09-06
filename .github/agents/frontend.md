@@ -21,7 +21,7 @@ frontend/
 │   ├── App.vue              # Root component — renders <RouterView />
 │   ├── router/index.ts      # Single route "/" → Dashboard
 │   ├── pages/
-│   │   └── Dashboard.vue    # Only page; all dashboard logic lives here
+│   │   └── Dashboard.vue    # Dashboard page; feature sections live in components/
 │   ├── services/
 │   │   └── api.ts           # Typed fetch helpers + DTO types (MarketTodayResponse, MarketHistoryPoint)
 │   └── assets/

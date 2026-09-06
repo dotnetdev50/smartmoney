@@ -26,16 +26,17 @@ Current implemented flow (verified from repository code):
                 -> deterministic explanation
                 -> API response and dashboard consumers
 
-Primary implementation location:
+Primary implementation locations:
 
 - backend/SmartMoney.Application/Services/DailyPipelineService.cs
+- backend/SmartMoney.Application/Scoring/MarketScoringCalculator.cs
 
 ## 2. Z-Score
 
 Active implementation:
 
-- Method: DailyPipelineService.Z(List<double> values)
-- File: backend/SmartMoney.Application/Services/DailyPipelineService.cs
+- Method: MarketScoringCalculator.Z(IReadOnlyList<double> values)
+- File: backend/SmartMoney.Application/Scoring/MarketScoringCalculator.cs
 - Formula: z = (latestValue - mean) / std
 - mean = Average(values)
 - variance (population) = Sum((v - mean)^2) / values.Count
