@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-05T08:06:54.5350023+00:00",
+  "generated_at_utc": "2026-09-06T06:47:18.3582424+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -37,6 +37,18 @@
       "source": "GDACS",
       "published_at_utc": "2026-08-09T01:00:00+00:00",
       "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=11\u0026eventtype=FL"
+    },
+    {
+      "rank": 4,
+      "scope": "Global",
+      "category": "NaturalDisaster",
+      "impact": "Low",
+      "sentiment": "Neutral",
+      "headline": "Eruption  Krakatau",
+      "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
+      "source": "GDACS",
+      "published_at_utc": "2026-09-04T21:00:00+00:00",
+      "url": "https://www.gdacs.org/report.aspx?eventid=1000148\u0026episodeid=1\u0026eventtype=VO"
     }
   ]
 }

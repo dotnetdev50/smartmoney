@@ -72,7 +72,7 @@ export type MarketTodayResponse = {
   banknifty_pcr?: number | null;
   banknifty_pcr_volume?: number | null;
 
-  // Participant activity: FII/DII Futures/Calls/Puts net OI changes
+  // Participant activity: user-facing directional OI signals (positive bullish, negative bearish)
   participant_activity?: ParticipantActivityRow[] | null;
 
   // Smart vs Retail diagnostics (Phase 4)
