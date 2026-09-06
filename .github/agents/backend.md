@@ -25,12 +25,12 @@ This is the only project that runs in CI/CD (GitHub Actions). It is a `net8.0` c
 3. **Runs EF Core migrations** against a local SQLite database (`jobdb.sqlite`) so the schema is always up-to-date before any work starts.
 4. **Ingests raw CSV data** from NSE archives for every weekday in the range, using `CsvIngestionService`.
 5. **Runs the daily pipeline** for the same range using `DailyPipelineService`, which computes z-score-based participant metrics and a composite market-bias score.
-6. **Exports JSON files** to `frontend/dist/data/` so the static Vue dashboard can read them after deployment:
+6. **Exports JSON files** to `frontend/public/data/`; the frontend build copies them into the deployment artifact:
    - `market_today.json` — latest date's bias, regime, shock score, and per-participant bias.
    - `market_history_30.json` — last 30 days of bias history.
    - `job_ingest_result.json` / `job_run_result.json` — debug artifacts.
 
-Entry point: `backend/SmartMoney.Job/Program.cs` (top-level statements).
+Entry point: `backend/SmartMoney.Job/Program.cs` (`Program.Main`).
 
 ### Key services (in SmartMoney.Application)
 
@@ -75,7 +75,7 @@ dotnet ef migrations add <MigrationName> --project SmartMoney.Infrastructure --s
 
 ### CI/CD
 
-The workflow `.github/workflows/pages.yml` runs on a schedule (weekdays at 9:40 PM IST) and on `workflow_dispatch`:
+The workflow `.github/workflows/pages.yml` runs four scheduled weekday refreshes and on `workflow_dispatch`:
 
 1. Builds the Vue frontend (`npm run build`).
 2. Builds the .NET solution (`dotnet build -c Release`).
