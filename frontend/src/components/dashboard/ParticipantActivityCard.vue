@@ -33,9 +33,9 @@ function fmtOiChange(n: number): string {
 
   <template v-if="activity?.length">
     <div class="grid min-h-0 flex-1 grid-cols-2 gap-x-4 overflow-y-auto">
-      <!-- Left panel: CHANGES (NET OI) -->
+      <!-- Left panel: directional participant signals -->
       <div>
-        <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Changes (Net OI)</p>
+        <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Directional OI Signal</p>
         <ul class="space-y-1">
           <li
             v-for="row in activity"

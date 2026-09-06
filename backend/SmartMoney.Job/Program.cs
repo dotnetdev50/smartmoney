@@ -384,31 +384,7 @@ namespace SmartMoney.Job
                     if (todayRow is null) continue;
 
                     prevMap.TryGetValue(pt, out var prevRow);
-                    var pName = pt.ToString().ToUpperInvariant();
-
-                    // Futures: FuturesChange is already today.FuturesNet - prev.FuturesNet
-                    var prevFutNet = prevRow?.FuturesNet ?? 0.0;
-                    var futChange = todayRow.FuturesChange;
-                    var futPct = Math.Abs(prevFutNet) > 1.0
-                        ? Math.Round(futChange / Math.Abs(prevFutNet) * 100.0, 2)
-                        : (double?)null;
-                    activityRows.Add(new ParticipantActivityRowDto(pName, "Futures", futChange, futPct));
-
-                    // Calls: CallOiChange stores today's net writing proxy (cumulative), so delta = today - prev
-                    var prevCallNet = prevRow?.CallOiChange ?? 0.0;
-                    var callChange = todayRow.CallOiChange - prevCallNet;
-                    var callPct = Math.Abs(prevCallNet) > 1.0
-                        ? Math.Round(callChange / Math.Abs(prevCallNet) * 100.0, 2)
-                        : (double?)null;
-                    activityRows.Add(new ParticipantActivityRowDto(pName, "Calls", callChange, callPct));
-
-                    // Puts: PutOiChange stores today's net writing proxy (cumulative), so delta = today - prev
-                    var prevPutNet = prevRow?.PutOiChange ?? 0.0;
-                    var putChange = todayRow.PutOiChange - prevPutNet;
-                    var putPct = Math.Abs(prevPutNet) > 1.0
-                        ? Math.Round(putChange / Math.Abs(prevPutNet) * 100.0, 2)
-                        : (double?)null;
-                    activityRows.Add(new ParticipantActivityRowDto(pName, "Puts", putChange, putPct));
+                    activityRows.AddRange(ParticipantActivityFactory.CreateRows(todayRow, prevRow));
                 }
 
                 marketToday = new MarketTodayDto(
@@ -566,36 +542,8 @@ namespace SmartMoney.Job
                 return orderMap.TryGetValue(name, out var idx) ? idx : 99;
             }))
             {
-                // Net long positions:
-                //   futures_net = Col B - Col C = FutLong - FutShort = FuturesNet
-                //   calls_net   = Col F - Col H = CallLong - CallShort = -(CallOiChange)
-                //   puts_net    = Col G - Col I = PutLong  - PutShort  = -(PutOiChange)
-                var futuresNet = r.FuturesNet;
-                var callsNet = -r.CallOiChange;
-                var putsNet = -r.PutOiChange;
-
-                double? futuresPct = null;
-                double? callsPct = null;
-                double? putsPct = null;
-
-                if (yesterdayMap.TryGetValue(r.Participant, out var prev))
-                {
-                    var prevFutures = prev.FuturesNet;
-                    var prevCalls = -prev.CallOiChange;
-                    var prevPuts = -prev.PutOiChange;
-
-                    if (Math.Abs(prevFutures) > 1e-10)
-                        futuresPct = Math.Round((futuresNet - prevFutures) / Math.Abs(prevFutures) * 100.0, 2);
-                    if (Math.Abs(prevCalls) > 1e-10)
-                        callsPct = Math.Round((callsNet - prevCalls) / Math.Abs(prevCalls) * 100.0, 2);
-                    if (Math.Abs(prevPuts) > 1e-10)
-                        putsPct = Math.Round((putsNet - prevPuts) / Math.Abs(prevPuts) * 100.0, 2);
-                }
-
-                var pName = r.Participant.ToString().ToUpperInvariant();
-                rows.Add(new ParticipantActivityRowDto(pName, "Futures", futuresNet, futuresPct));
-                rows.Add(new ParticipantActivityRowDto(pName, "Calls", callsNet, callsPct));
-                rows.Add(new ParticipantActivityRowDto(pName, "Puts", putsNet, putsPct));
+                yesterdayMap.TryGetValue(r.Participant, out var prev);
+                rows.AddRange(ParticipantActivityFactory.CreateRows(r, prev));
             }
 
             return rows;
