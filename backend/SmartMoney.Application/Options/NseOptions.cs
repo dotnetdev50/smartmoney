@@ -25,13 +25,12 @@ public sealed class NseOptions
 
     /// <summary>
     /// NSE VIX historical data API (primary VIX source).
-    /// Full URL: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy&amp;csv=true
-    /// Typical usage is a range window (for example, last 30 days) and then pick target date row.
-    /// Response columns: Date,Open,High,Low,Close,Prev Close,Change,%Change
-    /// Date format in response: DD-MMM-YYYY uppercase (e.g. 06-MAR-2026).
+    /// Full URL: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy
+    /// Typical usage is a range window up to 365 days and then pick target date row.
+    /// Response JSON shape: { "data": [ ... ] } with fields including EOD_TIMESTAMP and EOD_CLOSE_INDEX_VAL.
     /// Requires NSE session cookies (prime homepage first).
     /// </summary>
-    public string VixApiBaseUrl { get; set; } = "https://www.nseindia.com/api/historicalOR/vixhistory";
+    public string VixApiBaseUrl { get; set; } = "https://www.nseindia.com/api/historical/vixhistory";
 
     /// <summary>
     /// Full-history India VIX CSV from NSE archives (fallback when VIX API is unavailable).

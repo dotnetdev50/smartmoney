@@ -169,7 +169,13 @@ namespace SmartMoney.Job
             services.AddTransient<OpBhavCopyService>();
             services.AddHttpClient<PrPcrService>();
             services.AddHttpClient<FoBhavCopyService>();
-            services.AddHttpClient<VixFetchService>();
+            services.AddHttpClient<VixFetchService>()
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                {
+                    CookieContainer = new System.Net.CookieContainer(),
+                    UseCookies = true,
+                    AllowAutoRedirect = true
+                });
             services.AddHttpClient<CsvIngestionService>();
             services.AddScoped<MarketScoringCalculator>();
             services.AddScoped<DailyPipelineService>();

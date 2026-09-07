@@ -10,12 +10,11 @@ namespace SmartMoney.Application.Services;
 /// Fetches the India VIX closing value from NSE.
 ///
 /// Strategy (in order):
-///   1. NSE VIX API with csv=true
-///      URL: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy&amp;csv=true
-///      e.g. https://www.nseindia.com/api/historicalOR/vixhistory?from=06-03-2026&amp;to=06-03-2026&amp;csv=true
-///      Returns CSV directly. Requires NSE session cookies (homepage primed first).
-///      Response columns: Date,Open,High,Low,Close,Prev Close,Change,%Change
-///      Date format: DD-MAR-YYYY in uppercase (e.g. 06-MAR-2026)
+///   1. NSE VIX historical API
+///      URL: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy
+///      e.g. https://www.nseindia.com/api/historical/vixhistory?from=06-03-2026&amp;to=06-03-2026
+///      Returns JSON with records under data[]. Requires NSE session cookies
+///      (homepage primed first using the same cookie-aware HttpClient handler).
 ///
 ///   2. Archive CSV fallback — <see cref="NseOptions.VixArchiveUrl"/>
 ///      Full-history CSV, no session required.
@@ -39,10 +38,10 @@ public sealed class VixFetchService(
     /// </summary>
     public async Task<double?> FetchVixAsync(DateTime date, CancellationToken ct)
     {
-        var apiVix = await FetchVixFromApiCsvAsync(date, ct);
+        var apiVix = await FetchVixFromApiJsonAsync(date, ct);
         if (apiVix.HasValue)
         {
-            logger.LogInformation("India VIX for {Date} via NSE API (csv=true): {Vix}",
+            logger.LogInformation("India VIX for {Date} via NSE historical API: {Vix}",
                 date.ToString("yyyy-MM-dd"), apiVix.Value);
             return apiVix;
         }
@@ -53,42 +52,30 @@ public sealed class VixFetchService(
     }
 
     /// <summary>
-    /// Downloads VIX data as CSV from the NSE API using the confirmed &amp;csv=true parameter.
+    /// Downloads VIX data from the NSE historical API.
     /// Primes session cookies via NSE homepage first (required for Akamai bot-protection).
-    /// URL pattern: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy&amp;csv=true
+    /// URL pattern: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy
     /// </summary>
-    private async Task<double?> FetchVixFromApiCsvAsync(DateTime date, CancellationToken ct)
+    private async Task<double?> FetchVixFromApiJsonAsync(DateTime date, CancellationToken ct)
     {
         try
         {
-            // API date format: dd-MM-yyyy  e.g. 06-03-2026
-            var dateStr = date.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
-            var apiBase = (_opt.VixApiBaseUrl ?? "https://www.nseindia.com/api/historicalOR/vixhistory").TrimEnd('/');
-            var apiUrl = $"{apiBase}?from={dateStr}&to={dateStr}&csv=true";
-
-            var cookieContainer = new System.Net.CookieContainer();
-            var handler = new HttpClientHandler
-            {
-                CookieContainer = cookieContainer,
-                UseCookies = true,
-                AllowAutoRedirect = true,
-            };
-
-            using var sessionClient = new HttpClient(handler)
-            {
-                Timeout = TimeSpan.FromSeconds(_opt.RequestTimeoutSeconds > 0 ? _opt.RequestTimeoutSeconds : 30)
-            };
+            var dateValue = date.Date;
+            var fromStr = dateValue.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var toStr = dateValue.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var apiBase = (_opt.VixApiBaseUrl ?? "https://www.nseindia.com/api/historical/vixhistory").TrimEnd('/');
+            var apiUrl = $"{apiBase}?from={fromStr}&to={toStr}";
 
             // Step 1: prime session cookies via NSE homepage (Akamai bot-protection).
-            AddNseHeaders(sessionClient, acceptHtml: true);
-            logger.LogInformation("Priming NSE session via homepage for VIX API (csv=true) call.");
-            var homeResp = await sessionClient.GetAsync(NseHomeUrl, ct);
+            using var homeReq = CreateNseRequest(HttpMethod.Get, NseHomeUrl, acceptHtml: true);
+            logger.LogInformation("Priming NSE session via homepage for VIX historical API call.");
+            var homeResp = await http.SendAsync(homeReq, HttpCompletionOption.ResponseHeadersRead, ct);
             logger.LogInformation("NSE homepage responded with HTTP {Status}.", (int)homeResp.StatusCode);
 
-            // Step 2: download the CSV with session cookies in place.
-            AddNseHeaders(sessionClient, acceptHtml: false);
-            logger.LogInformation("Fetching VIX CSV from {Url}", apiUrl);
-            var resp = await sessionClient.GetAsync(apiUrl, ct);
+            // Step 2: call API with session cookies in place.
+            using var apiReq = CreateNseRequest(HttpMethod.Get, apiUrl, acceptHtml: false);
+            logger.LogInformation("Fetching VIX JSON from {Url}", apiUrl);
+            var resp = await http.SendAsync(apiReq, HttpCompletionOption.ResponseHeadersRead, ct);
 
             if (!resp.IsSuccessStatusCode)
             {
@@ -99,15 +86,15 @@ public sealed class VixFetchService(
 
             var payload = await resp.Content.ReadAsStringAsync(ct);
 
-            var csvVix = ParseVixFromCsv(payload, date, source: "API csv=true");
-            if (csvVix.HasValue)
-                return csvVix;
+            var jsonVix = ParseVixFromJson(payload, date, source: "API JSON");
+            if (jsonVix.HasValue)
+                return jsonVix;
 
-            return ParseVixFromJson(payload, date, source: "API JSON fallback");
+            return ParseVixFromCsv(payload, date, source: "API CSV compatibility fallback");
         }
         catch (Exception ex)
         {
-            logger.LogWarning("NSE VIX API (csv=true) fetch failed for {Date}: {Msg}",
+            logger.LogWarning("NSE VIX historical API fetch failed for {Date}: {Msg}",
                 date.ToString("yyyy-MM-dd"), ex.Message);
             return null;
         }
@@ -188,17 +175,18 @@ public sealed class VixFetchService(
         return null;
     }
 
-    private static void AddNseHeaders(HttpClient client, bool acceptHtml)
+    private static HttpRequestMessage CreateNseRequest(HttpMethod method, string url, bool acceptHtml)
     {
-        client.DefaultRequestHeaders.Clear();
-        client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", UserAgent);
-        client.DefaultRequestHeaders.TryAddWithoutValidation(
+        var req = new HttpRequestMessage(method, url);
+        req.Headers.TryAddWithoutValidation("User-Agent", UserAgent);
+        req.Headers.TryAddWithoutValidation(
             "Accept",
             acceptHtml
                 ? "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-                : "text/csv,text/plain,application/json,*/*");
-        client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en-US,en;q=0.9");
-        client.DefaultRequestHeaders.TryAddWithoutValidation("Referer", NseHomeUrl);
+                : "application/json,text/plain,*/*");
+        req.Headers.TryAddWithoutValidation("Accept-Language", "en-US,en;q=0.9");
+        req.Headers.TryAddWithoutValidation("Referer", NseHomeUrl);
+        return req;
     }
 
     private double? ParseVixFromJson(string payload, DateTime date, string source)
@@ -225,7 +213,7 @@ public sealed class VixFetchService(
                 if (row.ValueKind != JsonValueKind.Object) continue;
 
                 if (!TryGetJsonString(row, out var rowDate,
-                        "Date", "date", "TIMESTAMP", "timestamp", "HistoricalDate", "historicalDate"))
+                        "Date", "date", "TIMESTAMP", "timestamp", "HistoricalDate", "historicalDate", "EOD_TIMESTAMP", "eod_timestamp"))
                     continue;
 
                 if (!IsSameDate(rowDate, date)) continue;
