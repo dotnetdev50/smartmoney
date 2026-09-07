@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-07T04:52:36.6547834+00:00",
+  "generated_at_utc": "2026-09-07T15:19:13.8226467+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,39 +7,51 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 04, 2026",
+      "sentiment": "Positive",
+      "headline": "Auction of Government of India Dated Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-07T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63529"
+      "published_at_utc": "2026-09-07T12:50:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63539"
     },
     {
       "rank": 2,
       "scope": "India",
-      "category": "IndiaPolicyRegulation",
+      "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "SEBI signs MoU with European Securities and Markets Authority on cooperation and exchange of information relating to Central Counterparties",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-09-03T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2026/sebi-signs-mou-with-european-securities-and-markets-authority-on-cooperation-and-exchange-of-information-relating-to-central-counterparties_104279.html"
+      "headline": "RBI releases data on ECB / FCCB / RDB for July 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-09-07T12:20:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63537"
     },
     {
       "rank": 3,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "SEBI to review Settlement Price methodology for Derivative Contracts in the light of CAS rollout",
+      "sentiment": "Neutral",
+      "headline": "Relaxation in timeline with respect to Accredited Investor mandate for Angel Funds",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-02T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2026/sebi-to-review-settlement-price-methodology-for-derivative-contracts-in-the-light-of-cas-rollout_104260.html"
+      "published_at_utc": "2026-09-06T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/sep-2026/relaxation-in-timeline-with-respect-to-accredited-investor-mandate-for-angel-funds_104323.html"
     },
     {
       "rank": 4,
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Ease of regulatory compliances for FPIs investing only in Government Securities",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-09-06T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/sep-2026/ease-of-regulatory-compliances-for-fpis-investing-only-in-government-securities_104319.html"
+    },
+    {
+      "rank": 5,
       "scope": "India",
       "category": "NaturalDisaster",
       "impact": "Medium",
