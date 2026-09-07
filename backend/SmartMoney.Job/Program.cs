@@ -572,12 +572,12 @@ namespace SmartMoney.Job
             }
 
             // Do not attempt PCR/VIX fetch before StartAtIst (default 20:30 IST).
-            var istNow = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(5.5));
-            if (TimeSpan.TryParse(jobOpts.StartAtIst, System.Globalization.CultureInfo.InvariantCulture, out var startAt)
-                && istNow.TimeOfDay < startAt)
+            var utcNow = DateTimeOffset.UtcNow;
+            var istNow = ToIst(utcNow);
+            if (PcrVixFetchSchedule.ShouldDeferUntilStart(pcrVixDate, utcNow, jobOpts.StartAtIst))
             {
                 log.LogInformation(
-                    "[H3] Skipping PCR/VIX fetch — IST now ({IstNow:HH:mm}) is before StartAtIst ({StartAtIst}). Will run after {StartAtHhmm}.",
+                    "[H3] Skipping PCR/VIX fetch for same-day target — IST now ({IstNow:HH:mm}) is before StartAtIst ({StartAtIst}). Will run after {StartAtHhmm}.",
                     istNow, jobOpts.StartAtIst, jobOpts.StartAtIst);
                 return;
             }
