@@ -111,6 +111,24 @@ export type LayoffsSummary = {
   source_url: string;
 };
 
+export type PreciousMetalQuote = {
+  symbol: "XAU" | "XAG";
+  name: "Gold" | "Silver";
+  price_usd: number;
+  unit: string;
+  as_of_date: string;
+  series_id: string;
+  series_url: string;
+};
+
+export type PreciousMetalsSummary = {
+  retrieved_at_utc: string;
+  source: string;
+  source_url: string;
+  gold: PreciousMetalQuote;
+  silver: PreciousMetalQuote;
+};
+
 export type NewsScope = "India" | "Global";
 export type NewsImpact = "High" | "Medium" | "Low";
 export type NewsSentiment = "Positive" | "Negative" | "Mixed" | "Neutral";
@@ -147,6 +165,7 @@ export const api = {
   marketToday: () => jsonGet<MarketTodayResponse>("market_today.json"),
   marketHistory: () => jsonGet<MarketHistoryPoint[]>("market_history_30.json"),
   layoffsSummary: () => jsonGet<LayoffsSummary>("layoffs_summary.json"),
+  preciousMetalsSummary: () => jsonGet<PreciousMetalsSummary>("precious_metals.json"),
   marketNews: () => jsonGet<MarketNewsDocument>("market_news.json"),
 };
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import type { LayoffsSummary, MarketTodayResponse } from "@/services/api";
+import { computed, ref, watch } from "vue";
+import { api, type LayoffsSummary, type MarketTodayResponse, type PreciousMetalsSummary } from "@/services/api";
 
 const props = defineProps<{
   today: MarketTodayResponse;
@@ -29,10 +29,56 @@ const layoffsEmployeesFormatted = computed(() =>
 const layoffsCompaniesFormatted = computed(() =>
   props.layoffs ? numberFormatter.format(props.layoffs.companies_with_layoffs) : null,
 );
+
+const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 2,
+});
+
+const preciousMetals = ref<PreciousMetalsSummary | null>(null);
+let preciousMetalsRequestVersion = 0;
+
+function formatDate(value?: string | null) {
+  if (!value) return "-";
+  const parsed = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return parsed.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function formatPrice(value?: number | null) {
+  if (value == null) return "Unavailable";
+  return usdFormatter.format(value);
+}
+
+async function loadPreciousMetals() {
+  const version = ++preciousMetalsRequestVersion;
+
+  try {
+    const summary = await api.preciousMetalsSummary();
+    if (version !== preciousMetalsRequestVersion) return;
+    preciousMetals.value = summary;
+  } catch {
+    if (version !== preciousMetalsRequestVersion) return;
+    preciousMetals.value = null;
+  }
+}
+
+watch(
+  () => props.today,
+  () => {
+    void loadPreciousMetals();
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
-  <section class="dashboard-kpi-grid grid shrink-0 grid-cols-2 gap-2 lg:grid-cols-4">
+  <section class="dashboard-kpi-grid grid shrink-0 grid-cols-2 gap-2 lg:grid-cols-6">
     <article
       class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
     >
@@ -80,6 +126,50 @@ const layoffsCompaniesFormatted = computed(() =>
             rel="noopener noreferrer nofollow"
             class="underline hover:text-gray-700 dark:hover:text-gray-300"
           >layoffs.fyi</a>
+        </template>
+        <template v-else>External data</template>
+      </p>
+    </article>
+
+    <article
+      class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
+      title="Gold daily price from the LBMA series published via FRED. External context only; not used in SmartMoney scoring."
+    >
+      <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Gold Price</p>
+      <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">
+        {{ formatPrice(preciousMetals?.gold.price_usd) }}
+      </p>
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <template v-if="preciousMetals">
+          {{ formatDate(preciousMetals.gold.as_of_date) }} ·
+          <a
+            :href="preciousMetals.gold.series_url"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            class="underline hover:text-gray-700 dark:hover:text-gray-300"
+          >LBMA via FRED</a>
+        </template>
+        <template v-else>External data</template>
+      </p>
+    </article>
+
+    <article
+      class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
+      title="Silver daily price from the LBMA series published via FRED. External context only; not used in SmartMoney scoring."
+    >
+      <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Silver Price</p>
+      <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">
+        {{ formatPrice(preciousMetals?.silver.price_usd) }}
+      </p>
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <template v-if="preciousMetals">
+          {{ formatDate(preciousMetals.silver.as_of_date) }} ·
+          <a
+            :href="preciousMetals.silver.series_url"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            class="underline hover:text-gray-700 dark:hover:text-gray-300"
+          >LBMA via FRED</a>
         </template>
         <template v-else>External data</template>
       </p>

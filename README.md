@@ -30,6 +30,21 @@ and does not participate in FinalScore, Regime, ShockScore, Smart/Retail/DII cal
 decomposition, or AI interpretation. If the fetch fails, the last known-good file is preserved (or the
 KPI shows "Unavailable"); the market-data pipeline is never affected.
 
+### External Context: Gold and Silver Prices
+
+Independent of the NSE/scoring pipeline above, `scripts/fetch-precious-metals.mjs` fetches the latest
+available London bullion daily price series for gold and silver from
+[FRED](https://fred.stlouisfed.org/) and writes `frontend/public/data/precious_metals.json`:
+
+```
+LBMA daily price series via FRED → scheduled external-context fetch → frontend/public/data/precious_metals.json → dashboard KPIs
+```
+
+These values are **informational only** — they are displayed on the dashboard as "Gold Price" and
+"Silver Price" KPIs and do not participate in FinalScore, Regime, ShockScore, Smart/Retail/DII
+calculations, narrative decomposition, or AI interpretation. If the fetch fails, the last known-good
+file is preserved (or the KPIs show "Unavailable"); the market-data pipeline is never affected.
+
 ### External Context: Market-Moving News
 
 The GitHub Actions workflow runs scheduled refreshes every weekday at 9:30 AM and 8:30, 9:00, and
