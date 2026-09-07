@@ -15,6 +15,7 @@ namespace SmartMoney.Application.Services;
 ///      e.g. https://www.nseindia.com/api/historical/vixhistory?from=06-03-2026&amp;to=06-03-2026
 ///      Returns JSON with records under data[]. Requires NSE session cookies
 ///      (homepage primed first using the same cookie-aware HttpClient handler).
+///      Uses a 365-day window ending at target date and then selects the target date row.
 ///
 ///   2. Archive CSV fallback — <see cref="NseOptions.VixArchiveUrl"/>
 ///      Full-history CSV, no session required.
@@ -60,9 +61,10 @@ public sealed class VixFetchService(
     {
         try
         {
-            var dateValue = date.Date;
-            var fromStr = dateValue.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
-            var toStr = dateValue.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var to = date.Date;
+            var from = to.AddDays(-364); // inclusive range of up to 365 days
+            var fromStr = from.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var toStr = to.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
             var apiBase = (_opt.VixApiBaseUrl ?? "https://www.nseindia.com/api/historical/vixhistory").TrimEnd('/');
             var apiUrl = $"{apiBase}?from={fromStr}&to={toStr}";
 
