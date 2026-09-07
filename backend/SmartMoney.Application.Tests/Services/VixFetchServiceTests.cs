@@ -27,7 +27,7 @@ public sealed class VixFetchServiceTests
         Assert.Equal(13.46, result);
         Assert.Equal(2, handler.RequestUris.Count);
         Assert.Equal("/api/historical/vixhistory", handler.RequestUris[1].AbsolutePath);
-        Assert.Contains("from=07-09-2026", handler.RequestUris[1].Query);
+        Assert.Contains("from=08-09-2025", handler.RequestUris[1].Query);
         Assert.Contains("to=07-09-2026", handler.RequestUris[1].Query);
         Assert.DoesNotContain("csv=", handler.RequestUris[1].Query, StringComparison.OrdinalIgnoreCase);
     }
