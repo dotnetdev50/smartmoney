@@ -60,10 +60,9 @@ public sealed class VixFetchService(
     {
         try
         {
-            var to = date.Date;
-            var from = to.AddDays(-364);
-            var fromStr = from.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
-            var toStr = to.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var dateValue = date.Date;
+            var fromStr = dateValue.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var toStr = dateValue.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
             var apiBase = (_opt.VixApiBaseUrl ?? "https://www.nseindia.com/api/historical/vixhistory").TrimEnd('/');
             var apiUrl = $"{apiBase}?from={fromStr}&to={toStr}";
 
