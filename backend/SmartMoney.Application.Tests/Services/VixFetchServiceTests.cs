@@ -68,6 +68,8 @@ public sealed class VixFetchServiceTests
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             RequestUris.Add(request.RequestUri!);
+            if (_index >= _responses.Length)
+                throw new InvalidOperationException($"Unexpected extra HTTP request: {request.RequestUri}");
             var response = _responses[_index];
             _index++;
             return Task.FromResult(response);
