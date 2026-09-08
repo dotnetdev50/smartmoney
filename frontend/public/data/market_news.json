@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-08T04:28:42.8946575+00:00",
+  "generated_at_utc": "2026-09-08T15:19:43.9986943+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,27 +7,39 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 07, 2026",
+      "sentiment": "Mixed",
+      "headline": "RBI launches the September 2026 round of the Inflation Expectations Survey of Households",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-08T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63541"
+      "published_at_utc": "2026-09-08T11:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63548"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Positive",
-      "headline": "Auction of Government of India Dated Securities",
+      "sentiment": "Mixed",
+      "headline": "RBI launches the September 2026 round of Urban Consumer Confidence Survey",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-07T12:50:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63539"
+      "published_at_utc": "2026-09-08T11:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63547"
     },
     {
       "rank": 3,
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "SEBI Order for compliance \u2013 Notices of attachments in RC No. 9162 of 2026 against Rashmi Chandak (PAN: AEKPC4067M)",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-09-07T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/enforcement/recovery-proceedings/sep-2026/sebi-order-for-compliance-notices-of-attachments-in-rc-no-9162-of-2026-against-rashmi-chandak-pan-aekpc4067m-_104337.html"
+    },
+    {
+      "rank": 4,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
@@ -39,18 +51,6 @@
       "url": "https://www.sebi.gov.in/legal/circulars/sep-2026/relaxation-in-timeline-with-respect-to-accredited-investor-mandate-for-angel-funds_104323.html"
     },
     {
-      "rank": 4,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Ease of regulatory compliances for FPIs investing only in Government Securities",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-09-06T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/sep-2026/ease-of-regulatory-compliances-for-fpis-investing-only-in-government-securities_104319.html"
-    },
-    {
       "rank": 5,
       "scope": "India",
       "category": "NaturalDisaster",
@@ -60,7 +60,7 @@
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
       "published_at_utc": "2026-08-09T01:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=11\u0026eventtype=FL"
+      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=12\u0026eventtype=FL"
     }
   ]
 }
