@@ -82,6 +82,23 @@ written into `market_today.json`. If the external fetch fails, the previous vali
 `layoffs_summary.json` is preserved (or the KPI shows "Unavailable"); the NSE/scoring pipeline is
 never blocked by this fetch.
 
+## External Context: Precious Metals
+
+A separate, independent path feeds the dashboard's gold and silver price KPIs:
+
+    LBMA daily price series via FRED
+    -> scheduled external-context fetch (scripts/fetch-precious-metals.mjs)
+    -> frontend/public/data/precious_metals.json
+    -> dashboard KPI
+
+This path is intentionally decoupled from `SmartMoney.Job`, `DailyPipelineService`, and
+`MarketScoringCalculator`. Precious-metals data is informational only: it does not affect FinalScore,
+participant scoring, PCR/VIX, Regime, ShockScore, Smart/Retail/DII calculations, narrative
+decomposition, deterministic explanation, AI interpretation input, or backtesting, and it is never
+written into `market_today.json`. If the external fetch fails, the previous valid
+`precious_metals.json` is preserved (or the KPI shows "Unavailable"); the NSE/scoring pipeline is
+never blocked by this fetch.
+
 ## External Context
 
 The SmartMoney core pipeline remains independent and deterministic:
