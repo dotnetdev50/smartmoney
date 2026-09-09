@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-09T05:18:58.4322513+00:00",
+  "generated_at_utc": "2026-09-09T15:19:13.466756+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,23 +8,23 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 08, 2026",
+      "headline": "Foreign Exchange Turnover Data: August 24, 2026 \u2013 August 28, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-09T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63551"
+      "published_at_utc": "2026-09-09T11:55:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63560"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "RBI launches the September 2026 round of the Inflation Expectations Survey of Households",
+      "sentiment": "Neutral",
+      "headline": "Reserve Money for the fortnight ended on August 31, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-08T11:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63548"
+      "published_at_utc": "2026-09-09T11:35:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63556"
     },
     {
       "rank": 3,
@@ -32,11 +32,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "SEBI Order for compliance \u2013 Notices of attachments in RC No. 9162 of 2026 against Rashmi Chandak (PAN: AEKPC4067M)",
+      "headline": "Review of Position Limits for Clients and Penalty Provisions for Violation / Breach of Position Limits for Commodity Derivatives Segment",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-07T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/enforcement/recovery-proceedings/sep-2026/sebi-order-for-compliance-notices-of-attachments-in-rc-no-9162-of-2026-against-rashmi-chandak-pan-aekpc4067m-_104337.html"
+      "published_at_utc": "2026-09-08T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/sep-2026/review-of-position-limits-for-clients-and-penalty-provisions-for-violation-breach-of-position-limits-for-commodity-derivatives-segment_104387.html"
     },
     {
       "rank": 4,
@@ -44,11 +44,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Relaxation in timeline with respect to Accredited Investor mandate for Angel Funds",
+      "headline": "Remittance Order dated 08.09.2026 issued in RC No. 9189 of 2026",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-06T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/sep-2026/relaxation-in-timeline-with-respect-to-accredited-investor-mandate-for-angel-funds_104323.html"
+      "published_at_utc": "2026-09-07T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/enforcement/recovery-proceedings/sep-2026/remittance-order-dated-08-09-2026-issued-in-rc-no-9189-of-2026_104369.html"
     },
     {
       "rank": 5,
