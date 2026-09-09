@@ -50,9 +50,10 @@ jobs:
         working-directory: scripts
         run: npm ci
 
-      - name: Install Playwright Chromium runtime
+      - name: Install Playwright Chromium runtime (external context; never blocks the build)
         working-directory: scripts
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
+        continue-on-error: true
 
       - name: Fetch layoffs summary (external context; never blocks the build)
         working-directory: scripts
