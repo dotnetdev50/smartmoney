@@ -11,10 +11,10 @@ namespace SmartMoney.Application.Services;
 ///
 /// Strategy (in order):
 ///   1. NSE VIX historical API
-///      URL: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy
-///      e.g. https://www.nseindia.com/api/historical/vixhistory?from=06-03-2026&amp;to=06-03-2026
-///      Returns JSON with records under data[]. Requires NSE session cookies
-///      (homepage primed first using the same cookie-aware HttpClient handler).
+///      URL: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy&amp;csv=true
+///      e.g. https://www.nseindia.com/api/historicalOR/vixhistory?from=06-03-2026&amp;to=06-03-2026&amp;csv=true
+///      Returns CSV (preferred) or JSON with records under data[].
+///      Requires NSE session cookies (homepage primed first using the same cookie-aware HttpClient handler).
 ///      Uses a 365-day window ending at target date and then selects the target date row.
 ///
 ///   2. Archive CSV fallback — <see cref="NseOptions.VixArchiveUrl"/>
@@ -55,7 +55,7 @@ public sealed class VixFetchService(
     /// <summary>
     /// Downloads VIX data from the NSE historical API.
     /// Primes session cookies via NSE homepage first (required for Akamai bot-protection).
-    /// URL pattern: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy
+    /// URL pattern: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy&amp;csv=true
     /// </summary>
     private async Task<double?> FetchVixFromApiJsonAsync(DateTime date, CancellationToken ct)
     {
@@ -65,8 +65,8 @@ public sealed class VixFetchService(
             var from = to.AddDays(-364); // inclusive range of up to 365 days
             var fromStr = from.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
             var toStr = to.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
-            var apiBase = (_opt.VixApiBaseUrl ?? "https://www.nseindia.com/api/historical/vixhistory").TrimEnd('/');
-            var apiUrl = $"{apiBase}?from={fromStr}&to={toStr}";
+            var apiBase = (_opt.VixApiBaseUrl ?? "https://www.nseindia.com/api/historicalOR/vixhistory").TrimEnd('/');
+            var apiUrl = $"{apiBase}?from={fromStr}&to={toStr}&csv=true";
 
             // Step 1: prime session cookies via NSE homepage (Akamai bot-protection).
             using var homeReq = CreateNseRequest(HttpMethod.Get, NseHomeUrl, acceptHtml: true);
@@ -76,7 +76,7 @@ public sealed class VixFetchService(
 
             // Step 2: call API with session cookies in place.
             using var apiReq = CreateNseRequest(HttpMethod.Get, apiUrl, acceptHtml: false);
-            logger.LogInformation("Fetching VIX JSON from {Url}", apiUrl);
+            logger.LogInformation("Fetching VIX historical payload from {Url}", apiUrl);
             var resp = await http.SendAsync(apiReq, HttpCompletionOption.ResponseHeadersRead, ct);
 
             if (!resp.IsSuccessStatusCode)
@@ -88,11 +88,11 @@ public sealed class VixFetchService(
 
             var payload = await resp.Content.ReadAsStringAsync(ct);
 
-            var jsonVix = ParseVixFromJson(payload, date, source: "API JSON");
-            if (jsonVix.HasValue)
-                return jsonVix;
+            var csvVix = ParseVixFromCsv(payload, date, source: "API CSV");
+            if (csvVix.HasValue)
+                return csvVix;
 
-            return ParseVixFromCsv(payload, date, source: "API CSV compatibility fallback");
+            return ParseVixFromJson(payload, date, source: "API JSON fallback");
         }
         catch (Exception ex)
         {

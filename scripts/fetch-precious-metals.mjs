@@ -2,6 +2,7 @@
 //
 // This script is intentionally independent of SmartMoney.Job and the deterministic scoring
 // pipeline. It never touches market_today.json, the SQLite database, or any scoring code.
+// Source strategy: GoldPrice.org primary, FRED LBMA series fallback per metal.
 //
 // Behavior on failure (network error, source change, missing values, bad payload):
 //   - log a clear warning
@@ -19,6 +20,8 @@ const REPO_ROOT = path.resolve(__dirname, "..");
 const OUTPUT_PATH = path.join(REPO_ROOT, "frontend", "public", "data", "precious_metals.json");
 const SOURCE_NAME = "GoldPrice.org";
 const SOURCE_URL = "https://data-asg.goldprice.org/dbXRates/USD";
+const FRED_SOURCE_NAME = "FRED";
+const FRED_SOURCE_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv";
 
 const SERIES = [
   {
@@ -26,12 +29,14 @@ const SERIES = [
     symbol: "XAU",
     name: "Gold",
     series_ids: ["xauPrice"],
+    fallback_series_ids: ["GOLDPMGBD228NLBM"],
   },
   {
     key: "silver",
     symbol: "XAG",
     name: "Silver",
     series_ids: ["xagPrice"],
+    fallback_series_ids: ["SLVRUSD", "SLVPRUSD"],
   },
 ];
 
@@ -90,11 +95,13 @@ function validateQuote(quote, expected) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(quote.as_of_date)) {
     errors.push(`as_of_date must be YYYY-MM-DD, got ${quote.as_of_date}`);
   }
-  if (!expected.series_ids.includes(quote.series_id)) {
-    errors.push(`series_id mismatch: expected one of ${expected.series_ids.join(", ")}, got ${quote.series_id}`);
+  const expectedSeriesIds = [...expected.series_ids, ...(expected.fallback_series_ids ?? [])];
+  if (!expectedSeriesIds.includes(quote.series_id)) {
+    errors.push(`series_id mismatch: expected one of ${expectedSeriesIds.join(", ")}, got ${quote.series_id}`);
   }
-  if (quote.series_url !== SOURCE_URL) {
-    errors.push(`series_url mismatch: expected ${SOURCE_URL}, got ${quote.series_url}`);
+  const expectedUrls = [SOURCE_URL, FRED_SOURCE_URL];
+  if (!expectedUrls.includes(quote.series_url)) {
+    errors.push(`series_url mismatch: expected one of ${expectedUrls.join(", ")}, got ${quote.series_url}`);
   }
 
   if (errors.length > 0) {
@@ -103,21 +110,92 @@ function validateQuote(quote, expected) {
 }
 
 export async function fetchQuote(series) {
-  const response = await fetch(SOURCE_URL, {
-    headers: {
-      "user-agent": "SmartMoney/1.0 (+https://github.com/dotnetdev50/smartmoney)",
-      accept: "application/json,text/plain;q=0.9,*/*;q=0.8",
-    },
-  });
+  const primaryError = await (async () => {
+    try {
+      const response = await fetch(SOURCE_URL, {
+        headers: {
+          "user-agent": "SmartMoney/1.0 (+https://github.com/dotnetdev50/smartmoney)",
+          accept: "application/json,text/plain;q=0.9,*/*;q=0.8",
+        },
+      });
 
-  if (!response.ok) {
-    throw new Error(`${series.series_ids[0]} request failed with HTTP ${response.status}.`);
+      if (!response.ok) {
+        throw new Error(`${series.series_ids[0]} request failed with HTTP ${response.status}.`);
+      }
+
+      const payload = await response.json();
+      const quote = parseSourceQuote(payload, series);
+      validateQuote(quote, series);
+      return quote;
+    } catch (err) {
+      return err;
+    }
+  })();
+
+  if (!(primaryError instanceof Error)) {
+    return primaryError;
   }
 
-  const payload = await response.json();
-  const quote = parseSourceQuote(payload, series);
-  validateQuote(quote, series);
-  return quote;
+  const fallbackErrors = [];
+  for (const seriesId of series.fallback_series_ids ?? []) {
+    try {
+      const fallbackUrl = `${FRED_SOURCE_URL}?id=${seriesId}`;
+      const response = await fetch(fallbackUrl, {
+        headers: {
+          "user-agent": "SmartMoney/1.0 (+https://github.com/dotnetdev50/smartmoney)",
+          accept: "text/csv,text/plain;q=0.9,*/*;q=0.8",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`${seriesId} request failed with HTTP ${response.status}.`);
+      }
+
+      const csv = await response.text();
+      const quote = parseFredQuote(csv, series, seriesId);
+      validateQuote(quote, series);
+      return quote;
+    } catch (err) {
+      fallbackErrors.push(err?.message ?? String(err));
+    }
+  }
+
+  const fallbackMessage = fallbackErrors.length > 0 ? ` Fallback ${FRED_SOURCE_NAME} failed: ${fallbackErrors.join(" ")}` : "";
+  throw new Error(`${primaryError.message}${fallbackMessage}`);
+}
+
+function parseFredQuote(csv, series, seriesId) {
+  if (typeof csv !== "string" || csv.trim() === "") {
+    throw new Error(`${seriesId} returned an empty CSV payload.`);
+  }
+
+  const lines = csv.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  if (lines.length < 2) {
+    throw new Error(`${seriesId} CSV payload did not contain data rows.`);
+  }
+
+  for (let i = lines.length - 1; i >= 1; i -= 1) {
+    const [rawDate, rawValue] = lines[i].split(",");
+    if (!rawDate || !rawValue || rawValue === "." || rawValue === "") {
+      continue;
+    }
+
+    const price = Number.parseFloat(rawValue);
+    if (!Number.isFinite(price) || price <= 0) {
+      continue;
+    }
+
+    return {
+      symbol: series.symbol,
+      name: series.name,
+      price_usd: price,
+      unit: "USD/troy ounce",
+      as_of_date: normalizeAsOfDate(rawDate),
+      series_id: seriesId,
+      series_url: FRED_SOURCE_URL,
+    };
+  }
+
+  throw new Error(`${seriesId} CSV payload did not contain a usable latest value.`);
 }
 
 function getValidExistingQuote(summary, series) {
@@ -164,7 +242,7 @@ export async function fetchPreciousMetals(existingSummary = null) {
     }
 
     const message = result.reason?.message ?? String(result.reason);
-    errors.push(message);
+    errors.push(`${series.key}: ${message}`);
     summary[series.key] = getValidExistingQuote(existingSummary, series);
   });
 

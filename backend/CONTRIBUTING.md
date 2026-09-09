@@ -39,7 +39,7 @@ PCR_VIX_RETRY_MINUTES=10
 # Environment variables (for API host)
 NSE_FO_BHAV_COPY_BASE_URL=https://nsearchives.nseindia.com/content/historical/DERIVATIVES/
 NSE_PR_BASE_URL=https://nsearchives.nseindia.com/content/fo/
-NSE_VIX_ARCHIVE_URL=https://nsearchives.nseindia.com/content/indices/hist_vix_data.csv
+NSE_VIX_ARCHIVE_URL=https://archives.nseindia.com/content/indices/hist_vix_data.csv
 ```
 
 ## Rationale

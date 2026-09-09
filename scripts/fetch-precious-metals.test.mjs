@@ -67,6 +67,43 @@ test("fetchQuote surfaces source HTTP failures", async () => {
   }
 });
 
+test("fetchQuote falls back to FRED when GoldPrice returns 403", async () => {
+  const originalFetch = global.fetch;
+  const urls = [];
+
+  global.fetch = async (url) => {
+    urls.push(String(url));
+    if (String(url).startsWith("https://data-asg.goldprice.org/")) {
+      return { ok: false, status: 403, json: async () => ({}) };
+    }
+
+    return {
+      ok: true,
+      status: 200,
+      text: async () => "DATE,SLVRUSD\n2026-09-08,38.55\n",
+    };
+  };
+
+  try {
+    const quote = await fetchQuote({
+      key: "silver",
+      symbol: "XAG",
+      name: "Silver",
+      series_ids: ["xagPrice"],
+      fallback_series_ids: ["SLVRUSD", "SLVPRUSD"],
+    });
+
+    assert.equal(quote.price_usd, 38.55);
+    assert.equal(quote.series_id, "SLVRUSD");
+    assert.equal(quote.series_url, "https://fred.stlouisfed.org/graph/fredgraph.csv");
+    assert.equal(urls.length, 2);
+    assert.equal(urls[0], "https://data-asg.goldprice.org/dbXRates/USD");
+    assert.equal(urls[1], "https://fred.stlouisfed.org/graph/fredgraph.csv?id=SLVRUSD");
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
 test("fetchPreciousMetals writes whatever metal data is available", async () => {
   const originalFetch = global.fetch;
 

@@ -25,18 +25,18 @@ public sealed class NseOptions
 
     /// <summary>
     /// NSE VIX historical data API (primary VIX source).
-    /// Full URL: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy
+    /// Full URL: {VixApiBaseUrl}?from=dd-MM-yyyy&amp;to=dd-MM-yyyy&amp;csv=true
     /// Typical usage is a range window up to 365 days and then pick target date row.
-    /// Response JSON shape: { "data": [ ... ] } with fields including EOD_TIMESTAMP and EOD_CLOSE_INDEX_VAL.
+    /// Response is usually CSV (with csv=true), with JSON compatibility fallback.
     /// Requires NSE session cookies (prime homepage first).
     /// </summary>
-    public string VixApiBaseUrl { get; set; } = "https://www.nseindia.com/api/historical/vixhistory";
+    public string VixApiBaseUrl { get; set; } = "https://www.nseindia.com/api/historicalOR/vixhistory";
 
     /// <summary>
     /// Full-history India VIX CSV from NSE archives (fallback when VIX API is unavailable).
     /// Date format in file: DD-MMM-YYYY (e.g. 05-Mar-2026). Columns: Date,Open,High,Low,Close,...
     /// </summary>
-    public string VixArchiveUrl { get; set; } = "https://nsearchives.nseindia.com/content/indices/hist_vix_data.csv";
+    public string VixArchiveUrl { get; set; } = "https://archives.nseindia.com/content/indices/hist_vix_data.csv";
 
     /// <summary>
     /// Base URL for the NSE F&amp;O daily bhavcopy ZIP (op-bhavcopy, secondary PCR fallback).

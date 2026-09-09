@@ -121,7 +121,7 @@ VIX measures implied volatility (market fear/uncertainty) derived from NIFTY opt
 **Primary source:** NSE historical VIX API
 
 ```
-GET https://www.nseindia.com/api/historical/vixhistory?from=DD-MM-YYYY&to=DD-MM-YYYY
+GET https://www.nseindia.com/api/historicalOR/vixhistory?from=DD-MM-YYYY&to=DD-MM-YYYY&csv=true
 ```
 
 > **Important:** The NSE website uses Akamai bot-protection. The API requires valid session cookies.
@@ -130,7 +130,7 @@ GET https://www.nseindia.com/api/historical/vixhistory?from=DD-MM-YYYY&to=DD-MM-
 **Fallback source:** Full-history CSV from NSE archives
 
 ```
-https://nsearchives.nseindia.com/content/indices/hist_vix_data.csv
+https://archives.nseindia.com/content/indices/hist_vix_data.csv
 ```
 
 **Service:** `backend/SmartMoney.Application/Services/VixFetchService.cs`
