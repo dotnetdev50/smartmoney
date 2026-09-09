@@ -12,7 +12,7 @@
 
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
@@ -25,15 +25,13 @@ const SERIES = [
     key: "gold",
     symbol: "XAU",
     name: "Gold",
-    series_id: "GOLDAMGBD228NLBM",
-    series_url: "https://fred.stlouisfed.org/series/GOLDAMGBD228NLBM",
+    series_ids: ["GOLDAMGBD228NLBM"],
   },
   {
     key: "silver",
     symbol: "XAG",
     name: "Silver",
-    series_id: "SLVPRUSD",
-    series_url: "https://fred.stlouisfed.org/series/SLVPRUSD",
+    series_ids: ["SLVRUSD", "SLVPRUSD"],
   },
 ];
 
@@ -41,11 +39,15 @@ function csvUrl(seriesId) {
   return `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${seriesId}`;
 }
 
-function parseSeriesCsv(csvText, series) {
+function seriesPageUrl(seriesId) {
+  return `https://fred.stlouisfed.org/series/${seriesId}`;
+}
+
+export function parseSeriesCsv(csvText, series, seriesId) {
   const lines = csvText.trim().split(/\r?\n/);
 
   if (lines.length < 2) {
-    throw new Error(`${series.series_id} CSV did not contain any data rows.`);
+    throw new Error(`${seriesId} CSV did not contain any data rows.`);
   }
 
   for (let index = lines.length - 1; index >= 1; index -= 1) {
@@ -62,7 +64,7 @@ function parseSeriesCsv(csvText, series) {
 
     const price = Number.parseFloat(rawValue);
     if (!Number.isFinite(price) || price <= 0) {
-      throw new Error(`${series.series_id} contains invalid latest price "${rawValue}".`);
+      throw new Error(`${seriesId} contains invalid latest price "${rawValue}".`);
     }
 
     return {
@@ -71,12 +73,12 @@ function parseSeriesCsv(csvText, series) {
       price_usd: price,
       unit: "USD/troy ounce",
       as_of_date: date,
-      series_id: series.series_id,
-      series_url: series.series_url,
+      series_id: seriesId,
+      series_url: seriesPageUrl(seriesId),
     };
   }
 
-  throw new Error(`${series.series_id} had no usable latest data row.`);
+  throw new Error(`${seriesId} had no usable latest data row.`);
 }
 
 function validateQuote(quote, expected) {
@@ -94,8 +96,8 @@ function validateQuote(quote, expected) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(quote.as_of_date)) {
     errors.push(`as_of_date must be YYYY-MM-DD, got ${quote.as_of_date}`);
   }
-  if (quote.series_id !== expected.series_id) {
-    errors.push(`series_id mismatch: expected ${expected.series_id}, got ${quote.series_id}`);
+  if (!expected.series_ids.includes(quote.series_id)) {
+    errors.push(`series_id mismatch: expected one of ${expected.series_ids.join(", ")}, got ${quote.series_id}`);
   }
   if (!quote.series_url.startsWith("https://fred.stlouisfed.org/series/")) {
     errors.push(`series_url must be a FRED series URL, got ${quote.series_url}`);
@@ -106,22 +108,33 @@ function validateQuote(quote, expected) {
   }
 }
 
-async function fetchQuote(series) {
-  const response = await fetch(csvUrl(series.series_id), {
-    headers: {
-      "user-agent": "SmartMoney/1.0 (+https://github.com/dotnetdev50/smartmoney)",
-      accept: "text/csv,text/plain;q=0.9,*/*;q=0.8",
-    },
-  });
+export async function fetchQuote(series) {
+  const errors = [];
 
-  if (!response.ok) {
-    throw new Error(`${series.series_id} request failed with HTTP ${response.status}.`);
+  for (const seriesId of series.series_ids) {
+    try {
+      const response = await fetch(csvUrl(seriesId), {
+        headers: {
+          "user-agent": "SmartMoney/1.0 (+https://github.com/dotnetdev50/smartmoney)",
+          accept: "text/csv,text/plain;q=0.9,*/*;q=0.8",
+        },
+      });
+
+      if (!response.ok) {
+        errors.push(`${seriesId} request failed with HTTP ${response.status}.`);
+        continue;
+      }
+
+      const csvText = await response.text();
+      const quote = parseSeriesCsv(csvText, series, seriesId);
+      validateQuote(quote, series);
+      return quote;
+    } catch (error) {
+      errors.push(`${seriesId} request failed: ${error?.message ?? error}`);
+    }
   }
 
-  const csvText = await response.text();
-  const quote = parseSeriesCsv(csvText, series);
-  validateQuote(quote, series);
-  return quote;
+  throw new Error(errors.join(" "));
 }
 
 async function fetchPreciousMetals() {
@@ -182,7 +195,9 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.warn(`[precious-metals] WARNING: unexpected error: ${err?.message ?? err}`);
-  process.exitCode = 0;
-});
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+  main().catch((err) => {
+    console.warn(`[precious-metals] WARNING: unexpected error: ${err?.message ?? err}`);
+    process.exitCode = 0;
+  });
+}
