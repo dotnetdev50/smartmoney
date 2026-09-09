@@ -1,4 +1,4 @@
-// Isolated external-context fetch utility: FRED/LBMA daily prices -> frontend/public/data/precious_metals.json
+// Isolated external-context fetch utility: public daily prices -> frontend/public/data/precious_metals.json
 //
 // This script is intentionally independent of SmartMoney.Job and the deterministic scoring
 // pipeline. It never touches market_today.json, the SQLite database, or any scoring code.
@@ -17,68 +17,62 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
 const OUTPUT_PATH = path.join(REPO_ROOT, "frontend", "public", "data", "precious_metals.json");
-const SOURCE_NAME = "FRED (LBMA)";
-const SOURCE_URL = "https://fred.stlouisfed.org/";
+const SOURCE_NAME = "GoldPrice.org";
+const SOURCE_URL = "https://data-asg.goldprice.org/dbXRates/USD";
 
 const SERIES = [
   {
     key: "gold",
     symbol: "XAU",
     name: "Gold",
-    series_ids: ["GOLDAMGBD228NLBM", "GOLDPMGBD228NLBM"],
+    series_ids: ["xauPrice"],
   },
   {
     key: "silver",
     symbol: "XAG",
     name: "Silver",
-    series_ids: ["SLVRUSD", "SLVPRUSD"],
+    series_ids: ["xagPrice"],
   },
 ];
 
-function csvUrl(seriesId) {
-  return `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${seriesId}`;
-}
-
-function seriesPageUrl(seriesId) {
-  return `https://fred.stlouisfed.org/series/${seriesId}`;
-}
-
-export function parseSeriesCsv(csvText, series, seriesId) {
-  const lines = csvText.trim().split(/\r?\n/);
-
-  if (lines.length < 2) {
-    throw new Error(`${seriesId} CSV did not contain any data rows.`);
+function normalizeAsOfDate(rawDate) {
+  if (typeof rawDate !== "string" || rawDate.trim() === "") {
+    throw new Error(`source response did not include a usable date: ${rawDate}`);
   }
 
-  for (let index = lines.length - 1; index >= 1; index -= 1) {
-    const line = lines[index]?.trim();
-    if (!line) continue;
-
-    const commaIndex = line.indexOf(",");
-    if (commaIndex <= 0) continue;
-
-    const date = line.slice(0, commaIndex).trim();
-    const rawValue = line.slice(commaIndex + 1).trim();
-
-    if (!date || !rawValue || rawValue === ".") continue;
-
-    const price = Number.parseFloat(rawValue);
-    if (!Number.isFinite(price) || price <= 0) {
-      throw new Error(`${seriesId} contains invalid latest price "${rawValue}".`);
-    }
-
-    return {
-      symbol: series.symbol,
-      name: series.name,
-      price_usd: price,
-      unit: "USD/troy ounce",
-      as_of_date: date,
-      series_id: seriesId,
-      series_url: seriesPageUrl(seriesId),
-    };
+  const parsed = new Date(rawDate);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error(`source response date was not parseable: ${rawDate}`);
   }
 
-  throw new Error(`${seriesId} had no usable latest data row.`);
+  return parsed.toISOString().slice(0, 10);
+}
+
+export function parseSourceQuote(payload, series, seriesId = series.series_ids[0]) {
+  const item = payload?.items?.[0];
+  if (!item || typeof item !== "object") {
+    throw new Error("source payload did not contain items[0].");
+  }
+
+  const rawValue = item?.[seriesId];
+  if (rawValue == null || rawValue === "") {
+    throw new Error(`${seriesId} was missing from source payload.`);
+  }
+
+  const price = Number.parseFloat(String(rawValue));
+  if (!Number.isFinite(price) || price <= 0) {
+    throw new Error(`${seriesId} contains invalid latest price "${rawValue}".`);
+  }
+
+  return {
+    symbol: series.symbol,
+    name: series.name,
+    price_usd: price,
+    unit: "USD/troy ounce",
+    as_of_date: normalizeAsOfDate(payload?.date),
+    series_id: seriesId,
+    series_url: SOURCE_URL,
+  };
 }
 
 function validateQuote(quote, expected) {
@@ -99,8 +93,8 @@ function validateQuote(quote, expected) {
   if (!expected.series_ids.includes(quote.series_id)) {
     errors.push(`series_id mismatch: expected one of ${expected.series_ids.join(", ")}, got ${quote.series_id}`);
   }
-  if (!quote.series_url.startsWith("https://fred.stlouisfed.org/series/")) {
-    errors.push(`series_url must be a FRED series URL, got ${quote.series_url}`);
+  if (quote.series_url !== SOURCE_URL) {
+    errors.push(`series_url mismatch: expected ${SOURCE_URL}, got ${quote.series_url}`);
   }
 
   if (errors.length > 0) {
@@ -109,32 +103,21 @@ function validateQuote(quote, expected) {
 }
 
 export async function fetchQuote(series) {
-  const errors = [];
+  const response = await fetch(SOURCE_URL, {
+    headers: {
+      "user-agent": "SmartMoney/1.0 (+https://github.com/dotnetdev50/smartmoney)",
+      accept: "application/json,text/plain;q=0.9,*/*;q=0.8",
+    },
+  });
 
-  for (const seriesId of series.series_ids) {
-    try {
-      const response = await fetch(csvUrl(seriesId), {
-        headers: {
-          "user-agent": "SmartMoney/1.0 (+https://github.com/dotnetdev50/smartmoney)",
-          accept: "text/csv,text/plain;q=0.9,*/*;q=0.8",
-        },
-      });
-
-      if (!response.ok) {
-        errors.push(`${seriesId} request failed with HTTP ${response.status}.`);
-        continue;
-      }
-
-      const csvText = await response.text();
-      const quote = parseSeriesCsv(csvText, series, seriesId);
-      validateQuote(quote, series);
-      return quote;
-    } catch (error) {
-      errors.push(`${seriesId} request failed: ${error?.message ?? error}`);
-    }
+  if (!response.ok) {
+    throw new Error(`${series.series_ids[0]} request failed with HTTP ${response.status}.`);
   }
 
-  throw new Error(errors.join(" "));
+  const payload = await response.json();
+  const quote = parseSourceQuote(payload, series);
+  validateQuote(quote, series);
+  return quote;
 }
 
 function getValidExistingQuote(summary, series) {
@@ -205,7 +188,7 @@ async function existingFileIsValid(filePath) {
 }
 
 async function main() {
-  console.log("[precious-metals] Fetching gold and silver daily prices from FRED/LBMA...");
+  console.log(`[precious-metals] Fetching gold and silver daily prices from ${SOURCE_NAME}...`);
   const existingSummary = await readExistingSummary(OUTPUT_PATH);
 
   try {
