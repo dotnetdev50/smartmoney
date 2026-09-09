@@ -125,8 +125,8 @@ export type PreciousMetalsSummary = {
   retrieved_at_utc: string;
   source: string;
   source_url: string;
-  gold: PreciousMetalQuote;
-  silver: PreciousMetalQuote;
+  gold: PreciousMetalQuote | null;
+  silver: PreciousMetalQuote | null;
 };
 
 export type NewsScope = "India" | "Global";
