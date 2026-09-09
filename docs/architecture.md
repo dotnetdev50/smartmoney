@@ -86,7 +86,7 @@ never blocked by this fetch.
 
 A separate, independent path feeds the dashboard's gold and silver price KPIs:
 
-    LBMA daily price series via FRED
+    GoldPrice.org daily USD prices
     -> scheduled external-context fetch (scripts/fetch-precious-metals.mjs)
     -> frontend/public/data/precious_metals.json
     -> dashboard KPI

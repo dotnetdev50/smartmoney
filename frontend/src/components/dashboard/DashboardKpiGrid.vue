@@ -133,7 +133,7 @@ watch(
 
     <article
       class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
-      title="Gold daily price from the LBMA series published via FRED. External context only; not used in SmartMoney scoring."
+      title="Gold daily price from an external source. External context only; not used in SmartMoney scoring."
     >
       <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Gold Price</p>
       <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">
@@ -143,11 +143,11 @@ watch(
         <template v-if="preciousMetals?.gold">
           {{ formatDate(preciousMetals.gold.as_of_date) }} ·
           <a
-            :href="preciousMetals.gold.series_url"
+            :href="preciousMetals.source_url"
             target="_blank"
             rel="noopener noreferrer nofollow"
             class="underline hover:text-gray-700 dark:hover:text-gray-300"
-          >LBMA via FRED</a>
+          >{{ preciousMetals.source }}</a>
         </template>
         <template v-else>External data</template>
       </p>
@@ -155,7 +155,7 @@ watch(
 
     <article
       class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
-      title="Silver daily price from the LBMA series published via FRED. External context only; not used in SmartMoney scoring."
+      title="Silver daily price from an external source. External context only; not used in SmartMoney scoring."
     >
       <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Silver Price</p>
       <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">
@@ -165,11 +165,11 @@ watch(
         <template v-if="preciousMetals?.silver">
           {{ formatDate(preciousMetals.silver.as_of_date) }} ·
           <a
-            :href="preciousMetals.silver.series_url"
+            :href="preciousMetals.source_url"
             target="_blank"
             rel="noopener noreferrer nofollow"
             class="underline hover:text-gray-700 dark:hover:text-gray-300"
-          >LBMA via FRED</a>
+          >{{ preciousMetals.source }}</a>
         </template>
         <template v-else>External data</template>
       </p>

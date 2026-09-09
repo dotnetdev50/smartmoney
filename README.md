@@ -33,11 +33,11 @@ KPI shows "Unavailable"); the market-data pipeline is never affected.
 ### External Context: Gold and Silver Prices
 
 Independent of the NSE/scoring pipeline above, `scripts/fetch-precious-metals.mjs` fetches the latest
-available London bullion daily price series for gold and silver from
-[FRED](https://fred.stlouisfed.org/) and writes `frontend/public/data/precious_metals.json`:
+available public USD prices for gold and silver from
+[GoldPrice.org](https://data-asg.goldprice.org/dbXRates/USD) and writes `frontend/public/data/precious_metals.json`:
 
 ```
-LBMA daily price series via FRED → scheduled external-context fetch → frontend/public/data/precious_metals.json → dashboard KPIs
+GoldPrice.org daily USD prices → scheduled external-context fetch → frontend/public/data/precious_metals.json → dashboard KPIs
 ```
 
 These values are **informational only** — they are displayed on the dashboard as "Gold Price" and
