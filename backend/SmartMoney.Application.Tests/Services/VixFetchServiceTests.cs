@@ -26,16 +26,16 @@ public sealed class VixFetchServiceTests
 
         Assert.Equal(13.46, result);
         Assert.Equal(2, handler.RequestUris.Count);
-        Assert.Equal("/api/historical/vixhistory", handler.RequestUris[1].AbsolutePath);
+        Assert.Equal("/api/historicalOR/vixhistory", handler.RequestUris[1].AbsolutePath);
         Assert.Contains("from=08-09-2025", handler.RequestUris[1].Query);
         Assert.Contains("to=07-09-2026", handler.RequestUris[1].Query);
-        Assert.DoesNotContain("csv=", handler.RequestUris[1].Query, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("csv=true", handler.RequestUris[1].Query, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
     public async Task FetchVixAsync_FallsBackToArchiveCsv_WhenApiFails()
     {
-        var archiveUrl = "https://nsearchives.nseindia.com/content/indices/hist_vix_data.csv";
+        var archiveUrl = "https://archives.nseindia.com/content/indices/hist_vix_data.csv";
         var handler = new SequenceHttpMessageHandler(
             CreateResponse(HttpStatusCode.OK, "<html>ok</html>"),
             CreateResponse(HttpStatusCode.Forbidden, string.Empty),
