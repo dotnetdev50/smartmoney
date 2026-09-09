@@ -137,10 +137,10 @@ watch(
     >
       <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Gold Price</p>
       <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">
-        {{ formatPrice(preciousMetals?.gold.price_usd) }}
+        {{ formatPrice(preciousMetals?.gold?.price_usd) }}
       </p>
       <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-        <template v-if="preciousMetals">
+        <template v-if="preciousMetals?.gold">
           {{ formatDate(preciousMetals.gold.as_of_date) }} ·
           <a
             :href="preciousMetals.gold.series_url"
@@ -159,10 +159,10 @@ watch(
     >
       <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Silver Price</p>
       <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">
-        {{ formatPrice(preciousMetals?.silver.price_usd) }}
+        {{ formatPrice(preciousMetals?.silver?.price_usd) }}
       </p>
       <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-        <template v-if="preciousMetals">
+        <template v-if="preciousMetals?.silver">
           {{ formatDate(preciousMetals.silver.as_of_date) }} ·
           <a
             :href="preciousMetals.silver.series_url"

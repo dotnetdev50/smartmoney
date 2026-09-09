@@ -25,7 +25,7 @@ const SERIES = [
     key: "gold",
     symbol: "XAU",
     name: "Gold",
-    series_ids: ["GOLDAMGBD228NLBM"],
+    series_ids: ["GOLDAMGBD228NLBM", "GOLDPMGBD228NLBM"],
   },
   {
     key: "silver",
@@ -137,16 +137,59 @@ export async function fetchQuote(series) {
   throw new Error(errors.join(" "));
 }
 
-async function fetchPreciousMetals() {
-  const [gold, silver] = await Promise.all(SERIES.map((series) => fetchQuote(series)));
+function getValidExistingQuote(summary, series) {
+  const quote = summary?.[series.key];
+  if (!quote) return null;
 
-  return {
+  try {
+    validateQuote(quote, series);
+    return quote;
+  } catch {
+    return null;
+  }
+}
+
+function summaryHasAnyQuote(summary) {
+  return SERIES.some((series) => getValidExistingQuote(summary, series));
+}
+
+async function readExistingSummary(filePath) {
+  try {
+    const raw = await readFile(filePath, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchPreciousMetals(existingSummary = null) {
+  const results = await Promise.allSettled(SERIES.map((series) => fetchQuote(series)));
+  const errors = [];
+  const summary = {
     retrieved_at_utc: new Date().toISOString(),
     source: SOURCE_NAME,
     source_url: SOURCE_URL,
-    gold,
-    silver,
+    gold: null,
+    silver: null,
   };
+
+  results.forEach((result, index) => {
+    const series = SERIES[index];
+    if (result.status === "fulfilled") {
+      summary[series.key] = result.value;
+      return;
+    }
+
+    const message = result.reason?.message ?? String(result.reason);
+    errors.push(message);
+    summary[series.key] = getValidExistingQuote(existingSummary, series);
+  });
+
+  if (!summaryHasAnyQuote(summary)) {
+    throw new Error(errors.join(" ") || "No precious metals quotes available.");
+  }
+
+  return { summary, errors };
 }
 
 async function writeJsonAtomically(filePath, data) {
@@ -157,28 +200,20 @@ async function writeJsonAtomically(filePath, data) {
 }
 
 async function existingFileIsValid(filePath) {
-  try {
-    const raw = await readFile(filePath, "utf8");
-    const json = JSON.parse(raw);
-
-    return (
-      typeof json?.retrieved_at_utc === "string" &&
-      typeof json?.gold?.price_usd === "number" &&
-      json.gold.price_usd > 0 &&
-      typeof json?.silver?.price_usd === "number" &&
-      json.silver.price_usd > 0
-    );
-  } catch {
-    return false;
-  }
+  const summary = await readExistingSummary(filePath);
+  return summaryHasAnyQuote(summary);
 }
 
 async function main() {
   console.log("[precious-metals] Fetching gold and silver daily prices from FRED/LBMA...");
+  const existingSummary = await readExistingSummary(OUTPUT_PATH);
 
   try {
-    const summary = await fetchPreciousMetals();
+    const { summary, errors } = await fetchPreciousMetals(existingSummary);
     await writeJsonAtomically(OUTPUT_PATH, summary);
+    if (errors.length > 0) {
+      console.warn(`[precious-metals] WARNING: partial refresh completed: ${errors.join(" ")}`);
+    }
     console.log(`[precious-metals] Wrote ${OUTPUT_PATH}:`, JSON.stringify(summary));
   } catch (err) {
     console.warn(`[precious-metals] WARNING: failed to fetch/parse precious metals data: ${err.message}`);
