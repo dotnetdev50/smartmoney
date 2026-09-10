@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-09-09T17:46:20.916786+00:00",
+  "generated_at_utc": "2026-09-10T04:28:34.7076327+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on September 09, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-09-10T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63562"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -13,18 +25,6 @@
       "source": "RBI",
       "published_at_utc": "2026-09-09T11:55:00+00:00",
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63560"
-    },
-    {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Reserve Money for the fortnight ended on August 31, 2026",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-09-09T11:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63556"
     },
     {
       "rank": 3,
@@ -49,18 +49,6 @@
       "source": "SEBI",
       "published_at_utc": "2026-09-07T18:30:00+00:00",
       "url": "https://www.sebi.gov.in/enforcement/recovery-proceedings/sep-2026/remittance-order-dated-08-09-2026-issued-in-rc-no-9189-of-2026_104369.html"
-    },
-    {
-      "rank": 5,
-      "scope": "India",
-      "category": "NaturalDisaster",
-      "impact": "Medium",
-      "sentiment": "Neutral",
-      "headline": "Flood in India",
-      "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
-      "source": "GDACS",
-      "published_at_utc": "2026-08-09T01:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=12\u0026eventtype=FL"
     }
   ]
 }
