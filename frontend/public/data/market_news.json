@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-09-10T16:21:56.3572052+00:00",
+  "generated_at_utc": "2026-09-11T04:29:03.5882539+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on September 10, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-09-11T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63572"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -15,24 +27,12 @@
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63567"
     },
     {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Recognition of Self-Regulatory Organisation in the FinTech Sector (SRO-FT)",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-09-10T12:05:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63566"
-    },
-    {
       "rank": 3,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Successful launch of \u201CDemat 2.0\u201D  Pilot project for Tokenised Corporate Bonds",
+      "headline": "Successful launch of \u201CDemat 2.0\u201D  Pilot project for Tokenised Corporate Bonds  \u003Ca href=\u0027https://www.sebi.gov.in/sebi_data/faqfiles/sep-2026/1789049630065.pdf\u0027 target=\u0027_blank\u0027 style=\u0027color:#007ffc\u0027\u003E[FAQ]\u003C/a\u003E",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
       "published_at_utc": "2026-09-09T18:30:00+00:00",
