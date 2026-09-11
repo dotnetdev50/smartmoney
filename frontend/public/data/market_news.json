@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-11T15:21:06.8680954+00:00",
+  "generated_at_utc": "2026-09-11T15:46:26.8363848+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,7 +8,7 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "RBI announces OMO Sale of Government of India Securities (\u003Cfont color=\u0022red\u0022\u003ERevised\u003C/font\u003E)",
+      "headline": "RBI announces OMO Sale of Government of India Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
       "published_at_utc": "2026-09-11T12:10:00+00:00",
