@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-09-11T15:46:26.8363848+00:00",
+  "generated_at_utc": "2026-09-11T16:20:47.4320965+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "RBI invites comments on the Draft \u201CReserve Bank of India (Know Your Customer) Amendment Directions, 2026\u201D",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-09-11T16:10:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63587"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -13,18 +25,6 @@
       "source": "RBI",
       "published_at_utc": "2026-09-11T12:10:00+00:00",
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63584"
-    },
-    {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Supply for the fortnight ended on August 31, 2026",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-09-11T11:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63582"
     },
     {
       "rank": 3,
