@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-11T04:29:03.5882539+00:00",
+  "generated_at_utc": "2026-09-11T15:21:06.8680954+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,23 +8,23 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 10, 2026",
+      "headline": "RBI announces OMO Sale of Government of India Securities (\u003Cfont color=\u0022red\u0022\u003ERevised\u003C/font\u003E)",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-11T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63572"
+      "published_at_utc": "2026-09-11T12:10:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63584"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Positive",
-      "headline": "Auction of Government of India Dated Securities",
+      "sentiment": "Neutral",
+      "headline": "Money Supply for the fortnight ended on August 31, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-10T12:20:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63567"
+      "published_at_utc": "2026-09-11T11:35:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63582"
     },
     {
       "rank": 3,
@@ -32,11 +32,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Successful launch of \u201CDemat 2.0\u201D  Pilot project for Tokenised Corporate Bonds  \u003Ca href=\u0027https://www.sebi.gov.in/sebi_data/faqfiles/sep-2026/1789049630065.pdf\u0027 target=\u0027_blank\u0027 style=\u0027color:#007ffc\u0027\u003E[FAQ]\u003C/a\u003E",
+      "headline": "Felicitation of Winners of Securities Market TechSprint at Global Fintech Fest 2026",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-09T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2026/successful-launch-of-demat-2-0-pilot-project-for-tokenised-corporate-bonds_104418.html"
+      "published_at_utc": "2026-09-10T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2026/felicitation-of-winners-of-securities-market-techsprint-at-global-fintech-fest-2026_104463.html"
     },
     {
       "rank": 4,
@@ -44,11 +44,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Chairman, SEBI delivered a keynote address and participated in a panel discussion during Global Fintech Fest 2026",
+      "headline": "Final Enquiry Order in respect of Modex International Securities Ltd",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-09T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2026/chairman-sebi-delivered-a-keynote-address-and-participated-in-a-panel-discussion-during-global-fintech-fest-2026_104416.html"
+      "published_at_utc": "2026-09-10T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/enforcement/orders/sep-2026/final-enquiry-order-in-respect-of-modex-international-securities-ltd_104462.html"
     }
   ]
 }
