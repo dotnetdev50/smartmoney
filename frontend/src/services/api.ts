@@ -115,6 +115,7 @@ export type PreciousMetalQuote = {
   symbol: "XAU" | "XAG";
   name: "Gold" | "Silver";
   price_usd: number;
+  price_inr_10g: number;
   unit: string;
   as_of_date: string;
   series_id: string;
@@ -125,6 +126,12 @@ export type PreciousMetalsSummary = {
   retrieved_at_utc: string;
   source: string;
   source_url: string;
+  provider?: string;
+  asOf?: string;
+  stale?: boolean;
+  usd_inr_rate: number;
+  usd_inr_as_of: string;
+  fx_source_url: string;
   gold: PreciousMetalQuote | null;
   silver: PreciousMetalQuote | null;
 };

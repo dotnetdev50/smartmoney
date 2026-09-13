@@ -60,10 +60,11 @@ jobs:
         run: node fetch-layoffs-summary.mjs
         continue-on-error: true
 
-      - name: Fetch precious metals prices (external context; never blocks the build)
+      - name: Fetch precious metals prices
         working-directory: scripts
         run: node fetch-precious-metals.mjs
-        continue-on-error: true
+        env:
+          ALPHA_VANTAGE_API_KEY: ${{ secrets['ALPHA_VANTAGE_API_KEY'] }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4

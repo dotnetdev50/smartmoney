@@ -33,17 +33,20 @@ KPI shows "Unavailable"); the market-data pipeline is never affected.
 ### External Context: Gold and Silver Prices
 
 Independent of the NSE/scoring pipeline above, `scripts/fetch-precious-metals.mjs` fetches the latest
-available public USD prices for gold and silver from
-[GoldPrice.org](https://data-asg.goldprice.org/dbXRates/USD) and writes `frontend/public/data/precious_metals.json`:
+available USD spot prices for gold and silver and the USD/INR exchange rate from
+[Alpha Vantage](https://www.alphavantage.co/documentation/#gold-silver-spot), converts the spot prices
+to INR per 10g, and writes `frontend/public/data/precious_metals.json`:
 
 ```
-GoldPrice.org daily USD prices → scheduled external-context fetch → frontend/public/data/precious_metals.json → dashboard KPIs
+Alpha Vantage spot prices + USD/INR → scheduled external-context fetch → INR/10g conversion → dashboard KPIs
 ```
 
 These values are **informational only** — they are displayed on the dashboard as "Gold Price" and
 "Silver Price" KPIs and do not participate in FinalScore, Regime, ShockScore, Smart/Retail/DII
 calculations, narrative decomposition, or AI interpretation. If the fetch fails, the last known-good
 file is preserved (or the KPIs show "Unavailable"); the market-data pipeline is never affected.
+The converted amount is an indicative spot value and excludes Indian import duties, GST, and dealer
+premiums.
 
 ### External Context: Market-Moving News
 
