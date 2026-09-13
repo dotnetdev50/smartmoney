@@ -30,6 +30,21 @@ and does not participate in FinalScore, Regime, ShockScore, Smart/Retail/DII cal
 decomposition, or AI interpretation. If the fetch fails, the last known-good file is preserved (or the
 KPI shows "Unavailable"); the market-data pipeline is never affected.
 
+### External Context: Gold and Silver Prices
+
+Independent of the NSE/scoring pipeline above, `scripts/fetch-precious-metals.mjs` fetches the latest
+available public USD prices for gold and silver from
+[GoldPrice.org](https://data-asg.goldprice.org/dbXRates/USD) and writes `frontend/public/data/precious_metals.json`:
+
+```
+GoldPrice.org daily USD prices → scheduled external-context fetch → frontend/public/data/precious_metals.json → dashboard KPIs
+```
+
+These values are **informational only** — they are displayed on the dashboard as "Gold Price" and
+"Silver Price" KPIs and do not participate in FinalScore, Regime, ShockScore, Smart/Retail/DII
+calculations, narrative decomposition, or AI interpretation. If the fetch fails, the last known-good
+file is preserved (or the KPIs show "Unavailable"); the market-data pipeline is never affected.
+
 ### External Context: Market-Moving News
 
 The GitHub Actions workflow runs scheduled refreshes every weekday at 9:30 AM and 8:30, 9:00, and
@@ -103,10 +118,10 @@ If the PR file is unavailable (holiday, 404, or data not yet published), the ser
 
 VIX measures implied volatility (market fear/uncertainty) derived from NIFTY options prices.
 
-**Primary source:** NSE JSON API
+**Primary source:** NSE historical VIX API
 
 ```
-GET https://www.nseindia.com/api/historicalOR/vixhistory?from=DD-MM-YYYY&to=DD-MM-YYYY
+GET https://www.nseindia.com/api/historical/vixhistory?from=DD-MM-YYYY&to=DD-MM-YYYY
 ```
 
 > **Important:** The NSE website uses Akamai bot-protection. The API requires valid session cookies.
@@ -120,9 +135,9 @@ https://nsearchives.nseindia.com/content/indices/hist_vix_data.csv
 
 **Service:** `backend/SmartMoney.Application/Services/VixFetchService.cs`
 
-- **Step 1:** Creates a short-lived `HttpClient` with `HttpClientHandler { UseCookies = true }`.
+- **Step 1:** Uses a cookie-aware HTTP client/handler with a persistent `CookieContainer`.
 - **Step 2:** GETs the NSE homepage to obtain session cookies.
-- **Step 3:** GETs the VIX API with those cookies; parses `EOD_CLOSE_INDEX_VAL` from the JSON response.
+- **Step 3:** GETs the VIX API with those cookies; parses matching rows from `data[]` using `EOD_TIMESTAMP` and `EOD_CLOSE_INDEX_VAL`.
 - **Fallback:** If the API fails (HTTP error / no data), downloads the archives CSV and parses the matching date row.
 
 ---

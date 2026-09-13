@@ -50,13 +50,19 @@ jobs:
         working-directory: scripts
         run: npm ci
 
-      - name: Install Playwright Chromium runtime
+      - name: Install Playwright Chromium runtime (external context; never blocks the build)
         working-directory: scripts
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
+        continue-on-error: true
 
       - name: Fetch layoffs summary (external context; never blocks the build)
         working-directory: scripts
         run: node fetch-layoffs-summary.mjs
+        continue-on-error: true
+
+      - name: Fetch precious metals prices (external context; never blocks the build)
+        working-directory: scripts
+        run: node fetch-precious-metals.mjs
         continue-on-error: true
 
       - name: Setup .NET
@@ -91,6 +97,12 @@ jobs:
               || { echo "ERROR: layoffs_summary.json is not valid JSON"; exit 1; }
           else
             echo "layoffs_summary.json not present (external fetch may have failed); dashboard will show Unavailable."
+          fi
+          if [ -f frontend/public/data/precious_metals.json ]; then
+            python3 -m json.tool frontend/public/data/precious_metals.json > /dev/null \
+              || { echo "ERROR: precious_metals.json is not valid JSON"; exit 1; }
+          else
+            echo "precious_metals.json not present (external fetch may have failed); dashboard will show Unavailable."
           fi
           if [ -f frontend/public/data/market_news.json ]; then
             node scripts/validate-market-news.mjs frontend/public/data/market_news.json \
