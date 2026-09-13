@@ -86,8 +86,9 @@ never blocked by this fetch.
 
 A separate, independent path feeds the dashboard's gold and silver price KPIs:
 
-    GoldPrice.org daily USD prices
+    Alpha Vantage gold and silver USD spot prices + USD/INR rate
     -> scheduled external-context fetch (scripts/fetch-precious-metals.mjs)
+    -> deterministic troy-ounce to 10g conversion
     -> frontend/public/data/precious_metals.json
     -> dashboard KPI
 
@@ -95,9 +96,14 @@ This path is intentionally decoupled from `SmartMoney.Job`, `DailyPipelineServic
 `MarketScoringCalculator`. Precious-metals data is informational only: it does not affect FinalScore,
 participant scoring, PCR/VIX, Regime, ShockScore, Smart/Retail/DII calculations, narrative
 decomposition, deterministic explanation, AI interpretation input, or backtesting, and it is never
-written into `market_today.json`. If the external fetch fails, the previous valid
-`precious_metals.json` is preserved (or the KPI shows "Unavailable"); the NSE/scoring pipeline is
-never blocked by this fetch.
+written into `market_today.json`. If the external fetch fails, a complete previous
+`precious_metals.json` is retained and marked stale. Without valid last-known-good data, the fetch
+fails so the deployment cannot silently publish missing precious-metals data.
+
+The JSON retains the provider's USD-per-troy-ounce values and adds INR-per-10g values using the
+contemporaneous Alpha Vantage USD/INR exchange rate and 31.1034768 grams per troy ounce. The INR
+amount is an indicative converted spot price; it excludes Indian import duties, GST, and dealer
+premiums and is not a local retail quote.
 
 ## External Context
 

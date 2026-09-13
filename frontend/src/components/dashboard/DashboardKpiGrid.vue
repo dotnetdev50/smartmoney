@@ -30,10 +30,10 @@ const layoffsCompaniesFormatted = computed(() =>
   props.layoffs ? numberFormatter.format(props.layoffs.companies_with_layoffs) : null,
 );
 
-const usdFormatter = new Intl.NumberFormat("en-US", {
+const inrFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 2,
+  currency: "INR",
+  maximumFractionDigits: 0,
 });
 
 const preciousMetals = ref<PreciousMetalsSummary | null>(null);
@@ -52,7 +52,7 @@ function formatDate(value?: string | null) {
 
 function formatPrice(value?: number | null) {
   if (value == null) return "Unavailable";
-  return usdFormatter.format(value);
+  return inrFormatter.format(value);
 }
 
 async function loadPreciousMetals() {
@@ -133,15 +133,15 @@ watch(
 
     <article
       class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
-      title="Gold daily price from an external source. External context only; not used in SmartMoney scoring."
+      title="Alpha Vantage USD-denominated gold spot price converted to INR per 10g. Excludes Indian taxes and dealer premiums; not used in SmartMoney scoring."
     >
-      <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Gold Price</p>
+      <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Gold · USD Spot</p>
       <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">
-        {{ formatPrice(preciousMetals?.gold?.price_usd) }}
+        {{ formatPrice(preciousMetals?.gold?.price_inr_10g) }}
       </p>
       <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
         <template v-if="preciousMetals?.gold">
-          {{ formatDate(preciousMetals.gold.as_of_date) }} ·
+          INR/10g · {{ formatDate(preciousMetals.gold.as_of_date) }} ·
           <a
             :href="preciousMetals.source_url"
             target="_blank"
@@ -155,15 +155,15 @@ watch(
 
     <article
       class="dashboard-card rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:min-h-[92px]"
-      title="Silver daily price from an external source. External context only; not used in SmartMoney scoring."
+      title="Alpha Vantage USD-denominated silver spot price converted to INR per 10g. Excludes Indian taxes and dealer premiums; not used in SmartMoney scoring."
     >
-      <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Silver Price</p>
+      <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Silver · USD Spot</p>
       <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">
-        {{ formatPrice(preciousMetals?.silver?.price_usd) }}
+        {{ formatPrice(preciousMetals?.silver?.price_inr_10g) }}
       </p>
       <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
         <template v-if="preciousMetals?.silver">
-          {{ formatDate(preciousMetals.silver.as_of_date) }} ·
+          INR/10g · {{ formatDate(preciousMetals.silver.as_of_date) }} ·
           <a
             :href="preciousMetals.source_url"
             target="_blank"
