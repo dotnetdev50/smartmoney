@@ -136,7 +136,7 @@ watch(
       title="Alpha Vantage USD-denominated gold spot price converted to INR per 10g. Excludes Indian taxes and dealer premiums; not used in SmartMoney scoring."
     >
       <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Gold · USD Spot</p>
-      <p class="mt-1 text-2xl font-semibold leading-none text-gray-900 dark:text-gray-100">
+      <p class="mt-1 text-2xl font-semibold leading-none text-amber-600 dark:text-amber-400">
         {{ formatPrice(preciousMetals?.gold?.price_inr_10g) }}
       </p>
       <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
