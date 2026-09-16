@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-16T04:28:47.1256738+00:00",
+  "generated_at_utc": "2026-09-16T15:18:39.160258+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 15, 2026",
+      "headline": "Conversion/Switch of Government of India Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-16T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63598"
+      "published_at_utc": "2026-09-16T13:40:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63606"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Developments in India\u2019s Balance of Payments for the Month of July 2026",
+      "headline": "91-Day, 182-Day and 364-Day T-Bill Auction Result: Cut-off",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-15T12:00:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63596"
+      "published_at_utc": "2026-09-16T08:05:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63602"
     },
     {
       "rank": 3,
