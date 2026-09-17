@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-17T04:28:52.5225967+00:00",
+  "generated_at_utc": "2026-09-17T15:20:01.8646155+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,12 +7,12 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 16, 2026",
+      "sentiment": "Mixed",
+      "headline": "Directions under Section 35A read with Section 56 of the Banking Regulation Act, 1949 \u2013 The Valsad Mahila Nagrik Sahakari Bank Ltd., Valsad Gujarat \u2013 Extension of period",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-17T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63607"
+      "published_at_utc": "2026-09-17T12:05:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63616"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Conversion/Switch of Government of India Securities",
+      "headline": "RBI announces OMO Sale of Government of India Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-16T13:40:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63606"
+      "published_at_utc": "2026-09-17T11:55:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63615"
     },
     {
       "rank": 3,
@@ -49,6 +49,18 @@
       "source": "SEBI",
       "published_at_utc": "2026-09-10T18:30:00+00:00",
       "url": "https://www.sebi.gov.in/enforcement/orders/sep-2026/final-enquiry-order-in-respect-of-modex-international-securities-ltd_104462.html"
+    },
+    {
+      "rank": 5,
+      "scope": "India",
+      "category": "NaturalDisaster",
+      "impact": "Medium",
+      "sentiment": "Neutral",
+      "headline": "Flood in India",
+      "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
+      "source": "GDACS",
+      "published_at_utc": "2026-08-09T01:00:00+00:00",
+      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=14\u0026eventtype=FL"
     }
   ]
 }
