@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-18T04:27:54.3585824+00:00",
+  "generated_at_utc": "2026-09-18T15:18:55.1837467+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 17, 2026",
+      "sentiment": "Mixed",
+      "headline": "Survey on Computer Software and Information Technology Enabled Services Exports: 2025-26",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-18T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63618"
+      "published_at_utc": "2026-09-18T12:00:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63625"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Directions under Section 35A read with Section 56 of the Banking Regulation Act, 1949 \u2013 The Valsad Mahila Nagrik Sahakari Bank Ltd., Valsad Gujarat \u2013 Extension of period",
+      "sentiment": "Neutral",
+      "headline": "Overseas Direct Investment for August 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-17T12:05:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63616"
+      "published_at_utc": "2026-09-18T09:45:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63623"
     },
     {
       "rank": 3,
