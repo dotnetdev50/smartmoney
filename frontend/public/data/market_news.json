@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-21T04:30:40.9127043+00:00",
+  "generated_at_utc": "2026-09-21T15:18:49.8459362+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 18, 2026",
+      "sentiment": "Positive",
+      "headline": "Auction of Government of India Dated Security",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-21T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63629"
+      "published_at_utc": "2026-09-21T12:55:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63639"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Survey on Computer Software and Information Technology Enabled Services Exports: 2025-26",
+      "sentiment": "Neutral",
+      "headline": "Data on Forex inflows via FCNR(B) Deposits, External Commercial Borrowings (ECBs) and Overseas Foreign Currency Borrowings (OFCBs) under Reserve Bank\u2019s Swap facility",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-18T12:00:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63625"
+      "published_at_utc": "2026-09-21T12:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63638"
     },
     {
       "rank": 3,
@@ -36,7 +36,7 @@
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
       "published_at_utc": "2026-08-09T01:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=14\u0026eventtype=FL"
+      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=15\u0026eventtype=FL"
     }
   ]
 }
