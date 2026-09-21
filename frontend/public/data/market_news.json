@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-09-18T16:19:28.4418323+00:00",
+  "generated_at_utc": "2026-09-21T04:30:40.9127043+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on September 18, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-09-21T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63629"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -13,18 +25,6 @@
       "source": "RBI",
       "published_at_utc": "2026-09-18T12:00:00+00:00",
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63625"
-    },
-    {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Overseas Direct Investment for August 2026",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-09-18T09:45:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63623"
     },
     {
       "rank": 3,
