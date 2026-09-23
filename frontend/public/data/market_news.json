@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T04:29:11.1948448+00:00",
+  "generated_at_utc": "2026-09-23T15:19:14.8254868+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 22, 2026",
+      "headline": "RBI announces OMO Sale of Government of India Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-23T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63647"
+      "published_at_utc": "2026-09-23T11:50:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63651"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Supervisory Data Quality Index for Scheduled Commercial Banks (June 2026)",
+      "headline": "91-Day, 182-Day and 364-Day T-Bill Auction Result: Cut-off",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-22T12:20:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63645"
+      "published_at_utc": "2026-09-23T07:50:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63649"
     },
     {
       "rank": 3,
