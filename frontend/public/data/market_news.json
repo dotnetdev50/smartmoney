@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-24T04:28:40.791162+00:00",
+  "generated_at_utc": "2026-09-24T15:18:54.5930222+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 23, 2026",
+      "headline": "Reserve Money for the fortnight ended on September 15, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-24T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63653"
+      "published_at_utc": "2026-09-24T11:35:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63656"
     },
     {
       "rank": 2,
@@ -20,14 +20,26 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "RBI announces OMO Sale of Government of India Securities",
+      "headline": "Underwriting Auction for sale of Government Security for \u0026#8377;34,000 crore on September 25, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-23T11:50:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63651"
+      "published_at_utc": "2026-09-24T05:40:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63655"
     },
     {
       "rank": 3,
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Key decisions taken in the SEBI Board Meeting dated 24th September, 2026",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-09-23T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2026/key-decisions-taken-in-the-sebi-board-meeting-dated-24th-september-2026_104725.html"
+    },
+    {
+      "rank": 4,
       "scope": "India",
       "category": "NaturalDisaster",
       "impact": "Medium",
@@ -39,7 +51,7 @@
       "url": "https://www.gdacs.org/report.aspx?eventid=1001326\u0026episodeid=6\u0026eventtype=TC"
     },
     {
-      "rank": 4,
+      "rank": 5,
       "scope": "India",
       "category": "NaturalDisaster",
       "impact": "Medium",
