@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-24T16:21:21.5758356+00:00",
+  "generated_at_utc": "2026-09-25T04:29:09.1508058+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Reserve Money for the fortnight ended on September 15, 2026",
+      "headline": "Result of Underwriting Auction conducted on September 25, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-24T11:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63656"
+      "published_at_utc": "2026-09-25T04:25:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63662"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Underwriting Auction for sale of Government Security for \u0026#8377;34,000 crore on September 25, 2026",
+      "headline": "Money Market Operations as on September 24, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-24T05:40:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63655"
+      "published_at_utc": "2026-09-25T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63661"
     },
     {
       "rank": 3,
