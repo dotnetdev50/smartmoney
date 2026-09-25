@@ -1,10 +1,5 @@
 [
   {
-    "date": "2026-08-26",
-    "final_score": -7.7739500511284865,
-    "regime": "SHOCK"
-  },
-  {
     "date": "2026-08-27",
     "final_score": -21.68631704340582,
     "regime": "NORMAL"
@@ -102,6 +97,11 @@
   {
     "date": "2026-09-24",
     "final_score": -25.901393648887822,
+    "regime": "SHOCK"
+  },
+  {
+    "date": "2026-09-25",
+    "final_score": -3.16462670529203,
     "regime": "SHOCK"
   }
 ]
