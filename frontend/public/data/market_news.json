@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-28T04:31:13.6389707+00:00",
+  "generated_at_utc": "2026-09-28T15:19:45.0245158+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 25, 2026",
+      "sentiment": "Positive",
+      "headline": "Auction of Government of India Dated Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-28T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63675"
+      "published_at_utc": "2026-09-28T12:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63681"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "RBI Bulletin \u2013 September 2026",
+      "sentiment": "Neutral",
+      "headline": "Detailed Result: OMO Sale Auction held on Sep 28, 2026 and Settlement on Sep 29, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-25T16:20:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63674"
+      "published_at_utc": "2026-09-28T11:55:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63680"
     },
     {
       "rank": 3,
@@ -60,7 +60,7 @@
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
       "published_at_utc": "2026-08-09T01:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=16\u0026eventtype=FL"
+      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=18\u0026eventtype=FL"
     }
   ]
 }
