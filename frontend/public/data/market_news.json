@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-29T04:29:57.0773774+00:00",
+  "generated_at_utc": "2026-09-29T15:19:44.9265186+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,23 +8,23 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 28, 2026",
+      "headline": "Report of the Advisory Committee on Ways and Means Advances to State Governments",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-29T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63683"
+      "published_at_utc": "2026-09-29T11:35:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63689"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Positive",
-      "headline": "Auction of Government of India Dated Securities",
+      "sentiment": "Neutral",
+      "headline": "State Government Securities - Full Auction Result",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-28T12:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63681"
+      "published_at_utc": "2026-09-29T10:55:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63688"
     },
     {
       "rank": 3,
@@ -32,14 +32,26 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Key decisions taken in the SEBI Board Meeting dated 24th September, 2026",
+      "headline": "Remittance Order dated 28.09.2026 issued in RC No. 9249 of 2026.",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-23T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/sep-2026/key-decisions-taken-in-the-sebi-board-meeting-dated-24th-september-2026_104725.html"
+      "published_at_utc": "2026-09-27T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/enforcement/recovery-proceedings/sep-2026/remittance-order-dated-28-09-2026-issued-in-rc-no-9249-of-2026-_104801.html"
     },
     {
       "rank": 4,
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Remittance Order dated 28.09.2026 issued in RC No. 9248 of 2026.",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-09-27T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/enforcement/recovery-proceedings/sep-2026/remittance-order-dated-28-09-2026-issued-in-rc-no-9248-of-2026-_104799.html"
+    },
+    {
+      "rank": 5,
       "scope": "India",
       "category": "NaturalDisaster",
       "impact": "Medium",
@@ -49,18 +61,6 @@
       "source": "GDACS",
       "published_at_utc": "2026-09-22T18:00:00+00:00",
       "url": "https://www.gdacs.org/report.aspx?eventid=1001326\u0026episodeid=6\u0026eventtype=TC"
-    },
-    {
-      "rank": 5,
-      "scope": "India",
-      "category": "NaturalDisaster",
-      "impact": "Medium",
-      "sentiment": "Neutral",
-      "headline": "Flood in India",
-      "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
-      "source": "GDACS",
-      "published_at_utc": "2026-08-09T01:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=18\u0026eventtype=FL"
     }
   ]
 }

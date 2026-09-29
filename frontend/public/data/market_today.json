@@ -1,133 +1,133 @@
 {
   "index": "NIFTY",
-  "date": "2026-09-28",
-  "final_score": -13.789938669080119,
+  "date": "2026-09-29",
+  "final_score": 11.839768578760825,
   "regime": "SHOCK",
-  "shock_score": 1.9712248538055286,
+  "shock_score": 3.5078331859972995,
   "participants": [
     {
       "name": "DII",
-      "bias": 0.9529411831353615,
-      "label": "Mild Bullish"
+      "bias": 1.3107592574640188,
+      "label": "Bullish"
     },
     {
       "name": "FII",
-      "bias": -0.34333355059956694,
-      "label": "Neutral"
+      "bias": 0.7984952536252873,
+      "label": "Mild Bullish"
     },
     {
       "name": "PRO",
-      "bias": -1.5501608478529842,
-      "label": "Bearish"
+      "bias": -0.675910176655846,
+      "label": "Mild Bearish"
     },
     {
       "name": "RETAIL",
-      "bias": 1.3422622421790753,
-      "label": "Bullish"
+      "bias": -1.408656610951091,
+      "label": "Bearish"
     }
   ],
   "bias_Label": "Neutral",
   "strength": "Neutral",
-  "explanation": "Composite bias is neutral, with neutral strength (-13.8). The model classification is Shock regime with ShockScore 2.0. PRO is the largest weighted participant driver, with futures contributing most to the aggregate score. Smart participants and Retail are positioned in opposite directions (divergence -2.20); DII opposes Smart positioning, and participant contributions are mixed.",
-  "pcr": 0.7102,
+  "explanation": "Composite bias is neutral, with neutral strength (\u002B11.8). The model classification is Shock regime with ShockScore 3.5. FII is the largest weighted participant driver, with futures contributing most to the aggregate score. Smart participants and Retail are positioned in opposite directions (divergence 1.58); DII agrees with Smart positioning, and participant contributions are mixed.",
+  "pcr": 0.8944,
   "vix": null,
-  "pcr_volume": 1.0764,
-  "banknifty_pcr": 0.7395,
-  "banknifty_pcr_volume": 1.0468,
+  "pcr_volume": 0.9858,
+  "banknifty_pcr": 0.9734,
+  "banknifty_pcr_volume": 0.9436,
   "participant_activity": [
     {
       "participant": "FII",
       "instrument": "Futures",
-      "net_oi_change": -7668,
-      "vs_yesterday_pct": -2.46
+      "net_oi_change": 52362,
+      "vs_yesterday_pct": 16.38
     },
     {
       "participant": "FII",
       "instrument": "Calls",
-      "net_oi_change": -5506,
-      "vs_yesterday_pct": -2.28
+      "net_oi_change": -174988,
+      "vs_yesterday_pct": -71
     },
     {
       "participant": "FII",
       "instrument": "Puts",
-      "net_oi_change": 9989,
-      "vs_yesterday_pct": 1.46
+      "net_oi_change": 22537,
+      "vs_yesterday_pct": 3.34
     },
     {
       "participant": "DII",
       "instrument": "Futures",
-      "net_oi_change": 417,
-      "vs_yesterday_pct": 6.35
+      "net_oi_change": 28520,
+      "vs_yesterday_pct": 408.13
     },
     {
       "participant": "DII",
       "instrument": "Calls",
-      "net_oi_change": 448,
-      "vs_yesterday_pct": 4.31
+      "net_oi_change": -6274,
+      "vs_yesterday_pct": -57.85
     },
     {
       "participant": "DII",
       "instrument": "Puts",
-      "net_oi_change": 26200,
-      "vs_yesterday_pct": 33.3
+      "net_oi_change": 3073,
+      "vs_yesterday_pct": 5.86
     },
     {
       "participant": "PRO",
       "instrument": "Futures",
-      "net_oi_change": -5868,
-      "vs_yesterday_pct": -9.61
+      "net_oi_change": -47177,
+      "vs_yesterday_pct": -85.52
     },
     {
       "participant": "PRO",
       "instrument": "Calls",
-      "net_oi_change": -257092,
-      "vs_yesterday_pct": -450.43
+      "net_oi_change": 300250,
+      "vs_yesterday_pct": 150.11
     },
     {
       "participant": "PRO",
       "instrument": "Puts",
-      "net_oi_change": -6666,
-      "vs_yesterday_pct": -3.7
+      "net_oi_change": 141309,
+      "vs_yesterday_pct": 75.72
     }
   ],
-  "smart_bias": -0.86054524942246,
-  "retail_bias": 1.3422622421790753,
-  "dii_bias": 0.9529411831353615,
-  "smart_retail_divergence": -2.2028074916015354,
-  "smart_dii_divergence": -1.8134864325578215,
-  "smart_retail_state": "SmartBearRetailBull",
+  "smart_bias": 0.16660721207623025,
+  "retail_bias": -1.408656610951091,
+  "dii_bias": 1.3107592574640188,
+  "smart_retail_divergence": 1.5752638230273213,
+  "smart_dii_divergence": -1.1441520453877885,
+  "smart_retail_state": "SmartBullRetailBear",
   "decomposition": {
     "participant_contributions": [
       {
         "name": "FII",
-        "contribution": -0.13733342023982678
+        "contribution": 0.31939810145011494
       },
       {
         "name": "PRO",
-        "contribution": -0.46504825435589525
+        "contribution": -0.20277305299675377
       },
       {
         "name": "DII",
-        "contribution": 0.1905882366270723
+        "contribution": 0.2621518514928038
       },
       {
         "name": "RETAIL",
-        "contribution": 0.13422622421790753
+        "contribution": -0.1408656610951091
       }
     ],
-    "main_participant_driver": "PRO",
+    "main_participant_driver": "FII",
     "indicator_contributions": [
       {
         "name": "Futures",
-        "contribution": -0.17560958865730014
+        "contribution": 0.2685059728479624
       },
       {
         "name": "Puts",
-        "contribution": -0.07587918245340011
+        "contribution": 0.12260130950978582
       },
       {
         "name": "Calls",
-        "contribution": -0.026078442640042068
+        "contribution": -0.15319604350669244
       }
     ],
     "main_indicator_driver": "Futures",
@@ -137,19 +137,19 @@
       "zero": 0
     },
     "indicator_counts": {
-      "positive": 0,
-      "negative": 3,
+      "positive": 2,
+      "negative": 1,
       "zero": 0
     },
-    "participant_concentration": 0.501564055953334,
+    "participant_concentration": 0.34522483124850845,
     "participant_alignment": "Mixed",
-    "indicator_alignment": "Aligned",
-    "dii_smart_relationship": "Oppose",
-    "smart_bias": -0.86054524942246,
-    "retail_bias": 1.3422622421790753,
-    "dii_bias": 0.9529411831353615,
-    "smart_retail_divergence": -2.2028074916015354,
-    "smart_dii_divergence": -1.8134864325578215,
-    "smart_retail_state": "SmartBearRetailBull"
+    "indicator_alignment": "Mixed",
+    "dii_smart_relationship": "Agree",
+    "smart_bias": 0.16660721207623025,
+    "retail_bias": -1.408656610951091,
+    "dii_bias": 1.3107592574640188,
+    "smart_retail_divergence": 1.5752638230273213,
+    "smart_dii_divergence": -1.1441520453877885,
+    "smart_retail_state": "SmartBullRetailBear"
   }
 }
