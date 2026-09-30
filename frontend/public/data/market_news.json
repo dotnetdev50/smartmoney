@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-30T04:30:17.6324805+00:00",
+  "generated_at_utc": "2026-09-30T15:21:01.0693817+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 29, 2026",
+      "headline": "Lending and Deposit Rates of Scheduled Commercial Banks \u2013 September 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-30T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63691"
+      "published_at_utc": "2026-09-30T12:05:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63702"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Report of the Advisory Committee on Ways and Means Advances to State Governments",
+      "headline": "India\u2019s International Investment Position (IIP), June 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-29T11:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63689"
+      "published_at_utc": "2026-09-30T12:05:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63701"
     },
     {
       "rank": 3,
