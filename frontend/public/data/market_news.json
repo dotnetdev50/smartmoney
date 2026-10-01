@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-01T04:30:05.5770267+00:00",
+  "generated_at_utc": "2026-10-01T15:19:47.5736844+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,12 +7,12 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on September 30, 2026",
+      "sentiment": "Mixed",
+      "headline": "Indicative Calendar of Market borrowings by State Governments/ Union Territories for the Quarter October \u2013 December 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-01T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63704"
+      "published_at_utc": "2026-10-01T13:45:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63715"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Lending and Deposit Rates of Scheduled Commercial Banks \u2013 September 2026",
+      "headline": "Rate of Interest on Government of India Floating Rate Bond 2028",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-09-30T12:05:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63702"
+      "published_at_utc": "2026-10-01T12:00:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63713"
     },
     {
       "rank": 3,
@@ -32,11 +32,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Remittance Order dated 28.09.2026 issued in RC No. 9249 of 2026.",
+      "headline": "SEBI revamps its \u201CDocument Number Verification System\u201D",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-27T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/enforcement/recovery-proceedings/sep-2026/remittance-order-dated-28-09-2026-issued-in-rc-no-9249-of-2026-_104801.html"
+      "published_at_utc": "2026-09-30T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/sebi-revamps-its-document-number-verification-system-_104873.html"
     },
     {
       "rank": 4,
@@ -44,11 +44,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Remittance Order dated 28.09.2026 issued in RC No. 9248 of 2026.",
+      "headline": "Display of \u201Cinvestor awareness message(s)\u201D by stock brokers on their trading apps and websites, under Project Jagrook",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-27T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/enforcement/recovery-proceedings/sep-2026/remittance-order-dated-28-09-2026-issued-in-rc-no-9248-of-2026-_104799.html"
+      "published_at_utc": "2026-09-30T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/display-of-investor-awareness-message-s-by-stock-brokers-on-their-trading-apps-and-websites-under-project-jagrook_104858.html"
     },
     {
       "rank": 5,
