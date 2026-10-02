@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-02T04:29:29.5962108+00:00",
+  "generated_at_utc": "2026-10-02T15:19:31.900765+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Indicative Calendar of Market borrowings by State Governments/ Union Territories for the Quarter October \u2013 December 2026",
+      "sentiment": "Neutral",
+      "headline": "RBI appoints Shri Sudhakar Malli as new Executive Director",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-01T13:45:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63715"
+      "published_at_utc": "2026-10-02T11:35:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63719"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Rate of Interest on Government of India Floating Rate Bond 2028",
+      "sentiment": "Mixed",
+      "headline": "Processing of Applications Received Under the Citizen\u2019s Charter  Status as on September 30, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-01T12:00:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63713"
+      "published_at_utc": "2026-10-02T05:20:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63717"
     },
     {
       "rank": 3,
@@ -60,7 +60,7 @@
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
       "published_at_utc": "2026-08-09T01:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=19\u0026eventtype=FL"
+      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=20\u0026eventtype=FL"
     }
   ]
 }
