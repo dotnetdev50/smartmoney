@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-05T04:35:47.4389742+00:00",
+  "generated_at_utc": "2026-10-05T15:19:59.8946033+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 01, 2026",
+      "sentiment": "Mixed",
+      "headline": "Directions under Section 35A read with Section 56 of the Banking Regulation Act, 1949 \u2013 Motiram Agrawal Jalna Merchants Co-operative Bank Ltd, Jalna \u2013 Extension of Period",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-05T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63720"
+      "published_at_utc": "2026-10-05T12:25:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63732"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "RBI appoints Shri Sudhakar Malli as new Executive Director",
+      "sentiment": "Mixed",
+      "headline": "Directions under Section 35A read with Section 56 of the Banking Regulation Act, 1949 \u2013 Sadbhav Nagrik Sahakari Bank Maryadit, Chhatarpur, Madhya Pradesh \u2013 Extension of Period",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-02T11:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63719"
+      "published_at_utc": "2026-10-05T12:05:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63731"
     },
     {
       "rank": 3,
