@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-10-05T16:21:38.1977102+00:00",
+  "generated_at_utc": "2026-10-06T04:29:43.5133376+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on October 05, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-10-06T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63734"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -15,28 +27,16 @@
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63732"
     },
     {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Directions under Section 35A read with Section 56 of the Banking Regulation Act, 1949 \u2013 Sadbhav Nagrik Sahakari Bank Maryadit, Chhatarpur, Madhya Pradesh \u2013 Extension of Period",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-10-05T12:05:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63731"
-    },
-    {
       "rank": 3,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "SEBI revamps its \u201CDocument Number Verification System\u201D",
+      "headline": "SEBI opens a Local Office in Chandigarh",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-30T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/sebi-revamps-its-document-number-verification-system-_104873.html"
+      "published_at_utc": "2026-10-04T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/sebi-opens-a-local-office-in-chandigarh_105035.html"
     },
     {
       "rank": 4,
@@ -44,11 +44,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Display of \u201Cinvestor awareness message(s)\u201D by stock brokers on their trading apps and websites, under Project Jagrook",
+      "headline": "SEBI Releases \u201CSamajh Se Investing Simple\u201D Campaign under Project Jagrook, Rolls Out the MUST initiative, Announces Its Presence on WhatsApp and Other Initiatives for Investor Awareness and Education",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-09-30T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/display-of-investor-awareness-message-s-by-stock-brokers-on-their-trading-apps-and-websites-under-project-jagrook_104858.html"
+      "published_at_utc": "2026-10-04T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/sebi-releases-samajh-se-investing-simple-campaign-under-project-jagrook-rolls-out-the-must-initiative-announces-its-presence-on-whatsapp-and-other-initiatives-for-investor-awareness-and-education_105034.html"
     }
   ]
 }
