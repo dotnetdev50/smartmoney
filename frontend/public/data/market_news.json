@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-06T04:29:43.5133376+00:00",
+  "generated_at_utc": "2026-10-06T15:19:34.2491689+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,23 +8,23 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 05, 2026",
+      "headline": "Sectoral Deployment of Credit by NBFC \u2013 August 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-06T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63734"
+      "published_at_utc": "2026-10-06T11:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63739"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Directions under Section 35A read with Section 56 of the Banking Regulation Act, 1949 \u2013 Motiram Agrawal Jalna Merchants Co-operative Bank Ltd, Jalna \u2013 Extension of Period",
+      "sentiment": "Neutral",
+      "headline": "State Government Securities - Full Auction Result",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-05T12:25:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63732"
+      "published_at_utc": "2026-10-06T11:05:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63738"
     },
     {
       "rank": 3,
