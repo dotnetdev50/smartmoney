@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-07T04:29:47.3365689+00:00",
+  "generated_at_utc": "2026-10-07T15:55:59.804851+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 06, 2026",
+      "headline": "Reserve Money for the fortnight ended on September 30, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-07T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63741"
+      "published_at_utc": "2026-10-07T12:05:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63752"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Sectoral Deployment of Credit by NBFC \u2013 August 2026",
+      "headline": "Exclusion of \u201CPaytm Payments Bank Limited\u201D from the Second Schedule to the Reserve Bank of India Act, 1934",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-06T11:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63739"
+      "published_at_utc": "2026-10-07T12:00:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63751"
     },
     {
       "rank": 3,
@@ -32,11 +32,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "SEBI opens a Local Office in Chandigarh",
+      "headline": "Introduction of Credit Risk-o-Meter as an additional disclosure mechanism for debt securities",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-10-04T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/sebi-opens-a-local-office-in-chandigarh_105035.html"
+      "published_at_utc": "2026-10-06T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/introduction-of-credit-risk-o-meter-as-an-additional-disclosure-mechanism-for-debt-securities_105081.html"
     },
     {
       "rank": 4,
@@ -44,11 +44,23 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "SEBI Releases \u201CSamajh Se Investing Simple\u201D Campaign under Project Jagrook, Rolls Out the MUST initiative, Announces Its Presence on WhatsApp and Other Initiatives for Investor Awareness and Education",
+      "headline": "Exemption from the requirement of mandatory merchant banker appointment for debt issued through private placement by certain listed issuers",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-10-04T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/sebi-releases-samajh-se-investing-simple-campaign-under-project-jagrook-rolls-out-the-must-initiative-announces-its-presence-on-whatsapp-and-other-initiatives-for-investor-awareness-and-education_105034.html"
+      "published_at_utc": "2026-10-06T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/exemption-from-the-requirement-of-mandatory-merchant-banker-appointment-for-debt-issued-through-private-placement-by-certain-listed-issuers_105080.html"
+    },
+    {
+      "rank": 5,
+      "scope": "India",
+      "category": "NaturalDisaster",
+      "impact": "Medium",
+      "sentiment": "Neutral",
+      "headline": "Flood in India",
+      "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
+      "source": "GDACS",
+      "published_at_utc": "2026-08-09T01:00:00+00:00",
+      "url": "https://www.gdacs.org/report.aspx?eventid=1104121\u0026episodeid=18\u0026eventtype=FL"
     }
   ]
 }
