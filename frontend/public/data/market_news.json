@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-08T16:22:26.2386484+00:00",
+  "generated_at_utc": "2026-10-09T04:31:32.9931775+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Directions under Section 35 A read with Section 56 of the Banking Regulation Act, 1949 \u2013 Sri Mahatma Basaveshwar Co-operative Bank Ltd., Afzalpur",
+      "sentiment": "Neutral",
+      "headline": "Result of Underwriting Auction conducted on October 09, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-08T11:50:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63764"
+      "published_at_utc": "2026-10-09T04:25:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63768"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Directions under Section 35 A read with Section 56 of the Banking Regulation Act, 1949 \u2013 The Tiruvalla Urban Co-operative Bank Ltd., Tiruvalla, Pathanamthitta",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on October 08, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-08T11:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63763"
+      "published_at_utc": "2026-10-09T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63767"
     },
     {
       "rank": 3,
