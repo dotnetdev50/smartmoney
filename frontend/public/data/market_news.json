@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-09T04:31:32.9931775+00:00",
+  "generated_at_utc": "2026-10-09T15:19:18.9524547+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,12 +7,12 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Result of Underwriting Auction conducted on October 09, 2026",
+      "sentiment": "Mixed",
+      "headline": "RBI launches Quarterly Order Books, Inventories and Capacity Utilisation Survey: July \u2013 September 2026 (Round 75)",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-09T04:25:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63768"
+      "published_at_utc": "2026-10-09T12:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63781"
     },
     {
       "rank": 2,
@@ -20,14 +20,26 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 08, 2026",
+      "headline": "RBI announces OMO Sale of Government of India Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-09T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63767"
+      "published_at_utc": "2026-10-09T11:55:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63779"
     },
     {
       "rank": 3,
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
+      "impact": "High",
+      "sentiment": "Mixed",
+      "headline": "Securities and Exchange Board of India (Settlement of Administrative and Civil Proceedings) Regulations, 2026",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-10-07T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/regulations/oct-2026/securities-and-exchange-board-of-india-settlement-of-administrative-and-civil-proceedings-regulations-2026_105126.html"
+    },
+    {
+      "rank": 4,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
@@ -37,18 +49,6 @@
       "source": "SEBI",
       "published_at_utc": "2026-10-06T18:30:00+00:00",
       "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/introduction-of-credit-risk-o-meter-as-an-additional-disclosure-mechanism-for-debt-securities_105081.html"
-    },
-    {
-      "rank": 4,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Exemption from the requirement of mandatory merchant banker appointment for debt issued through private placement by certain listed issuers",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-10-06T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/exemption-from-the-requirement-of-mandatory-merchant-banker-appointment-for-debt-issued-through-private-placement-by-certain-listed-issuers_105080.html"
     },
     {
       "rank": 5,
