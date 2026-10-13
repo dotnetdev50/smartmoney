@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-13T04:34:04.9018043+00:00",
+  "generated_at_utc": "2026-10-13T15:20:28.9502741+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,50 +8,26 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 12, 2026",
+      "headline": "State Government Securities - Full Auction Result",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-13T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63794"
+      "published_at_utc": "2026-10-13T10:55:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63799"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Positive",
-      "headline": "Auction of Government of India Dated Security",
+      "sentiment": "Neutral",
+      "headline": "Detailed Result: OMO Sale Auction held on Oct 13, 2026 and Settlement on Oct 14, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-12T12:00:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63792"
+      "published_at_utc": "2026-10-13T10:20:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63798"
     },
     {
       "rank": 3,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Securities and Exchange Board of India (Portfolio Managers) Regulations, 2026 (With effect from April 1, 2027)\u0022",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-10-11T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/regulations/oct-2026/securities-and-exchange-board-of-india-portfolio-managers-regulations-2026-with-effect-from-april-1-2027-_105159.html"
-    },
-    {
-      "rank": 4,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Securities and Exchange Board of India (Research Analysts) (Amendment) Regulations, 2026",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-10-09T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/regulations/oct-2026/securities-and-exchange-board-of-india-research-analysts-amendment-regulations-2026_105155.html"
-    },
-    {
-      "rank": 5,
       "scope": "India",
       "category": "NaturalDisaster",
       "impact": "Medium",
