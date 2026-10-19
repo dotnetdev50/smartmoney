@@ -1,15 +1,5 @@
 [
   {
-    "date": "2026-09-15",
-    "final_score": -19.34780895360842,
-    "regime": "SHOCK"
-  },
-  {
-    "date": "2026-09-16",
-    "final_score": 25.59863903393832,
-    "regime": "SHOCK"
-  },
-  {
     "date": "2026-09-17",
     "final_score": 2.3533317252031885,
     "regime": "SHOCK"
@@ -97,6 +87,21 @@
   {
     "date": "2026-10-13",
     "final_score": 21.64384143891161,
+    "regime": "NORMAL"
+  },
+  {
+    "date": "2026-10-14",
+    "final_score": -4.045469341629113,
+    "regime": "NORMAL"
+  },
+  {
+    "date": "2026-10-15",
+    "final_score": 32.88459250438155,
+    "regime": "SHOCK"
+  },
+  {
+    "date": "2026-10-16",
+    "final_score": 9.491655257479978,
     "regime": "NORMAL"
   }
 ]

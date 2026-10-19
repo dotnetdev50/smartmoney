@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-10-16T19:15:43.6424828+00:00",
+  "generated_at_utc": "2026-10-19T09:54:03.5280577+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on October 18, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-10-19T05:40:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63827"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -15,40 +27,28 @@
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63820"
     },
     {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Government Stock - Full Auction Results",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-10-16T09:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63818"
-    },
-    {
       "rank": 3,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Mixed",
-      "headline": "Review of certain aspects of the Closing Auction Session, market timings and settlement methodology for derivatives contracts",
+      "headline": "Securities and Exchange Board of India (Alternative Investment Funds) (Third Amendment) Regulations, 2026",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
       "published_at_utc": "2026-10-14T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/review-of-certain-aspects-of-the-closing-auction-session-market-timings-and-settlement-methodology-for-derivatives-contracts_105293.html"
+      "url": "https://www.sebi.gov.in/legal/regulations/oct-2026/securities-and-exchange-board-of-india-alternative-investment-funds-third-amendment-regulations-2026_105331.html"
     },
     {
       "rank": 4,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "SEBI Teams win at IOSCO TechSprint 2026 on Investor Education in the Age of  Artificial Intelligence (AI)",
+      "sentiment": "Mixed",
+      "headline": "Securities and Exchange Board of India (Listing Obligations and Disclosure Requirements) (Third Amendment) Regulations, 2026",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-10-13T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/sebi-teams-win-at-iosco-techsprint-2026-on-investor-education-in-the-age-of-artificial-intelligence-ai-_105266.html"
+      "published_at_utc": "2026-10-14T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/regulations/oct-2026/securities-and-exchange-board-of-india-listing-obligations-and-disclosure-requirements-third-amendment-regulations-2026_105330.html"
     }
   ]
 }
