@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-10-22T16:21:04.3399596+00:00",
+  "generated_at_utc": "2026-10-23T04:27:49.9262841+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on October 22, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-10-23T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63849"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -13,18 +25,6 @@
       "source": "RBI",
       "published_at_utc": "2026-10-22T13:00:00+00:00",
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63847"
-    },
-    {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Reserve Money for the fortnight ended on October 15, 2026",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-10-22T11:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63846"
     },
     {
       "rank": 3,
@@ -54,7 +54,7 @@
       "rank": 5,
       "scope": "Global",
       "category": "NaturalDisaster",
-      "impact": "Medium",
+      "impact": "Low",
       "sentiment": "Neutral",
       "headline": "Earthquake in China",
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",

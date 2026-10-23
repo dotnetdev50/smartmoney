@@ -1,9 +1,9 @@
 {
   "year": 2026,
-  "employees_laid_off": 134917,
-  "companies_with_layoffs": 328,
-  "layoff_events": 372,
-  "retrieved_at_utc": "2026-10-22T16:10:20.327Z",
+  "employees_laid_off": 135183,
+  "companies_with_layoffs": 331,
+  "layoff_events": 376,
+  "retrieved_at_utc": "2026-10-23T04:17:07.308Z",
   "source": "layoffs.fyi",
   "source_url": "https://layoffs.fyi/2026-layoffs/"
 }
