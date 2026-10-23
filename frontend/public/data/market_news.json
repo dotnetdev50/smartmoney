@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-23T04:27:49.9262841+00:00",
+  "generated_at_utc": "2026-10-23T15:18:16.7300265+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 22, 2026",
+      "sentiment": "Mixed",
+      "headline": "RBI Bulletin \u2013 October 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-23T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63849"
+      "published_at_utc": "2026-10-23T12:20:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63859"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Final redemption under Sovereign Gold Bond (SGB) Scheme - Redemption Price for final redemption of SGB 2018-19 Series-II due on October 23, 2026",
+      "sentiment": "Mixed",
+      "headline": "RBI issues Reserve Bank of India (Commercial Banks \u2013 Forthcoming Instructions) Second Amendment Directions, 2026 on Minimum Capital Requirements for Operational Risk",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-22T13:00:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63847"
+      "published_at_utc": "2026-10-23T12:00:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63858"
     },
     {
       "rank": 3,
@@ -32,11 +32,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Caution to Investors against Stock Tips offered through Invitation-only WhatsApp Groups",
+      "headline": "Review of regulatory requirement for maintenance of call records of institutional clients by Research Analysts or Research Entities",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-10-21T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/caution-to-investors-against-stock-tips-offered-through-invitation-only-whatsapp-groups_105389.html"
+      "published_at_utc": "2026-10-22T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/review-of-regulatory-requirement-for-maintenance-of-call-records-of-institutional-clients-by-research-analysts-or-research-entities_105400.html"
     },
     {
       "rank": 4,
@@ -44,11 +44,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Margin Waiver on Subsequent Buy/Sell Transactions Post Early Pay-In (EPI) in Cash Segment",
+      "headline": "General Public Notice to Rose Valley Depositors",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-10-21T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/margin-waiver-on-subsequent-buy-sell-transactions-post-early-pay-in-epi-in-cash-segment_105364.html"
+      "published_at_utc": "2026-10-22T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/enforcement/recovery-proceedings/oct-2026/general-public-notice-to-rose-valley-depositors_105395.html"
     },
     {
       "rank": 5,
