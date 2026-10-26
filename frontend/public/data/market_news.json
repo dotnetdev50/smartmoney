@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-26T04:29:46.9967879+00:00",
+  "generated_at_utc": "2026-10-26T15:41:03.0471627+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,12 +7,12 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 23, 2026",
+      "sentiment": "Positive",
+      "headline": "Auction of Government of India Dated Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-26T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63863"
+      "published_at_utc": "2026-10-26T12:50:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63868"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Hon\u2019ble Prime Minister of India inaugurates the Reserve Bank of India\u2019s Data Centre and Cybersecurity Training Institute in Bhubaneswar, Odisha",
+      "headline": "Overseas Direct Investment for September 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-25T14:20:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63862"
+      "published_at_utc": "2026-10-26T12:15:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63867"
     },
     {
       "rank": 3,
@@ -56,11 +56,11 @@
       "category": "NaturalDisaster",
       "impact": "Medium",
       "sentiment": "Neutral",
-      "headline": "Tropical Cyclone TWO-26",
+      "headline": "Tropical Cyclone ARNAB-26",
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
       "published_at_utc": "2026-10-26T00:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1001345\u0026episodeid=1\u0026eventtype=TC"
+      "url": "https://www.gdacs.org/report.aspx?eventid=1001345\u0026episodeid=3\u0026eventtype=TC"
     }
   ]
 }
