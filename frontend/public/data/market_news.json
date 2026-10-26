@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-23T16:21:08.2309166+00:00",
+  "generated_at_utc": "2026-10-26T04:29:46.9967879+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "RBI Bulletin \u2013 October 2026",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on October 23, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-23T12:20:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63859"
+      "published_at_utc": "2026-10-26T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63863"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "RBI issues Reserve Bank of India (Commercial Banks \u2013 Forthcoming Instructions) Second Amendment Directions, 2026 on Minimum Capital Requirements for Operational Risk",
+      "sentiment": "Neutral",
+      "headline": "Hon\u2019ble Prime Minister of India inaugurates the Reserve Bank of India\u2019s Data Centre and Cybersecurity Training Institute in Bhubaneswar, Odisha",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-23T12:00:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63858"
+      "published_at_utc": "2026-10-25T14:20:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63862"
     },
     {
       "rank": 3,
@@ -52,15 +52,15 @@
     },
     {
       "rank": 5,
-      "scope": "Global",
+      "scope": "India",
       "category": "NaturalDisaster",
-      "impact": "Low",
+      "impact": "Medium",
       "sentiment": "Neutral",
-      "headline": "Earthquake in China",
+      "headline": "Tropical Cyclone TWO-26",
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
-      "published_at_utc": "2026-10-22T14:33:40+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1573141\u0026episodeid=1741837\u0026eventtype=EQ"
+      "published_at_utc": "2026-10-26T00:00:00+00:00",
+      "url": "https://www.gdacs.org/report.aspx?eventid=1001345\u0026episodeid=1\u0026eventtype=TC"
     }
   ]
 }
