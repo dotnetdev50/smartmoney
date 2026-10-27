@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-10-26T16:23:02.7560591+00:00",
+  "generated_at_utc": "2026-10-27T04:27:23.2867764+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on October 26, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-10-27T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63869"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -13,18 +25,6 @@
       "source": "RBI",
       "published_at_utc": "2026-10-26T12:50:00+00:00",
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63868"
-    },
-    {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Overseas Direct Investment for September 2026",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-10-26T12:15:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63867"
     },
     {
       "rank": 3,
@@ -60,7 +60,7 @@
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
       "published_at_utc": "2026-10-26T00:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1001345\u0026episodeid=3\u0026eventtype=TC"
+      "url": "https://www.gdacs.org/report.aspx?eventid=1001345\u0026episodeid=5\u0026eventtype=TC"
     }
   ]
 }
