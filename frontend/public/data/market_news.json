@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-28T04:23:36.6752533+00:00",
+  "generated_at_utc": "2026-10-28T15:17:57.4915652+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,12 +7,12 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 27, 2026",
+      "sentiment": "Mixed",
+      "headline": "Directions under Section 35A read with Section 56 of the Banking Regulation Act, 1949 \u2013 Lokapavani Mahila Sahakari Bank Niyamitha, Mandya - Extension of Period",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-28T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63874"
+      "published_at_utc": "2026-10-28T12:20:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63878"
     },
     {
       "rank": 2,
@@ -20,14 +20,26 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Reserve Bank holds 36\u003Csup\u003Eth\u003C/sup\u003E Conference of State Finance Secretaries",
+      "headline": "91-Day, 182-Day and 364-Day T-Bill Auction Result: Cut-off",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-27T12:45:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63873"
+      "published_at_utc": "2026-10-28T08:25:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63876"
     },
     {
       "rank": 3,
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "SEBI signs MoU with BoE on cooperation and exchange of information related to SEBI-recognised Clearing Corporations",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-10-27T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/sebi-signs-mou-with-boe-on-cooperation-and-exchange-of-information-related-to-sebi-recognised-clearing-corporations_105473.html"
+    },
+    {
+      "rank": 4,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
@@ -39,18 +51,6 @@
       "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/extension-of-timeline-for-compliance-with-terms-and-conditions-by-debenture-trustees-dts-for-carrying-out-activities-outside-the-purview-of-sebi_105454.html"
     },
     {
-      "rank": 4,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Review of regulatory requirement for maintenance of call records of institutional clients by Research Analysts or Research Entities",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-10-22T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/review-of-regulatory-requirement-for-maintenance-of-call-records-of-institutional-clients-by-research-analysts-or-research-entities_105400.html"
-    },
-    {
       "rank": 5,
       "scope": "India",
       "category": "NaturalDisaster",
@@ -60,7 +60,7 @@
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
       "published_at_utc": "2026-10-26T00:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1001345\u0026episodeid=8\u0026eventtype=TC"
+      "url": "https://www.gdacs.org/report.aspx?eventid=1001345\u0026episodeid=10\u0026eventtype=TC"
     }
   ]
 }
