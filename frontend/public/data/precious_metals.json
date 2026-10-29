@@ -4,7 +4,7 @@
   "source_url": "https://www.alphavantage.co/documentation/#gold-silver-spot",
   "provider": "Alpha Vantage",
   "asOf": "2026-10-29",
-  "stale": false,
+  "stale": true,
   "usd_inr_rate": 95.25319929,
   "usd_inr_as_of": "2026-10-29",
   "fx_source_url": "https://www.alphavantage.co/documentation/#currency-exchange",
