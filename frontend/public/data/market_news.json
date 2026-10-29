@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-29T15:44:10.6937755+00:00",
+  "generated_at_utc": "2026-10-29T16:18:21.2612953+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -49,18 +49,6 @@
       "source": "SEBI",
       "published_at_utc": "2026-10-26T18:30:00+00:00",
       "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/extension-of-timeline-for-compliance-with-terms-and-conditions-by-debenture-trustees-dts-for-carrying-out-activities-outside-the-purview-of-sebi_105454.html"
-    },
-    {
-      "rank": 5,
-      "scope": "India",
-      "category": "NaturalDisaster",
-      "impact": "Medium",
-      "sentiment": "Neutral",
-      "headline": "Tropical Cyclone ARNAB-26",
-      "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
-      "source": "GDACS",
-      "published_at_utc": "2026-10-26T00:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1001345\u0026episodeid=10\u0026eventtype=TC"
     }
   ]
 }
