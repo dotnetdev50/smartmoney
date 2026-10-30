@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-30T04:23:24.3452126+00:00",
+  "generated_at_utc": "2026-10-30T15:16:33.5671102+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 29, 2026",
+      "headline": "Lending and Deposit Rates of Scheduled Commercial Banks \u2013 October 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-30T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63885"
+      "published_at_utc": "2026-10-30T12:05:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63894"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Rate of Interest on Government of India Floating Rate Bond 2034",
+      "headline": "Monthly Data on India\u2019s International Trade in Services  for the Month of September 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-29T11:50:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63883"
+      "published_at_utc": "2026-10-30T12:00:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63893"
     },
     {
       "rank": 3,
@@ -32,11 +32,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "SEBI signs MoU with BoE on cooperation and exchange of information related to SEBI-recognised Clearing Corporations",
+      "headline": "Extension of timeline with respect to compliance of Digital Accessibility Circulars",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-10-27T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/sebi-signs-mou-with-boe-on-cooperation-and-exchange-of-information-related-to-sebi-recognised-clearing-corporations_105473.html"
+      "published_at_utc": "2026-10-29T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/extension-of-timeline-with-respect-to-compliance-of-digital-accessibility-circulars_105523.html"
     },
     {
       "rank": 4,
@@ -44,11 +44,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Extension of timeline for compliance with terms and conditions by Debenture Trustees (DTs) for carrying out activities outside the purview of SEBI",
+      "headline": "Ease of Compliance for FPIs \u2013 Rationalisation of KYC Review Periodicity",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-10-26T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/extension-of-timeline-for-compliance-with-terms-and-conditions-by-debenture-trustees-dts-for-carrying-out-activities-outside-the-purview-of-sebi_105454.html"
+      "published_at_utc": "2026-10-29T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/ease-of-compliance-for-fpis-rationalisation-of-kyc-review-periodicity_105522.html"
     },
     {
       "rank": 5,
