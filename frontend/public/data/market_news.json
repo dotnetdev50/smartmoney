@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-02T04:22:33.9579574+00:00",
+  "generated_at_utc": "2026-11-02T15:16:57.0381913+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,48 +7,48 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on October 30, 2026",
+      "sentiment": "Positive",
+      "headline": "Auction of Government of India Dated Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-02T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63898"
+      "published_at_utc": "2026-11-02T12:55:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63902"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Lending and Deposit Rates of Scheduled Commercial Banks \u2013 October 2026",
+      "sentiment": "Mixed",
+      "headline": "Processing of Applications Received Under the Citizen\u2019s Charter Status as on October 31, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-10-30T12:05:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63894"
+      "published_at_utc": "2026-11-02T11:45:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63901"
     },
     {
       "rank": 3,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Extension of timeline with respect to compliance of Digital Accessibility Circulars",
+      "sentiment": "Mixed",
+      "headline": "Framework for Issuance of Depository Receipts on Units of REITs\u200B",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-10-29T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/oct-2026/extension-of-timeline-with-respect-to-compliance-of-digital-accessibility-circulars_105523.html"
+      "published_at_utc": "2026-11-01T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/framework-for-issuance-of-depository-receipts-on-units-of-reits-_105558.html"
     },
     {
       "rank": 4,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Ease of Compliance for FPIs \u2013 Rationalisation of KYC Review Periodicity",
+      "sentiment": "Mixed",
+      "headline": "Framework for Issuance of Depository Receipts on Units of InvITs\u200B",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-10-29T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/oct-2026/ease-of-compliance-for-fpis-rationalisation-of-kyc-review-periodicity_105522.html"
+      "published_at_utc": "2026-11-01T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/framework-for-issuance-of-depository-receipts-on-units-of-invits-_105557.html"
     },
     {
       "rank": 5,
@@ -56,11 +56,11 @@
       "category": "NaturalDisaster",
       "impact": "Medium",
       "sentiment": "Neutral",
-      "headline": "Tropical Cyclone ARNAB-26",
+      "headline": "Tropical Cyclone MURASU-26",
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
-      "published_at_utc": "2026-10-26T00:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1001345\u0026episodeid=10\u0026eventtype=TC"
+      "published_at_utc": "2026-11-01T00:00:00+00:00",
+      "url": "https://www.gdacs.org/report.aspx?eventid=1001346\u0026episodeid=7\u0026eventtype=TC"
     }
   ]
 }
