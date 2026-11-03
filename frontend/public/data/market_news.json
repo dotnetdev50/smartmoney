@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-03T04:22:11.3310533+00:00",
+  "generated_at_utc": "2026-11-03T15:16:22.7732766+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,26 +8,38 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 02, 2026",
+      "headline": "State Government Securities - Full Auction Result",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-03T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63903"
+      "published_at_utc": "2026-11-03T11:35:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63910"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Positive",
-      "headline": "Auction of Government of India Dated Securities",
+      "sentiment": "Mixed",
+      "headline": "RBI launches the November 2026 round of the Inflation Expectations Survey of Households",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-02T12:55:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63902"
+      "published_at_utc": "2026-11-03T11:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63909"
     },
     {
       "rank": 3,
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Memorandum of Understanding between Securities and Exchange Board of India (SEBI) and Digital India BHASHINI Division (DIBD)",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-11-02T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/nov-2026/memorandum-of-understanding-between-securities-and-exchange-board-of-india-sebi-and-digital-india-bhashini-division-dibd-_105575.html"
+    },
+    {
+      "rank": 4,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
@@ -37,30 +49,6 @@
       "source": "SEBI",
       "published_at_utc": "2026-11-01T18:30:00+00:00",
       "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/framework-for-issuance-of-depository-receipts-on-units-of-reits-_105558.html"
-    },
-    {
-      "rank": 4,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Framework for Issuance of Depository Receipts on Units of InvITs\u200B",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-11-01T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/framework-for-issuance-of-depository-receipts-on-units-of-invits-_105557.html"
-    },
-    {
-      "rank": 5,
-      "scope": "India",
-      "category": "NaturalDisaster",
-      "impact": "Medium",
-      "sentiment": "Neutral",
-      "headline": "Tropical Cyclone MURASU-26",
-      "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
-      "source": "GDACS",
-      "published_at_utc": "2026-11-01T00:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1001346\u0026episodeid=9\u0026eventtype=TC"
     }
   ]
 }
