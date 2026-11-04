@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-04T04:21:36.6646315+00:00",
+  "generated_at_utc": "2026-11-04T15:16:14.1875915+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,47 +8,47 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 03, 2026",
+      "headline": "91-Day, 182-Day and 364-Day T-Bill Auction Result: Cut-off",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-04T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63912"
+      "published_at_utc": "2026-11-04T08:35:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63917"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "State Government Securities - Full Auction Result",
+      "sentiment": "Mixed",
+      "headline": "Constitution of the Technical Consultative Committee for Financial Markets (TCCFM)",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-03T11:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63910"
+      "published_at_utc": "2026-11-04T05:45:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63914"
     },
     {
       "rank": 3,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Memorandum of Understanding between Securities and Exchange Board of India (SEBI) and Digital India BHASHINI Division (DIBD)",
+      "sentiment": "Mixed",
+      "headline": "SEBI Constitutes Working Group to Review the Innovators Growth Platform Framework",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-11-02T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/nov-2026/memorandum-of-understanding-between-securities-and-exchange-board-of-india-sebi-and-digital-india-bhashini-division-dibd-_105575.html"
+      "published_at_utc": "2026-11-03T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/nov-2026/sebi-constitutes-working-group-to-review-the-innovators-growth-platform-framework_105610.html"
     },
     {
       "rank": 4,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Framework for Issuance of Depository Receipts on Units of REITs\u200B",
+      "sentiment": "Neutral",
+      "headline": "Review of Know Your Client process for individual Person Resident Outside India clients",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-11-01T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/framework-for-issuance-of-depository-receipts-on-units-of-reits-_105558.html"
+      "published_at_utc": "2026-11-03T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/review-of-know-your-client-process-for-individual-person-resident-outside-india-clients_105603.html"
     }
   ]
 }
