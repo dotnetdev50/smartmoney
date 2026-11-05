@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-05T04:22:09.3952785+00:00",
+  "generated_at_utc": "2026-11-05T15:16:42.3662693+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 04, 2026",
+      "headline": "Foreign Exchange Turnover Data: October 26, 2026 \u2013 October 30, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-05T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63920"
+      "published_at_utc": "2026-11-05T12:00:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63930"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "91-Day, 182-Day and 364-Day T-Bill Auction Result: Cut-off",
+      "headline": "Consolidation of Instructions Related to Priority Sector Lending \u2013 Drafts for Comments",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-04T08:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63917"
+      "published_at_utc": "2026-11-05T11:35:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63925"
     },
     {
       "rank": 3,
@@ -32,23 +32,23 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Mixed",
-      "headline": "SEBI Constitutes Working Group to Review the Innovators Growth Platform Framework",
+      "headline": "Review of the framework for Accredited Investors",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-11-03T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/nov-2026/sebi-constitutes-working-group-to-review-the-innovators-growth-platform-framework_105610.html"
+      "published_at_utc": "2026-11-04T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/review-of-the-framework-for-accredited-investors_105618.html"
     },
     {
       "rank": 4,
       "scope": "India",
       "category": "IndiaPolicyRegulation",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Review of Know Your Client process for individual Person Resident Outside India clients",
+      "sentiment": "Mixed",
+      "headline": "Framework for net settlement of funds for transactions undertaken by mutual fund schemes in cash market",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-11-03T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/review-of-know-your-client-process-for-individual-person-resident-outside-india-clients_105603.html"
+      "published_at_utc": "2026-11-04T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/framework-for-net-settlement-of-funds-for-transactions-undertaken-by-mutual-fund-schemes-in-cash-market_105616.html"
     }
   ]
 }
