@@ -1,31 +1,31 @@
 {
-  "retrieved_at_utc": "2026-11-05T15:33:46.119Z",
+  "retrieved_at_utc": "2026-11-05T16:07:13.554Z",
   "source": "Alpha Vantage",
   "source_url": "https://www.alphavantage.co/documentation/#gold-silver-spot",
   "provider": "Alpha Vantage",
   "asOf": "2026-11-05",
   "stale": false,
-  "usd_inr_rate": 94.46517739,
+  "usd_inr_rate": 94.46531316,
   "usd_inr_as_of": "2026-11-05",
   "fx_source_url": "https://www.alphavantage.co/documentation/#currency-exchange",
   "gold": {
     "symbol": "XAU",
     "name": "Gold",
-    "price_usd": 4104.2731640047,
+    "price_usd": 4088.4294584425,
     "unit": "USD/troy ounce",
     "as_of_date": "2026-11-05",
     "series_id": "GOLD",
     "series_url": "https://www.alphavantage.co/documentation/#gold-silver-spot",
-    "price_inr_10g": 124651.95
+    "price_inr_10g": 124170.93
   },
   "silver": {
     "symbol": "XAG",
     "name": "Silver",
-    "price_usd": 52.2303353401,
+    "price_usd": 51.6626481565,
     "unit": "USD/troy ounce",
     "as_of_date": "2026-11-05",
     "series_id": "SILVER",
     "series_url": "https://www.alphavantage.co/documentation/#gold-silver-spot",
-    "price_inr_10g": 1586.3
+    "price_inr_10g": 1569.06
   }
 }
