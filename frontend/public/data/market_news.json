@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-11-04T16:16:25.2700286+00:00",
+  "generated_at_utc": "2026-11-05T04:22:09.3952785+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on November 04, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-11-05T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63920"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -13,18 +25,6 @@
       "source": "RBI",
       "published_at_utc": "2026-11-04T08:35:00+00:00",
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63917"
-    },
-    {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Constitution of the Technical Consultative Committee for Financial Markets (TCCFM)",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-11-04T05:45:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63914"
     },
     {
       "rank": 3,
