@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-06T04:22:15.4355247+00:00",
+  "generated_at_utc": "2026-11-06T15:25:09.5430787+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 05, 2026",
+      "headline": "Census on Foreign Liabilities and Assets of Indian Direct Investment Entities for 2025-26",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-06T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63933"
+      "published_at_utc": "2026-11-06T12:00:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63941"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Foreign Exchange Turnover Data: October 26, 2026 \u2013 October 30, 2026",
+      "headline": "Sectoral Deployment of Credit by NBFC \u2013 September 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-05T12:00:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63930"
+      "published_at_utc": "2026-11-06T11:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63940"
     },
     {
       "rank": 3,
@@ -32,23 +32,11 @@
       "category": "IndiaPolicyRegulation",
       "impact": "High",
       "sentiment": "Mixed",
-      "headline": "Review of the framework for Accredited Investors",
+      "headline": "Commencement of SEBI (Settlement of Administrative and Civil Proceedings) Regulations, 2026",
       "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
       "source": "SEBI",
-      "published_at_utc": "2026-11-04T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/review-of-the-framework-for-accredited-investors_105618.html"
-    },
-    {
-      "rank": 4,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Framework for net settlement of funds for transactions undertaken by mutual fund schemes in cash market",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-11-04T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/framework-for-net-settlement-of-funds-for-transactions-undertaken-by-mutual-fund-schemes-in-cash-market_105616.html"
+      "published_at_utc": "2026-11-05T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/nov-2026/commencement-of-sebi-settlement-of-administrative-and-civil-proceedings-regulations-2026_105680.html"
     }
   ]
 }
