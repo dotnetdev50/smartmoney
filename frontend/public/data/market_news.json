@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-09T04:22:55.553951+00:00",
+  "generated_at_utc": "2026-11-09T15:16:30.9929672+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 06, 2026",
+      "sentiment": "Positive",
+      "headline": "Auction of Government of India Dated Security",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-09T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63944"
+      "published_at_utc": "2026-11-09T13:25:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63952"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Census on Foreign Liabilities and Assets of Indian Direct Investment Entities for 2025-26",
+      "sentiment": "Mixed",
+      "headline": "Supersession of Board of Directors of Abhyudaya Co-operative Bank Ltd., Mumbai - Extension of period",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-06T12:00:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63941"
+      "published_at_utc": "2026-11-09T13:20:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63951"
     },
     {
       "rank": 3,
@@ -37,6 +37,18 @@
       "source": "SEBI",
       "published_at_utc": "2026-11-05T18:30:00+00:00",
       "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/nov-2026/commencement-of-sebi-settlement-of-administrative-and-civil-proceedings-regulations-2026_105680.html"
+    },
+    {
+      "rank": 4,
+      "scope": "India",
+      "category": "NaturalDisaster",
+      "impact": "Medium",
+      "sentiment": "Neutral",
+      "headline": "Tropical Cyclone MURASU-26",
+      "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
+      "source": "GDACS",
+      "published_at_utc": "2026-11-01T00:00:00+00:00",
+      "url": "https://www.gdacs.org/report.aspx?eventid=1001346\u0026episodeid=10\u0026eventtype=TC"
     }
   ]
 }
