@@ -29,11 +29,11 @@
   "bias_Label": "Neutral",
   "strength": "Neutral",
   "explanation": "Composite bias is neutral, with neutral strength (\u002B10.5). The model classification is Shock regime with ShockScore 2.1. FII is the largest weighted participant driver, with puts contributing most to the aggregate score. Smart participants and Retail are positioned in opposite directions (divergence 1.26); DII opposes Smart positioning, and participant contributions are mixed.",
-  "pcr": null,
+  "pcr": 1.4706,
   "vix": null,
-  "pcr_volume": null,
-  "banknifty_pcr": null,
-  "banknifty_pcr_volume": null,
+  "pcr_volume": 0.8512,
+  "banknifty_pcr": 1.2314,
+  "banknifty_pcr_volume": 0.7015,
   "participant_activity": [
     {
       "participant": "FII",
