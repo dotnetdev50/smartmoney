@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-13T04:22:09.1750173+00:00",
+  "generated_at_utc": "2026-11-13T15:16:16.6555143+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 12, 2026",
+      "headline": "Developments in India\u2019s Balance of Payments for the Month of September 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-13T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63966"
+      "published_at_utc": "2026-11-13T12:00:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63974"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Final redemption under Sovereign Gold Bond (SGB) Scheme - Redemption Price for final redemption of SGB 2018-19 Series-III due on November 13, 2026",
+      "headline": "Scheduled Banks\u2019 Statement of Position in India as on October 31, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-12T13:05:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63964"
+      "published_at_utc": "2026-11-13T09:25:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63971"
     },
     {
       "rank": 3,
