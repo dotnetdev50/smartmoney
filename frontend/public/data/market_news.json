@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-16T04:23:02.4065448+00:00",
+  "generated_at_utc": "2026-11-16T15:16:35.3447066+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,12 +7,12 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 13, 2026",
+      "sentiment": "Positive",
+      "headline": "Auction of Government of India Dated Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-16T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63977"
+      "published_at_utc": "2026-11-16T12:15:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63983"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Developments in India\u2019s Balance of Payments for the Month of September 2026",
+      "headline": "Result: Conversion/Switch Auction of Government of India Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-13T12:00:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63974"
+      "published_at_utc": "2026-11-16T09:25:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63982"
     }
   ]
 }
