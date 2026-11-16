@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-11-13T16:16:32.4065331+00:00",
+  "generated_at_utc": "2026-11-16T04:23:02.4065448+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on November 13, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-11-16T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63977"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -13,30 +25,6 @@
       "source": "RBI",
       "published_at_utc": "2026-11-13T12:00:00+00:00",
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63974"
-    },
-    {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Scheduled Banks\u2019 Statement of Position in India as on October 31, 2026",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-11-13T09:25:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63971"
-    },
-    {
-      "rank": 3,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Niveshak Shivir to be held on November 17, 2026 at New Delhi",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-11-11T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/media-and-notifications/press-releases/nov-2026/niveshak-shivir-to-be-held-on-november-17-2026-at-new-delhi_105731.html"
     }
   ]
 }
