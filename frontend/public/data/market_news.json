@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-19T04:22:13.7749011+00:00",
+  "generated_at_utc": "2026-11-19T15:16:16.1848496+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,12 +7,12 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 18, 2026",
+      "sentiment": "Mixed",
+      "headline": "Finances of Panchayati Raj Institutions",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-19T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63998"
+      "published_at_utc": "2026-11-19T12:05:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64002"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "91-Day, 182-Day and 364-Day T-Bill Auction Result: Cut-off",
+      "headline": "Overseas Direct Investment for October 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-18T07:55:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63994"
+      "published_at_utc": "2026-11-19T11:10:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64001"
     },
     {
       "rank": 3,
@@ -36,7 +36,7 @@
       "why_it_matters": "Could affect regional supply, infrastructure or risk sentiment if disruption is material.",
       "source": "GDACS",
       "published_at_utc": "2026-11-16T18:00:00+00:00",
-      "url": "https://www.gdacs.org/report.aspx?eventid=1001351\u0026episodeid=10\u0026eventtype=TC"
+      "url": "https://www.gdacs.org/report.aspx?eventid=1001351\u0026episodeid=12\u0026eventtype=TC"
     }
   ]
 }
