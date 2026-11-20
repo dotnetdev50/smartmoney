@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-20T04:22:20.0078593+00:00",
+  "generated_at_utc": "2026-11-20T15:17:00.031413+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,23 +8,23 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 19, 2026",
+      "headline": "Conversion/Switch of State Government Securities",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-20T03:45:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64005"
+      "published_at_utc": "2026-11-20T14:15:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64017"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Finances of Panchayati Raj Institutions",
+      "sentiment": "Neutral",
+      "headline": "Government Stock - Full Auction Results",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-19T12:05:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64002"
+      "published_at_utc": "2026-11-20T10:00:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64012"
     }
   ]
 }
