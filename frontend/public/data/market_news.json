@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-23T04:22:53.908146+00:00",
+  "generated_at_utc": "2026-11-23T15:16:34.5591762+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -7,24 +7,24 @@
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 20, 2026",
+      "sentiment": "Mixed",
+      "headline": "Governor, Reserve Bank of India meets Managing Directors \u0026 Chief Executive Officers of select NBFCs, HFCs and Industry Representatives in Mumbai on November 23, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-23T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64018"
+      "published_at_utc": "2026-11-23T13:50:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64032"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Conversion/Switch of State Government Securities",
+      "sentiment": "Mixed",
+      "headline": "Governor, Reserve Bank of India meets Chairpersons and Managing Directors \u0026 Chief Executive Officers of select UCBs and Industry Representatives in Mumbai on November 23, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-20T14:15:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64017"
+      "published_at_utc": "2026-11-23T13:45:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64031"
     }
   ]
 }
