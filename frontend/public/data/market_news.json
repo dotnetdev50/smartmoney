@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-25T04:23:10.1622652+00:00",
+  "generated_at_utc": "2026-11-25T15:17:01.1087956+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 23, 2026",
+      "headline": "47th Half-Yearly Report on Management of Foreign Exchange Reserves: April \u2013 September 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-25T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64034"
+      "published_at_utc": "2026-11-25T12:35:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64042"
     },
     {
       "rank": 2,
@@ -20,11 +20,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Mixed",
-      "headline": "Governor, Reserve Bank of India meets Managing Directors \u0026 Chief Executive Officers of select NBFCs, HFCs and Industry Representatives in Mumbai on November 23, 2026",
+      "headline": "RBI Bulletin \u2013 November 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-23T13:50:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64032"
+      "published_at_utc": "2026-11-25T12:25:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64041"
     }
   ]
 }
