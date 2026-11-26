@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-26T04:22:23.6401389+00:00",
+  "generated_at_utc": "2026-11-26T15:16:30.9762594+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,11 +8,11 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 25, 2026",
+      "headline": "Reserve Money and Money Supply for the fortnight ended on November 15, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-26T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64044"
+      "published_at_utc": "2026-11-26T12:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64050"
     },
     {
       "rank": 2,
@@ -20,11 +20,35 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "47th Half-Yearly Report on Management of Foreign Exchange Reserves: April \u2013 September 2026",
+      "headline": "Underwriting Auction for sale of Government Securities for \u0026#8377;33,000 crore on November 27, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-25T12:35:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64042"
+      "published_at_utc": "2026-11-26T06:45:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64048"
+    },
+    {
+      "rank": 3,
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
+      "impact": "High",
+      "sentiment": "Mixed",
+      "headline": "Half-yearly review of -Significant Indices- under SEBI (Index Providers) Regulations, 2024",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-11-24T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/half-yearly-review-of-significant-indices-under-sebi-index-providers-regulations-2024_105853.html"
+    },
+    {
+      "rank": 4,
+      "scope": "India",
+      "category": "IndiaPolicyRegulation",
+      "impact": "High",
+      "sentiment": "Mixed",
+      "headline": "Simplification of client on-boarding and rationalisation of risk management framework at KYC Registration Agencies",
+      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
+      "source": "SEBI",
+      "published_at_utc": "2026-11-24T18:30:00+00:00",
+      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/simplification-of-client-on-boarding-and-rationalisation-of-risk-management-framework-at-kyc-registration-agencies_105839.html"
     }
   ]
 }
