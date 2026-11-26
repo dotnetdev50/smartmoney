@@ -1,9 +1,21 @@
 {
-  "generated_at_utc": "2026-11-25T16:18:15.1189588+00:00",
+  "generated_at_utc": "2026-11-26T04:22:23.6401389+00:00",
   "lookback_hours": 168,
   "items": [
     {
       "rank": 1,
+      "scope": "India",
+      "category": "MonetaryMacro",
+      "impact": "High",
+      "sentiment": "Neutral",
+      "headline": "Money Market Operations as on November 25, 2026",
+      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
+      "source": "RBI",
+      "published_at_utc": "2026-11-26T03:30:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64044"
+    },
+    {
+      "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
@@ -13,18 +25,6 @@
       "source": "RBI",
       "published_at_utc": "2026-11-25T12:35:00+00:00",
       "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64042"
-    },
-    {
-      "rank": 2,
-      "scope": "India",
-      "category": "MonetaryMacro",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "RBI Bulletin \u2013 November 2026",
-      "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
-      "source": "RBI",
-      "published_at_utc": "2026-11-25T12:25:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64041"
     }
   ]
 }
