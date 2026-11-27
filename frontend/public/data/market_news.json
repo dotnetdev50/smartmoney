@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-27T04:22:17.5066373+00:00",
+  "generated_at_utc": "2026-11-27T15:16:15.2662005+00:00",
   "lookback_hours": 168,
   "items": [
     {
@@ -8,47 +8,23 @@
       "category": "MonetaryMacro",
       "impact": "High",
       "sentiment": "Neutral",
-      "headline": "Money Market Operations as on November 26, 2026",
+      "headline": "RBI Issues Amendment Directions on \u2018Suspected Money Mule Accounts to Prevent Cyber-enabled Financial Frauds\u2019",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-27T03:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64052"
+      "published_at_utc": "2026-11-27T15:15:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64062"
     },
     {
       "rank": 2,
       "scope": "India",
       "category": "MonetaryMacro",
       "impact": "High",
-      "sentiment": "Neutral",
-      "headline": "Reserve Money and Money Supply for the fortnight ended on November 15, 2026",
+      "sentiment": "Positive",
+      "headline": "Thirty First Meeting of the Standing Advisory Committee (SAC) to Review the Flow of Credit to the MSME Sector in Kolkata on November 27, 2026",
       "why_it_matters": "Could affect rates, banking liquidity, bond yields and rate-sensitive sectors.",
       "source": "RBI",
-      "published_at_utc": "2026-11-26T12:30:00+00:00",
-      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64050"
-    },
-    {
-      "rank": 3,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Half-yearly review of -Significant Indices- under SEBI (Index Providers) Regulations, 2024",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-11-24T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/half-yearly-review-of-significant-indices-under-sebi-index-providers-regulations-2024_105853.html"
-    },
-    {
-      "rank": 4,
-      "scope": "India",
-      "category": "IndiaPolicyRegulation",
-      "impact": "High",
-      "sentiment": "Mixed",
-      "headline": "Simplification of client on-boarding and rationalisation of risk management framework at KYC Registration Agencies",
-      "why_it_matters": "Could affect market structure, derivatives positioning or investor behavior.",
-      "source": "SEBI",
-      "published_at_utc": "2026-11-24T18:30:00+00:00",
-      "url": "https://www.sebi.gov.in/legal/circulars/nov-2026/simplification-of-client-on-boarding-and-rationalisation-of-risk-management-framework-at-kyc-registration-agencies_105839.html"
+      "published_at_utc": "2026-11-27T12:55:00+00:00",
+      "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64059"
     }
   ]
 }
